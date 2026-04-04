@@ -8,6 +8,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -82,6 +83,10 @@ public class ResultsFragment extends Fragment {
                 currentClub = club;
             }
         });
+
+        binding.swipeRefresh.setColorSchemeColors(
+                ContextCompat.getColor(requireContext(), R.color.accent),
+                ContextCompat.getColor(requireContext(), R.color.secondary));
 
         // Swipe to Refresh logic for regeneration
         binding.swipeRefresh.setOnRefreshListener(() -> {
