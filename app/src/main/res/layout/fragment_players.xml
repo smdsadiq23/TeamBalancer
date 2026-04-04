@@ -258,7 +258,7 @@
                         android:layout_marginTop="14dp"
                         android:letterSpacing="0.05"
                         android:text="ADD PLAYER"
-                        android:textColor="@color/black"
+                        android:textColor="@color/white"
                         app:backgroundTint="@color/accent"
                         app:cornerRadius="@dimen/card_corner_lg" />
                 </LinearLayout>

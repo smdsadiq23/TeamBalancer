@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:drawable="@color/background" />
-    <!-- Stadium floodlight / HUD glow -->
     <item android:top="-160dp" android:left="-160dp">
         <shape android:shape="oval">
             <size android:width="420dp" android:height="420dp" />
-            <solid android:color="#2800E8B8" />
+            <solid android:color="#3800F5FF" />
         </shape>
     </item>
     <item android:gravity="end|top" android:right="-100dp" android:top="20dp">
         <shape android:shape="oval">
             <size android:width="340dp" android:height="340dp" />
-            <solid android:color="#184D9FFF" />
+            <solid android:color="#357C3AED" />
         </shape>
     </item>
     <item android:gravity="end|bottom" android:right="-80dp" android:bottom="-140dp">
         <shape android:shape="oval">
             <size android:width="360dp" android:height="360dp" />
-            <solid android:color="#2200E8B8" />
+            <solid android:color="#2838BDF8" />
         </shape>
     </item>
 </layer-list>

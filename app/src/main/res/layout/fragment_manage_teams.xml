@@ -82,7 +82,7 @@
                         android:background="@drawable/bg_cta_gradient"
                         android:letterSpacing="0.05"
                         android:text="ADD TEAM"
-                        android:textColor="@color/black"
+                        android:textColor="@color/white"
                         android:textStyle="bold"
                         app:backgroundTint="@null"
                         app:cornerRadius="@dimen/card_corner_lg" />
