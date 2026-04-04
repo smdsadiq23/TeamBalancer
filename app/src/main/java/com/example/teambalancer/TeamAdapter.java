@@ -49,7 +49,7 @@ public class TeamAdapter extends RecyclerView.Adapter<TeamAdapter.TeamViewHolder
     @Override
     public void onBindViewHolder(@NonNull TeamViewHolder holder, int position) {
         if (colorOnSurface == Integer.MIN_VALUE) {
-            Context c = holder.itemView.getContext();
+            android.content.Context c = holder.itemView.getContext();
             colorOnSurface = ContextCompat.getColor(c, R.color.on_surface);
             colorAccent = ContextCompat.getColor(c, R.color.accent);
         }
@@ -59,7 +59,7 @@ public class TeamAdapter extends RecyclerView.Adapter<TeamAdapter.TeamViewHolder
         if (isManagementMode) {
             holder.btnDeleteTeam.setVisibility(View.VISIBLE);
             holder.btnDeleteTeam.setOnClickListener(v -> {
-                int adapterPos = holder.getBindingAdapterPosition();
+                int adapterPos = holder.getAdapterPosition();
                 if (listener != null && adapterPos != RecyclerView.NO_POSITION) {
                     listener.onDeleteTeam(adapterPos);
                 }

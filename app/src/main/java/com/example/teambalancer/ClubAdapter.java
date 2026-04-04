@@ -97,7 +97,7 @@ public class ClubAdapter extends RecyclerView.Adapter<ClubAdapter.ClubViewHolder
         
         holder.btnSelect.setOnClickListener(v -> listener.onClubSelect(club));
         holder.btnDelete.setOnClickListener(v -> {
-            int pos = holder.getBindingAdapterPosition();
+            int pos = holder.getAdapterPosition();
             if (pos != RecyclerView.NO_POSITION) {
                 listener.onClubDelete(pos);
             }

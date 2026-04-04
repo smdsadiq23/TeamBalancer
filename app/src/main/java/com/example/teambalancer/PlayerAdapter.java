@@ -65,7 +65,7 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.PlayerView
         
         holder.checkIsCaptain.setOnClickListener(v -> {
             boolean isChecked = holder.checkIsCaptain.isChecked();
-            int pos = holder.getBindingAdapterPosition();
+            int pos = holder.getAdapterPosition();
             if (pos != RecyclerView.NO_POSITION) {
                 actionListener.onPlayerCaptaincyChanged(pos, isChecked);
             }
@@ -87,20 +87,20 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.PlayerView
         holder.checkAvailable.setOnCheckedChangeListener(null);
         holder.checkAvailable.setChecked(player.isAvailable);
         holder.checkAvailable.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            int pos = holder.getBindingAdapterPosition();
+            int pos = holder.getAdapterPosition();
             if (pos != RecyclerView.NO_POSITION) {
                 actionListener.onPlayerAvailabilityChanged(pos, isChecked);
             }
         });
 
         holder.btnEdit.setOnClickListener(v -> {
-            int pos = holder.getBindingAdapterPosition();
+            int pos = holder.getAdapterPosition();
             if (pos != RecyclerView.NO_POSITION) {
                 actionListener.onPlayerEdit(pos, player);
             }
         });
         holder.btnDelete.setOnClickListener(v -> {
-            int pos = holder.getBindingAdapterPosition();
+            int pos = holder.getAdapterPosition();
             if (pos != RecyclerView.NO_POSITION) {
                 actionListener.onPlayerDelete(pos);
             }

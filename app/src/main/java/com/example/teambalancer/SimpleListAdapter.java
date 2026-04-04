@@ -60,14 +60,14 @@ public class SimpleListAdapter extends RecyclerView.Adapter<SimpleListAdapter.Si
         }
 
         holder.itemView.setOnClickListener(v -> {
-            int pos = holder.getBindingAdapterPosition();
+            int pos = holder.getAdapterPosition();
             if (pos != RecyclerView.NO_POSITION && listener != null) {
                 listener.onItemSelect(pos);
             }
         });
 
         holder.btnDelete.setOnClickListener(v -> {
-            int pos = holder.getBindingAdapterPosition();
+            int pos = holder.getAdapterPosition();
             if (pos != RecyclerView.NO_POSITION) {
                 listener.onItemDelete(pos);
             }

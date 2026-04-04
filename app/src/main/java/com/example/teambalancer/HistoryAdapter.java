@@ -84,7 +84,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
 
         holder.btnView.setOnClickListener(v -> listener.onHistoryClick(history));
         holder.btnDelete.setOnClickListener(v -> {
-            int pos = holder.getBindingAdapterPosition();
+            int pos = holder.getAdapterPosition();
             if (pos != RecyclerView.NO_POSITION) {
                 listener.onHistoryDelete(pos);
             }
