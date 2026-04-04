@@ -1,6 +1,5 @@
 package com.example.teambalancer;
 
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,7 +65,10 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.PlayerView
         
         holder.checkIsCaptain.setOnClickListener(v -> {
             boolean isChecked = holder.checkIsCaptain.isChecked();
-            actionListener.onPlayerCaptaincyChanged(holder.getAdapterPosition(), isChecked);
+            int pos = holder.getBindingAdapterPosition();
+            if (pos != RecyclerView.NO_POSITION) {
+                actionListener.onPlayerCaptaincyChanged(pos, isChecked);
+            }
         });
         
         // Team Selection for Captains
@@ -85,14 +87,24 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.PlayerView
         holder.checkAvailable.setOnCheckedChangeListener(null);
         holder.checkAvailable.setChecked(player.isAvailable);
         holder.checkAvailable.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            int pos = holder.getAdapterPosition();
+            int pos = holder.getBindingAdapterPosition();
             if (pos != RecyclerView.NO_POSITION) {
                 actionListener.onPlayerAvailabilityChanged(pos, isChecked);
             }
         });
 
-        holder.btnEdit.setOnClickListener(v -> actionListener.onPlayerEdit(holder.getAdapterPosition(), player));
-        holder.btnDelete.setOnClickListener(v -> actionListener.onPlayerDelete(holder.getAdapterPosition()));
+        holder.btnEdit.setOnClickListener(v -> {
+            int pos = holder.getBindingAdapterPosition();
+            if (pos != RecyclerView.NO_POSITION) {
+                actionListener.onPlayerEdit(pos, player);
+            }
+        });
+        holder.btnDelete.setOnClickListener(v -> {
+            int pos = holder.getBindingAdapterPosition();
+            if (pos != RecyclerView.NO_POSITION) {
+                actionListener.onPlayerDelete(pos);
+            }
+        });
     }
 
     @Override

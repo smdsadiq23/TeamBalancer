@@ -53,7 +53,7 @@ public class ManageTeamsFragment extends Fragment {
                 adapter.setSelectedPosition(position);
                 Toast.makeText(requireContext(), "Selected: " + teamNames.get(position), Toast.LENGTH_SHORT).show();
             }
-        });
+        }, requireContext());
 
         binding.recyclerTeams.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.recyclerTeams.setAdapter(adapter);

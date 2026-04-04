@@ -11,7 +11,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 import com.example.teambalancer.databinding.FragmentPlayersBinding;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +27,12 @@ public class PlayersFragment extends Fragment {
     private PlayerAdapter adapter;
     private final List<Player> playersList = new ArrayList<>();
     private Club currentClub;
+    private LiveData<List<Player>> observedPlayersLiveData;
+    private final Observer<List<Player>> playersObserver = players -> {
+        if (players == null || binding == null) return;
+        adapter.updatePlayers(players);
+        binding.txtPlayerCount.setText("Total: " + players.size());
+    };
 
     @Nullable
     @Override
@@ -93,8 +103,16 @@ public class PlayersFragment extends Fragment {
             }
         });
 
-        binding.recyclerPlayers.setLayoutManager(new LinearLayoutManager(requireContext()));
+        LinearLayoutManager lm = new LinearLayoutManager(requireContext());
+        lm.setInitialPrefetchItemCount(8);
+        binding.recyclerPlayers.setLayoutManager(lm);
         binding.recyclerPlayers.setAdapter(adapter);
+        binding.recyclerPlayers.setHasFixedSize(true);
+        binding.recyclerPlayers.setItemViewCacheSize(20);
+        RecyclerView.ItemAnimator animator = binding.recyclerPlayers.getItemAnimator();
+        if (animator instanceof SimpleItemAnimator) {
+            ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
+        }
     }
 
     private void observeData() {
@@ -117,12 +135,11 @@ public class PlayersFragment extends Fragment {
     }
 
     private void observePlayers(int clubId) {
-        dataManager.getPlayersForClub(clubId).observe(getViewLifecycleOwner(), players -> {
-            playersList.clear();
-            playersList.addAll(players);
-            binding.txtPlayerCount.setText("Total: " + players.size());
-            adapter.notifyDataSetChanged();
-        });
+        if (observedPlayersLiveData != null) {
+            observedPlayersLiveData.removeObserver(playersObserver);
+        }
+        observedPlayersLiveData = dataManager.getPlayersForClub(clubId);
+        observedPlayersLiveData.observe(getViewLifecycleOwner(), playersObserver);
     }
 
     private void setupListeners() {

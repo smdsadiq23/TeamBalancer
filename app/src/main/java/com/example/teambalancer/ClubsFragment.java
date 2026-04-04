@@ -113,7 +113,7 @@ public class ClubsFragment extends Fragment {
                         .setPositiveButton("Close", null)
                         .show();
             }
-        });
+        }, requireContext());
 
         binding.recyclerClubs.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.recyclerClubs.setAdapter(clubAdapter);

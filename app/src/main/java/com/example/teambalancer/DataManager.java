@@ -46,11 +46,6 @@ public class DataManager {
         return db.clubDao().getClubById(id);
     }
 
-    public Club getFirstClubSync() {
-        List<Club> clubs = db.clubDao().getAllClubsSync();
-        return clubs.isEmpty() ? null : clubs.get(0);
-    }
-
     public LiveData<List<Player>> getPlayersForClub(int clubId) {
         return db.playerDao().getPlayersForClub(clubId);
     }

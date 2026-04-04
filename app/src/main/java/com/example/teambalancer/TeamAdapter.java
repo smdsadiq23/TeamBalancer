@@ -18,6 +18,8 @@ public class TeamAdapter extends RecyclerView.Adapter<TeamAdapter.TeamViewHolder
     private final List<Team> teams;
     private OnTeamModifiedListener listener;
     private boolean isManagementMode = false;
+    private int colorOnSurface = Integer.MIN_VALUE;
+    private int colorAccent;
 
     public interface OnTeamModifiedListener {
         void onTeamModified();
@@ -46,13 +48,18 @@ public class TeamAdapter extends RecyclerView.Adapter<TeamAdapter.TeamViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull TeamViewHolder holder, int position) {
+        if (colorOnSurface == Integer.MIN_VALUE) {
+            Context c = holder.itemView.getContext();
+            colorOnSurface = ContextCompat.getColor(c, R.color.on_surface);
+            colorAccent = ContextCompat.getColor(c, R.color.accent);
+        }
         Team team = teams.get(position);
         holder.txtTeamName.setText(team.name);
         
         if (isManagementMode) {
             holder.btnDeleteTeam.setVisibility(View.VISIBLE);
             holder.btnDeleteTeam.setOnClickListener(v -> {
-                int adapterPos = holder.getAdapterPosition();
+                int adapterPos = holder.getBindingAdapterPosition();
                 if (listener != null && adapterPos != RecyclerView.NO_POSITION) {
                     listener.onDeleteTeam(adapterPos);
                 }
@@ -67,9 +74,6 @@ public class TeamAdapter extends RecyclerView.Adapter<TeamAdapter.TeamViewHolder
 
         boolean hasCaptain = team.players.stream().anyMatch(p -> p.isCaptain);
         LayoutInflater inflater = LayoutInflater.from(holder.itemView.getContext());
-
-        int colorOnSurface = ContextCompat.getColor(holder.itemView.getContext(), R.color.on_surface);
-        int colorAccent = ContextCompat.getColor(holder.itemView.getContext(), R.color.accent);
 
         for (int i = 0; i < currentPlayerCount; i++) {
             Player player = team.players.get(i);

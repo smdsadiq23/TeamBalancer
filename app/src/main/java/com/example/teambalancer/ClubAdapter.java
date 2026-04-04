@@ -1,5 +1,6 @@
 package com.example.teambalancer;
 
+import android.content.Context;
 import android.graphics.Typeface;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -21,6 +22,9 @@ public class ClubAdapter extends RecyclerView.Adapter<ClubAdapter.ClubViewHolder
     private final List<ClubWithPlayers> clubs;
     private final OnClubActionListener listener;
     private String selectedClubName = "";
+    private final int accentColor;
+    private final int dividerColor;
+    private final int greenColor;
 
     public interface OnClubActionListener {
         void onClubSelect(Club club);
@@ -28,9 +32,12 @@ public class ClubAdapter extends RecyclerView.Adapter<ClubAdapter.ClubViewHolder
         void onShowPlayers(List<Player> players, String clubName);
     }
 
-    public ClubAdapter(List<ClubWithPlayers> clubs, OnClubActionListener listener) {
+    public ClubAdapter(List<ClubWithPlayers> clubs, OnClubActionListener listener, Context context) {
         this.clubs = clubs;
         this.listener = listener;
+        accentColor = ContextCompat.getColor(context, R.color.accent);
+        dividerColor = ContextCompat.getColor(context, R.color.divider);
+        greenColor = ContextCompat.getColor(context, R.color.cricket_green);
     }
 
     public void setSelectedClubName(String selectedClubName) {
@@ -59,9 +66,7 @@ public class ClubAdapter extends RecyclerView.Adapter<ClubAdapter.ClubViewHolder
         String fullText = playerPart + " | " + teamPart;
 
         SpannableStringBuilder ssb = new SpannableStringBuilder(fullText);
-        // Using cricket_green for the "Players" part
-        int greenColor = ContextCompat.getColor(holder.itemView.getContext(), R.color.cricket_green);
-        
+
         ssb.setSpan(new ForegroundColorSpan(greenColor), 0, playerPart.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         ssb.setSpan(new StyleSpan(Typeface.BOLD), 0, playerPart.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         
@@ -77,13 +82,13 @@ public class ClubAdapter extends RecyclerView.Adapter<ClubAdapter.ClubViewHolder
         boolean isSelected = club.name.equals(selectedClubName);
         
         if (isSelected) {
-            holder.cardRoot.setStrokeColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.accent));
+            holder.cardRoot.setStrokeColor(accentColor);
             holder.cardRoot.setStrokeWidth(4);
             holder.btnSelect.setText("SELECTED");
             holder.btnSelect.setEnabled(false);
             holder.btnSelect.setAlpha(0.6f);
         } else {
-            holder.cardRoot.setStrokeColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.divider));
+            holder.cardRoot.setStrokeColor(dividerColor);
             holder.cardRoot.setStrokeWidth(2);
             holder.btnSelect.setText("SELECT");
             holder.btnSelect.setEnabled(true);
@@ -91,7 +96,12 @@ public class ClubAdapter extends RecyclerView.Adapter<ClubAdapter.ClubViewHolder
         }
         
         holder.btnSelect.setOnClickListener(v -> listener.onClubSelect(club));
-        holder.btnDelete.setOnClickListener(v -> listener.onClubDelete(holder.getAdapterPosition()));
+        holder.btnDelete.setOnClickListener(v -> {
+            int pos = holder.getBindingAdapterPosition();
+            if (pos != RecyclerView.NO_POSITION) {
+                listener.onClubDelete(pos);
+            }
+        });
     }
 
     @Override

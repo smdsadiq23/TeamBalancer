@@ -13,7 +13,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 import com.example.teambalancer.databinding.FragmentBalanceBinding;
 import com.google.android.material.chip.Chip;
 import java.text.SimpleDateFormat;
@@ -33,6 +37,16 @@ public class BalanceFragment extends Fragment {
     private final List<Player> availablePlayers = new ArrayList<>();
     private final List<Player> filteredPlayers = new ArrayList<>();
     private Club currentClub;
+    private LiveData<List<Player>> observedPlayersLiveData;
+    private final Observer<List<Player>> playersObserver = players -> {
+        if (players == null || binding == null) return;
+        availablePlayers.clear();
+        availablePlayers.addAll(players.stream()
+                .filter(p -> p.isAvailable)
+                .collect(Collectors.toList()));
+        binding.txtAvailableCount.setText("Available Players: " + availablePlayers.size());
+        filter(binding.editSearch.getText().toString());
+    };
 
     @Nullable
     @Override
@@ -65,15 +79,11 @@ public class BalanceFragment extends Fragment {
     }
 
     private void observePlayers(int clubId) {
-        dataManager.getPlayersForClub(clubId).observe(getViewLifecycleOwner(), players -> {
-            availablePlayers.clear();
-            availablePlayers.addAll(players.stream()
-                    .filter(p -> p.isAvailable)
-                    .collect(Collectors.toList()));
-
-            binding.txtAvailableCount.setText("Available Players: " + availablePlayers.size());
-            filter(binding.editSearch.getText().toString());
-        });
+        if (observedPlayersLiveData != null) {
+            observedPlayersLiveData.removeObserver(playersObserver);
+        }
+        observedPlayersLiveData = dataManager.getPlayersForClub(clubId);
+        observedPlayersLiveData.observe(getViewLifecycleOwner(), playersObserver);
     }
 
     private void setupTeamSelection() {
@@ -164,8 +174,16 @@ public class BalanceFragment extends Fragment {
             }
         });
 
-        binding.recyclerCaptainSelection.setLayoutManager(new LinearLayoutManager(requireContext()));
+        LinearLayoutManager lm = new LinearLayoutManager(requireContext());
+        lm.setInitialPrefetchItemCount(8);
+        binding.recyclerCaptainSelection.setLayoutManager(lm);
         binding.recyclerCaptainSelection.setAdapter(captainAdapter);
+        binding.recyclerCaptainSelection.setHasFixedSize(true);
+        binding.recyclerCaptainSelection.setItemViewCacheSize(20);
+        RecyclerView.ItemAnimator anim = binding.recyclerCaptainSelection.getItemAnimator();
+        if (anim instanceof SimpleItemAnimator) {
+            ((SimpleItemAnimator) anim).setSupportsChangeAnimations(false);
+        }
         
         binding.editTeamNames.addTextChangedListener(new TextWatcher() {
             @Override
@@ -309,18 +327,26 @@ public class BalanceFragment extends Fragment {
             }
         }
 
-        List<Team> balancedTeams = balanceTeams(new ArrayList<>(availablePlayers), teamNames);
-        
-        String date = new SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault()).format(new Date());
-        currentClub.history.add(new Club.TeamHistory(date, balancedTeams));
-        dataManager.updateClub(currentClub);
+        List<Player> playersSnapshot = new ArrayList<>(availablePlayers);
+        int clubId = currentClub.id;
+        String clubName = currentClub.name;
 
-        // Updated call to newInstance with clubId
-        ResultsFragment resultsFragment = ResultsFragment.newInstance(currentClub.id, currentClub.name, (ArrayList<Team>) balancedTeams);
-        getParentFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, resultsFragment)
-                .addToBackStack(null)
-                .commit();
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            List<Team> balancedTeams = balanceTeams(playersSnapshot, teamNames);
+            String date = new SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault()).format(new Date());
+            if (getActivity() == null) return;
+            getActivity().runOnUiThread(() -> {
+                if (!isAdded() || currentClub == null || binding == null) return;
+                currentClub.history.add(new Club.TeamHistory(date, balancedTeams));
+                dataManager.updateClub(currentClub);
+                ResultsFragment resultsFragment = ResultsFragment.newInstance(
+                        clubId, clubName, new ArrayList<>(balancedTeams));
+                getParentFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, resultsFragment)
+                        .addToBackStack(null)
+                        .commit();
+            });
+        });
     }
 
     private List<Team> balanceTeams(List<Player> allPlayers, String[] teamNames) {

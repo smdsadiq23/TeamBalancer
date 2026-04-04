@@ -36,40 +36,59 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
     public void onBindViewHolder(@NonNull HistoryViewHolder holder, int position) {
         Club.TeamHistory history = historyList.get(position);
         holder.txtDate.setText(history.date);
-        
-        int totalPlayers = 0;
-        holder.layoutTeams.removeAllViews();
-        LayoutInflater inflater = LayoutInflater.from(holder.itemView.getContext());
 
-        for (Team team : history.teams) {
+        LayoutInflater inflater = holder.inflater;
+        LinearLayout layoutTeams = holder.layoutTeams;
+        List<Team> teams = history.teams;
+        int teamCount = teams != null ? teams.size() : 0;
+        int existing = layoutTeams.getChildCount();
+
+        int totalPlayers = 0;
+        for (int i = 0; i < teamCount; i++) {
+            Team team = teams.get(i);
             totalPlayers += team.players.size();
-            
-            View teamView = inflater.inflate(R.layout.item_history_team, holder.layoutTeams, false);
+
+            View teamView;
+            if (i < existing) {
+                teamView = layoutTeams.getChildAt(i);
+            } else {
+                teamView = inflater.inflate(R.layout.item_history_team, layoutTeams, false);
+                layoutTeams.addView(teamView);
+            }
+            teamView.setVisibility(View.VISIBLE);
+
             TextView txtTeamName = teamView.findViewById(R.id.txtTeamName);
             TextView txtTeamStrength = teamView.findViewById(R.id.txtTeamStrength);
             TextView txtTeamPlayers = teamView.findViewById(R.id.txtTeamPlayers);
-            
+
             txtTeamName.setText(team.name);
             txtTeamStrength.setText("Str: " + team.totalStrength);
-            
-            StringBuilder playersList = new StringBuilder();
-            for (int i = 0; i < team.players.size(); i++) {
-                Player p = team.players.get(i);
+
+            StringBuilder playersList = new StringBuilder(team.players.size() * 16);
+            for (int j = 0; j < team.players.size(); j++) {
+                Player p = team.players.get(j);
                 playersList.append(p.isCaptain ? "★ " : "• ").append(p.name);
-                if (i < team.players.size() - 1) {
-                    playersList.append("\n");
+                if (j < team.players.size() - 1) {
+                    playersList.append('\n');
                 }
             }
             txtTeamPlayers.setText(playersList.toString());
-            
-            holder.layoutTeams.addView(teamView);
         }
-        
-        String summary = history.teams.size() + " Teams, " + totalPlayers + " Players total";
+
+        for (int i = teamCount; i < existing; i++) {
+            layoutTeams.getChildAt(i).setVisibility(View.GONE);
+        }
+
+        String summary = teamCount + " Teams, " + totalPlayers + " Players total";
         holder.txtSummary.setText(summary);
-        
+
         holder.btnView.setOnClickListener(v -> listener.onHistoryClick(history));
-        holder.btnDelete.setOnClickListener(v -> listener.onHistoryDelete(holder.getAdapterPosition()));
+        holder.btnDelete.setOnClickListener(v -> {
+            int pos = holder.getBindingAdapterPosition();
+            if (pos != RecyclerView.NO_POSITION) {
+                listener.onHistoryDelete(pos);
+            }
+        });
     }
 
     @Override
@@ -81,9 +100,11 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
         TextView txtDate, txtSummary;
         LinearLayout layoutTeams;
         MaterialButton btnView, btnDelete;
+        final LayoutInflater inflater;
 
-        public HistoryViewHolder(@NonNull View itemView) {
+        HistoryViewHolder(@NonNull View itemView) {
             super(itemView);
+            inflater = LayoutInflater.from(itemView.getContext());
             txtDate = itemView.findViewById(R.id.txtHistoryDate);
             txtSummary = itemView.findViewById(R.id.txtHistorySummary);
             layoutTeams = itemView.findViewById(R.id.layoutHistoryTeams);

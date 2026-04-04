@@ -1,5 +1,6 @@
 package com.example.teambalancer;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,15 +18,19 @@ public class SimpleListAdapter extends RecyclerView.Adapter<SimpleListAdapter.Si
     private List<String> items;
     private final OnItemActionListener listener;
     private int selectedPosition = -1;
+    private final int accentColor;
+    private final int dividerColor;
 
     public interface OnItemActionListener {
         void onItemDelete(int position);
         default void onItemSelect(int position) {}
     }
 
-    public SimpleListAdapter(List<String> items, OnItemActionListener listener) {
+    public SimpleListAdapter(List<String> items, OnItemActionListener listener, Context context) {
         this.items = items != null ? items : new ArrayList<>();
         this.listener = listener;
+        accentColor = ContextCompat.getColor(context, R.color.accent);
+        dividerColor = ContextCompat.getColor(context, R.color.divider);
     }
 
     public void setSelectedPosition(int position) {
@@ -47,22 +52,22 @@ public class SimpleListAdapter extends RecyclerView.Adapter<SimpleListAdapter.Si
         boolean isSelected = (position == selectedPosition);
         
         if (isSelected) {
-            holder.cardRoot.setStrokeColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.accent));
+            holder.cardRoot.setStrokeColor(accentColor);
             holder.cardRoot.setStrokeWidth(4);
         } else {
-            holder.cardRoot.setStrokeColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.divider));
+            holder.cardRoot.setStrokeColor(dividerColor);
             holder.cardRoot.setStrokeWidth(2);
         }
 
         holder.itemView.setOnClickListener(v -> {
-            int pos = holder.getAdapterPosition();
+            int pos = holder.getBindingAdapterPosition();
             if (pos != RecyclerView.NO_POSITION && listener != null) {
                 listener.onItemSelect(pos);
             }
         });
 
         holder.btnDelete.setOnClickListener(v -> {
-            int pos = holder.getAdapterPosition();
+            int pos = holder.getBindingAdapterPosition();
             if (pos != RecyclerView.NO_POSITION) {
                 listener.onItemDelete(pos);
             }

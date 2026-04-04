@@ -12,9 +12,13 @@ import java.util.concurrent.Executors;
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase instance;
-    private static final int NUMBER_OF_THREADS = 4;
+    /** Single writer avoids transaction races and matches Room’s recommended usage. */
     public static final ExecutorService databaseWriteExecutor =
-            Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+            Executors.newSingleThreadExecutor(r -> {
+                Thread t = new Thread(r, "TeamBalancer-DB");
+                t.setPriority(Thread.NORM_PRIORITY - 1);
+                return t;
+            });
 
     public abstract ClubDao clubDao();
     public abstract PlayerDao playerDao();
