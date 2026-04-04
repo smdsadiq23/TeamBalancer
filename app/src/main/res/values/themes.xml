@@ -35,6 +35,7 @@
         <item name="textAppearanceHeadlineMedium">@style/TextAppearance.TeamBalancer.HeadlineMedium</item>
         <item name="textAppearanceTitleLarge">@style/TextAppearance.TeamBalancer.TitleLarge</item>
         <item name="textAppearanceTitleMedium">@style/TextAppearance.TeamBalancer.TitleMedium</item>
+        <item name="textAppearanceTitleSmall">@style/TextAppearance.TeamBalancer.TitleSmall</item>
         <item name="textAppearanceBodyLarge">@style/TextAppearance.TeamBalancer.BodyLarge</item>
         <item name="textAppearanceBodyMedium">@style/TextAppearance.TeamBalancer.BodyMedium</item>
         <item name="textAppearanceLabelLarge">@style/TextAppearance.TeamBalancer.LabelLarge</item>
@@ -45,6 +46,10 @@
 
         <!-- Dropdown styling -->
         <item name="autoCompleteTextViewStyle">@style/Widget.TeamBalancer.AutoCompleteTextView</item>
+
+        <item name="materialToolbarStyle">@style/Widget.TeamBalancer.Toolbar</item>
+        <item name="toolbarStyle">@style/Widget.TeamBalancer.Toolbar</item>
+        <item name="android:colorControlHighlight">@color/ripple_surface</item>
     </style>
 
     <style name="Theme.TeamBalancer" parent="Base.Theme.TeamBalancer" />
@@ -77,8 +82,40 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="Widget.TeamBalancer.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="titleTextAppearance">@style/TextAppearance.TeamBalancer.TitleLarge</item>
+        <item name="titleTextColor">@color/on_surface</item>
+        <item name="subtitleTextColor">@color/on_surface_variant</item>
+        <item name="android:minHeight">@dimen/toolbar_min_height</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">10dp</item>
+    </style>
+
+    <style name="Widget.TeamBalancer.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">18dp</item>
+        <item name="boxCornerRadiusTopEnd">18dp</item>
+        <item name="boxCornerRadiusBottomStart">18dp</item>
+        <item name="boxCornerRadiusBottomEnd">18dp</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxStrokeWidthFocused">2dp</item>
+    </style>
+
+    <style name="Widget.TeamBalancer.TextInputLayout.ExposedDropdownMenu" parent="Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+        <item name="boxCornerRadiusTopStart">18dp</item>
+        <item name="boxCornerRadiusTopEnd">18dp</item>
+        <item name="boxCornerRadiusBottomStart">18dp</item>
+        <item name="boxCornerRadiusBottomEnd">18dp</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxStrokeWidthFocused">2dp</item>
+    </style>
+
+    <style name="TextAppearance.TeamBalancer.DisplayHero" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">-0.02</item>
+    </style>
+
     <style name="Widget.TeamBalancer.Button" parent="Widget.Material3.Button">
-        <item name="cornerRadius">22dp</item>
+        <item name="cornerRadius">24dp</item>
         <item name="backgroundTint">@color/accent</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:textAllCaps">true</item>
@@ -108,6 +145,11 @@
         <item name="android:letterSpacing">0.01</item>
     </style>
 
+    <style name="TextAppearance.TeamBalancer.TitleSmall" parent="TextAppearance.Material3.TitleSmall">
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.02</item>
+    </style>
+
     <style name="TextAppearance.TeamBalancer.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
         <item name="android:letterSpacing">0.01</item>
     </style>
@@ -132,5 +174,9 @@
 
     <style name="ShapeAppearance.TeamBalancer.Medium" parent="ShapeAppearance.Material3.MediumComponent">
         <item name="cornerSize">20dp</item>
+    </style>
+
+    <style name="ShapeAppearance.TeamBalancer.Large" parent="ShapeAppearance.Material3.MediumComponent">
+        <item name="cornerSize">28dp</item>
     </style>
 </resources>

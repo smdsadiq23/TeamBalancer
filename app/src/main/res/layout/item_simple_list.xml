@@ -6,5 +6,5 @@
     android:paddingHorizontal="16dp"
     android:paddingVertical="14dp"
     android:textAppearance="@style/TextAppearance.TeamBalancer.BodyLarge"
-    android:textColor="@color/white"
+    android:textColor="@color/on_surface"
     android:gravity="center_vertical" />

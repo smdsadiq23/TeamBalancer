@@ -11,9 +11,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingHorizontal="18dp"
-        android:paddingTop="14dp"
-        android:paddingBottom="20dp">
+        android:paddingHorizontal="@dimen/screen_padding_x"
+        android:paddingTop="@dimen/screen_padding_y"
+        android:paddingBottom="@dimen/content_bottom_inset">
 
         <LinearLayout
             android:id="@+id/layoutUserInfo"
@@ -35,7 +35,7 @@
                     android:background="@drawable/bg_stat_pill"
                     android:paddingHorizontal="10dp"
                     android:paddingVertical="5dp"
-                    android:text="MATCH DAY HUB"
+                    android:text="COMMAND"
                     android:textAllCaps="true"
                     android:textColor="@color/white"
                     android:textSize="10sp"
@@ -46,9 +46,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:text="GamXen"
-                    android:textAppearance="@style/TextAppearance.Material3.HeadlineLarge"
-                    android:textColor="@color/white"
-                    android:textStyle="bold" />
+                    android:textAppearance="@style/TextAppearance.TeamBalancer.HeadlineLarge"
+                    android:textColor="@color/on_surface" />
 
                 <TextView
                     android:id="@+id/txtUsername"
@@ -70,9 +69,10 @@
                     android:layout_width="122dp"
                     android:layout_height="72dp"
                     app:cardBackgroundColor="@color/surface_elevated"
-                    app:cardCornerRadius="24dp"
-                    app:cardElevation="0dp"
-                    app:strokeColor="@color/divider"
+                    app:cardCornerRadius="@dimen/card_corner_lg"
+                    app:cardElevation="2dp"
+                    app:rippleColor="@color/ripple_surface"
+                    app:strokeColor="@color/stroke_glow"
                     app:strokeWidth="1dp">
 
                     <ImageView
@@ -88,13 +88,13 @@
 
                 <ImageButton
                     android:id="@+id/btnUserMenu"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
                     android:layout_gravity="end"
                     android:layout_marginTop="8dp"
                     android:background="@drawable/bg_stat_pill"
                     android:contentDescription="Open user menu"
-                    android:padding="8dp"
+                    android:padding="10dp"
                     android:scaleType="centerInside"
                     android:src="@drawable/ic_person"
                     app:tint="@color/secondary" />
@@ -106,10 +106,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:layout_marginBottom="14dp"
+            android:layout_marginBottom="@dimen/section_gap"
+            android:clickable="true"
+            android:focusable="true"
             app:cardBackgroundColor="@android:color/transparent"
-            app:cardCornerRadius="26dp"
-            app:cardElevation="0dp">
+            app:cardCornerRadius="@dimen/glass_corner"
+            app:cardElevation="0dp"
+            app:rippleColor="@color/ripple_surface">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -124,7 +127,7 @@
                     android:background="@drawable/bg_stat_pill"
                     android:paddingHorizontal="10dp"
                     android:paddingVertical="5dp"
-                    android:text="READY TO GENERATE"
+                    android:text="LIVE SESSION"
                     android:textAllCaps="true"
                     android:textColor="@color/white"
                     android:textSize="10sp"
@@ -135,9 +138,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
                     android:text="Launch balanced teams fast."
-                    android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
-                    android:textColor="@color/white"
-                    android:textStyle="bold" />
+                    android:textAppearance="@style/TextAppearance.TeamBalancer.HeadlineMedium"
+                    android:textColor="@color/on_surface" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -177,9 +179,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:text="No Club Selected"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                            android:textColor="@color/white"
-                            android:textStyle="bold" />
+                            android:textAppearance="@style/TextAppearance.TeamBalancer.TitleSmall"
+                            android:textColor="@color/on_surface" />
                     </LinearLayout>
 
                     <ImageView
@@ -195,11 +196,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="12dp"
             android:text="Workspace"
-            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-            android:textColor="@color/white"
-            android:textStyle="bold" />
+            android:textAppearance="@style/TextAppearance.TeamBalancer.LabelLarge"
+            android:textColor="@color/on_surface_variant" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -210,13 +210,16 @@
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardPlayers"
                 android:layout_width="0dp"
-                android:layout_height="146dp"
-                android:layout_marginEnd="7dp"
+                android:layout_height="152dp"
+                android:layout_marginEnd="8dp"
                 android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
                 app:cardBackgroundColor="@color/surface"
-                app:cardCornerRadius="22dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/divider"
+                app:cardCornerRadius="@dimen/card_corner_lg"
+                app:cardElevation="3dp"
+                app:rippleColor="@color/ripple_surface"
+                app:strokeColor="@color/stroke_glow"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
@@ -236,9 +239,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
                         android:text="Players"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                        android:textColor="@color/white"
-                        android:textStyle="bold" />
+                        android:textAppearance="@style/TextAppearance.TeamBalancer.TitleMedium"
+                        android:textColor="@color/on_surface" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -254,13 +256,16 @@
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardTeams"
                 android:layout_width="0dp"
-                android:layout_height="146dp"
-                android:layout_marginStart="7dp"
+                android:layout_height="152dp"
+                android:layout_marginStart="8dp"
                 android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
                 app:cardBackgroundColor="@color/surface"
-                app:cardCornerRadius="22dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/divider"
+                app:cardCornerRadius="@dimen/card_corner_lg"
+                app:cardElevation="3dp"
+                app:rippleColor="@color/ripple_surface"
+                app:strokeColor="@color/stroke_glow"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
@@ -280,9 +285,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
                         android:text="Teams"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                        android:textColor="@color/white"
-                        android:textStyle="bold" />
+                        android:textAppearance="@style/TextAppearance.TeamBalancer.TitleMedium"
+                        android:textColor="@color/on_surface" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -306,13 +310,16 @@
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardHistory"
                 android:layout_width="0dp"
-                android:layout_height="146dp"
-                android:layout_marginEnd="7dp"
+                android:layout_height="152dp"
+                android:layout_marginEnd="8dp"
                 android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
                 app:cardBackgroundColor="@color/surface"
-                app:cardCornerRadius="22dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/divider"
+                app:cardCornerRadius="@dimen/card_corner_lg"
+                app:cardElevation="3dp"
+                app:rippleColor="@color/ripple_surface"
+                app:strokeColor="@color/stroke_glow"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
@@ -332,9 +339,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
                         android:text="History"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                        android:textColor="@color/white"
-                        android:textStyle="bold" />
+                        android:textAppearance="@style/TextAppearance.TeamBalancer.TitleMedium"
+                        android:textColor="@color/on_surface" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -350,13 +356,16 @@
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardClubs"
                 android:layout_width="0dp"
-                android:layout_height="146dp"
-                android:layout_marginStart="7dp"
+                android:layout_height="152dp"
+                android:layout_marginStart="8dp"
                 android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
                 app:cardBackgroundColor="@color/surface"
-                app:cardCornerRadius="22dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/divider"
+                app:cardCornerRadius="@dimen/card_corner_lg"
+                app:cardElevation="3dp"
+                app:rippleColor="@color/ripple_surface"
+                app:strokeColor="@color/stroke_glow"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
@@ -376,9 +385,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
                         android:text="Clubs"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                        android:textColor="@color/white"
-                        android:textStyle="bold" />
+                        android:textAppearance="@style/TextAppearance.TeamBalancer.TitleMedium"
+                        android:textColor="@color/on_surface" />
 
                     <TextView
                         android:layout_width="match_parent"

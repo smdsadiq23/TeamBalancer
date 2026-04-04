@@ -32,6 +32,8 @@
     <color name="warning">#FFC14D</color>
     <color name="error">#FF5C7A</color>
     <color name="divider">#1E2A3A</color>
+    <color name="ripple_surface">#45FFFFFF</color>
+    <color name="stroke_glow">#4000E8B8</color>
 
     <color name="ch_primary">#0B101A</color>
     <color name="ch_primary_dark">#141C2A</color>

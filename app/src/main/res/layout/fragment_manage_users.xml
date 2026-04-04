@@ -13,19 +13,21 @@
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
+            style="@style/Widget.TeamBalancer.Toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:navigationIcon="@android:drawable/ic_media_previous"
             app:title="Manage Users"
-            app:titleCentered="true"
-            app:titleTextColor="@color/white" />
+            app:titleCentered="true" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="16dp"
+        android:paddingHorizontal="@dimen/screen_padding_x"
+        android:paddingTop="12dp"
+        android:paddingBottom="@dimen/content_bottom_inset"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <TextView
@@ -33,7 +35,7 @@
             android:layout_height="wrap_content"
             android:text="Registered Users"
             android:textAppearance="@style/TextAppearance.TeamBalancer.TitleLarge"
-            android:textColor="@color/white" />
+            android:textColor="@color/on_surface" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerUsers"
@@ -42,7 +44,7 @@
             android:layout_marginTop="10dp"
             android:layout_weight="1"
             android:clipToPadding="false"
-            android:paddingBottom="8dp" />
+            android:paddingBottom="@dimen/content_bottom_inset" />
 
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -10,9 +10,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingHorizontal="24dp"
-        android:paddingTop="36dp"
-        android:paddingBottom="24dp">
+        android:paddingHorizontal="@dimen/screen_padding_x"
+        android:paddingTop="@dimen/auth_padding_top"
+        android:paddingBottom="@dimen/content_bottom_inset">
 
         <TextView
             android:layout_width="wrap_content"
@@ -31,9 +31,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="18dp"
             android:text="Create your GamXen organizer profile."
-            android:textAppearance="@style/TextAppearance.Material3.DisplaySmall"
-            android:textColor="@color/white"
-            android:textStyle="bold" />
+            android:textAppearance="@style/TextAppearance.TeamBalancer.DisplayHero"
+            android:textColor="@color/on_surface" />
 
         <TextView
             android:layout_width="match_parent"
@@ -49,15 +48,15 @@
             android:layout_height="wrap_content"
             android:background="@drawable/bg_glass_card"
             android:orientation="vertical"
-            android:padding="24dp">
+            android:paddingHorizontal="22dp"
+            android:paddingVertical="26dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Create Account"
-                android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
-                android:textColor="@color/white"
-                android:textStyle="bold" />
+                android:textAppearance="@style/TextAppearance.TeamBalancer.HeadlineMedium"
+                android:textColor="@color/on_surface" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -70,7 +69,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/layoutRegUsername"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                style="@style/Widget.TeamBalancer.TextInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Username"
@@ -91,7 +90,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/layoutRegPassword"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                style="@style/Widget.TeamBalancer.TextInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -115,7 +114,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/layoutRegConfirmPassword"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                style="@style/Widget.TeamBalancer.TextInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -140,14 +139,15 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnRegisterSubmit"
                 android:layout_width="match_parent"
-                android:layout_height="58dp"
+                android:layout_height="@dimen/cta_height"
                 android:layout_marginTop="24dp"
-                android:background="@drawable/bg_gradient_red"
+                android:background="@drawable/bg_cta_gradient"
+                android:letterSpacing="0.06"
                 android:text="REGISTER"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textStyle="bold"
                 app:backgroundTint="@null"
-                app:cornerRadius="18dp" />
+                app:cornerRadius="@dimen/card_corner_lg" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnBackToLogin"

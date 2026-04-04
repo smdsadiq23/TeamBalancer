@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="6dp"
+    android:layout_margin="@dimen/list_item_vertical_gap"
     android:background="@drawable/bg_team_card_modern"
     android:orientation="vertical">
 
@@ -22,9 +22,8 @@
             android:paddingHorizontal="44dp"
             android:text="TEAM A"
             android:textAllCaps="true"
-            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-            android:textColor="@android:color/white"
-            android:textStyle="bold" />
+            android:textAppearance="@style/TextAppearance.TeamBalancer.TitleMedium"
+            android:textColor="@color/on_surface" />
 
         <ImageButton
             android:id="@+id/btnDeleteTeam"
