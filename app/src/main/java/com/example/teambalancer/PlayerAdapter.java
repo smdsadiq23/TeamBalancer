@@ -7,36 +7,34 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.PlayerViewHolder> {
+public class PlayerAdapter extends ListAdapter<Player, PlayerAdapter.PlayerViewHolder> {
 
-    private final List<Player> players;
     private final OnPlayerActionListener actionListener;
     private List<String> teamNames = new ArrayList<>();
     private boolean showTeamSelection = false;
 
     public interface OnPlayerActionListener {
-        void onPlayerDelete(int position);
-        void onPlayerAvailabilityChanged(int position, boolean isAvailable);
-        void onPlayerCaptaincyChanged(int position, boolean isCaptain);
-        void onPlayerEdit(int position, Player player);
+        void onPlayerDelete(Player player);
+        void onPlayerAvailabilityChanged(Player player, boolean isAvailable);
+        void onPlayerCaptaincyChanged(Player player, boolean isCaptain);
+        void onPlayerEdit(Player player);
         default void onTeamAssigned(Player player, String teamName) {}
     }
 
-    public PlayerAdapter(List<Player> players, OnPlayerActionListener actionListener) {
-        this.players = players;
+    public PlayerAdapter(OnPlayerActionListener actionListener) {
+        super(new PlayerDiffCallback());
         this.actionListener = actionListener;
     }
 
     public void updatePlayers(List<Player> newPlayers) {
-        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new PlayerDiffCallback(this.players, newPlayers));
-        this.players.clear();
-        this.players.addAll(newPlayers);
-        diffResult.dispatchUpdatesTo(this);
+        submitList(newPlayers != null ? new ArrayList<>(newPlayers) : null);
     }
 
     public void setTeamNames(List<String> teamNames) {
@@ -54,9 +52,10 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.PlayerView
 
     @Override
     public void onBindViewHolder(@NonNull PlayerViewHolder holder, int position) {
-        Player player = players.get(position);
+        Player player = getItem(position);
         holder.txtName.setText(player.name);
-        String styleText = player.style.toString() + " (" + player.category.displayName + ")";
+        String styleText = (player.style != null ? player.style.toString() : "Batsman") + 
+                " (" + (player.category != null ? player.category.displayName : "Regular") + ")";
         holder.txtStyle.setText(styleText);
         
         // Captaincy Toggle
@@ -65,9 +64,9 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.PlayerView
         
         holder.checkIsCaptain.setOnClickListener(v -> {
             boolean isChecked = holder.checkIsCaptain.isChecked();
-            int pos = holder.getAdapterPosition();
+            int pos = holder.getBindingAdapterPosition();
             if (pos != RecyclerView.NO_POSITION) {
-                actionListener.onPlayerCaptaincyChanged(pos, isChecked);
+                actionListener.onPlayerCaptaincyChanged(getItem(pos), isChecked);
             }
         });
         
@@ -77,7 +76,10 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.PlayerView
             String team = player.assignedTeam != null ? player.assignedTeam : "Assign Team";
             holder.txtAssignedTeam.setText(team);
             holder.txtAssignedTeam.setOnClickListener(v -> {
-                actionListener.onTeamAssigned(player, null);
+                int pos = holder.getBindingAdapterPosition();
+                if (pos != RecyclerView.NO_POSITION) {
+                    actionListener.onTeamAssigned(getItem(pos), null);
+                }
             });
         } else {
             holder.txtAssignedTeam.setVisibility(View.GONE);
@@ -87,29 +89,24 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.PlayerView
         holder.checkAvailable.setOnCheckedChangeListener(null);
         holder.checkAvailable.setChecked(player.isAvailable);
         holder.checkAvailable.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            int pos = holder.getAdapterPosition();
+            int pos = holder.getBindingAdapterPosition();
             if (pos != RecyclerView.NO_POSITION) {
-                actionListener.onPlayerAvailabilityChanged(pos, isChecked);
+                actionListener.onPlayerAvailabilityChanged(getItem(pos), isChecked);
             }
         });
 
         holder.btnEdit.setOnClickListener(v -> {
-            int pos = holder.getAdapterPosition();
+            int pos = holder.getBindingAdapterPosition();
             if (pos != RecyclerView.NO_POSITION) {
-                actionListener.onPlayerEdit(pos, player);
+                actionListener.onPlayerEdit(getItem(pos));
             }
         });
         holder.btnDelete.setOnClickListener(v -> {
-            int pos = holder.getAdapterPosition();
+            int pos = holder.getBindingAdapterPosition();
             if (pos != RecyclerView.NO_POSITION) {
-                actionListener.onPlayerDelete(pos);
+                actionListener.onPlayerDelete(getItem(pos));
             }
         });
-    }
-
-    @Override
-    public int getItemCount() {
-        return players.size();
     }
 
     static class PlayerViewHolder extends RecyclerView.ViewHolder {
@@ -133,41 +130,20 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.PlayerView
         }
     }
 
-    private static class PlayerDiffCallback extends DiffUtil.Callback {
-        private final List<Player> oldList;
-        private final List<Player> newList;
-
-        public PlayerDiffCallback(List<Player> oldList, List<Player> newList) {
-            this.oldList = oldList;
-            this.newList = newList;
+    private static class PlayerDiffCallback extends DiffUtil.ItemCallback<Player> {
+        @Override
+        public boolean areItemsTheSame(@NonNull Player oldItem, @NonNull Player newItem) {
+            return oldItem.id == newItem.id;
         }
 
         @Override
-        public int getOldListSize() {
-            return oldList.size();
-        }
-
-        @Override
-        public int getNewListSize() {
-            return newList.size();
-        }
-
-        @Override
-        public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-            return oldList.get(oldItemPosition).id == newList.get(newItemPosition).id;
-        }
-
-        @Override
-        public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-            Player oldPlayer = oldList.get(oldItemPosition);
-            Player newPlayer = newList.get(newItemPosition);
-            return oldPlayer.name.equals(newPlayer.name) &&
-                    oldPlayer.isCaptain == newPlayer.isCaptain &&
-                    oldPlayer.isAvailable == newPlayer.isAvailable &&
-                    oldPlayer.style == newPlayer.style &&
-                    oldPlayer.category == newPlayer.category &&
-                    ((oldPlayer.assignedTeam == null && newPlayer.assignedTeam == null) ||
-                     (oldPlayer.assignedTeam != null && oldPlayer.assignedTeam.equals(newPlayer.assignedTeam)));
+        public boolean areContentsTheSame(@NonNull Player oldItem, @NonNull Player newItem) {
+            return Objects.equals(oldItem.name, newItem.name) &&
+                    oldItem.isCaptain == newItem.isCaptain &&
+                    oldItem.isAvailable == newItem.isAvailable &&
+                    oldItem.style == newItem.style &&
+                    oldItem.category == newItem.category &&
+                    Objects.equals(oldItem.assignedTeam, newItem.assignedTeam);
         }
     }
 }

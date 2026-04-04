@@ -3,6 +3,7 @@ package com.example.teambalancer;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -99,7 +100,8 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
     static class HistoryViewHolder extends RecyclerView.ViewHolder {
         TextView txtDate, txtSummary;
         LinearLayout layoutTeams;
-        MaterialButton btnView, btnDelete;
+        MaterialButton btnView;
+        ImageButton btnDelete;
         final LayoutInflater inflater;
 
         HistoryViewHolder(@NonNull View itemView) {

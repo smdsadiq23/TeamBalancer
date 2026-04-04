@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="screen_padding_x">22dp</dimen>
-    <dimen name="screen_padding_y">12dp</dimen>
-    <dimen name="auth_padding_top">28dp</dimen>
-    <dimen name="section_gap">20dp</dimen>
-    <dimen name="card_corner">24dp</dimen>
-    <dimen name="card_corner_lg">28dp</dimen>
-    <dimen name="glass_corner">32dp</dimen>
-    <dimen name="list_item_vertical_gap">8dp</dimen>
-    <dimen name="content_bottom_inset">28dp</dimen>
-    <dimen name="cta_height">56dp</dimen>
-    <dimen name="toolbar_min_height">64dp</dimen>
+    <dimen name="screen_padding_x">16dp</dimen>
+    <dimen name="screen_padding_y">8dp</dimen>
+    <dimen name="auth_padding_top">20dp</dimen>
+    <dimen name="section_gap">12dp</dimen>
+    <dimen name="card_corner">20dp</dimen>
+    <dimen name="card_corner_lg">22dp</dimen>
+    <dimen name="glass_corner">24dp</dimen>
+    <dimen name="list_item_vertical_gap">6dp</dimen>
+    <dimen name="content_bottom_inset">20dp</dimen>
+    <dimen name="cta_height">52dp</dimen>
+    <dimen name="toolbar_min_height">56dp</dimen>
 </resources>

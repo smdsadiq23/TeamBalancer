@@ -16,8 +16,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SimpleItemAnimator;
 import com.example.teambalancer.databinding.FragmentBalanceBinding;
 import com.google.android.material.chip.Chip;
 import java.text.SimpleDateFormat;
@@ -60,11 +58,18 @@ public class BalanceFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         dataManager = new DataManager(requireContext());
         
+        setupSportSpinner();
         setupCaptainSelection();
         setupSearch();
         observeData();
 
         binding.btnGenerate.setOnClickListener(v -> generateTeams());
+    }
+
+    private void setupSportSpinner() {
+        String[] sports = {"Cricket", "Football", "Basketball", "Other"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, sports);
+        binding.spinnerSport.setAdapter(adapter);
     }
 
     private void observeData() {
@@ -137,35 +142,31 @@ public class BalanceFragment extends Fragment {
     }
 
     private void setupCaptainSelection() {
-        captainAdapter = new PlayerAdapter(new ArrayList<>(filteredPlayers), new PlayerAdapter.OnPlayerActionListener() {
+        captainAdapter = new PlayerAdapter(new PlayerAdapter.OnPlayerActionListener() {
             @Override
-            public void onPlayerDelete(int position) {
-                Player player = filteredPlayers.get(position);
+            public void onPlayerDelete(Player player) {
                 dataManager.deletePlayer(player);
             }
 
             @Override
-            public void onPlayerAvailabilityChanged(int position, boolean isAvailable) {
-                Player player = filteredPlayers.get(position);
+            public void onPlayerAvailabilityChanged(Player player, boolean isAvailable) {
                 player.isAvailable = isAvailable;
                 dataManager.updatePlayer(player);
             }
 
             @Override
-            public void onPlayerCaptaincyChanged(int position, boolean isCaptain) {
-                Player player = filteredPlayers.get(position);
+            public void onPlayerCaptaincyChanged(Player player, boolean isCaptain) {
                 player.isCaptain = isCaptain;
                 if (!isCaptain) player.assignedTeam = null;
                 dataManager.updatePlayer(player);
                 
-                if (isCaptain && !binding.editSearch.getText().toString().isEmpty()) {
-                    binding.editSearch.setText("");
-                }
+                // Refresh the list immediately to show/hide the team assignment button
+                filter(binding.editSearch.getText().toString());
             }
 
             @Override
-            public void onPlayerEdit(int position, Player player) {
-                showEditPlayerDialog(position, player);
+            public void onPlayerEdit(Player player) {
+                showEditPlayerDialog(player);
             }
 
             @Override
@@ -173,17 +174,10 @@ public class BalanceFragment extends Fragment {
                 showAssignTeamDialog(player);
             }
         });
-
+        
         LinearLayoutManager lm = new LinearLayoutManager(requireContext());
-        lm.setInitialPrefetchItemCount(8);
         binding.recyclerCaptainSelection.setLayoutManager(lm);
         binding.recyclerCaptainSelection.setAdapter(captainAdapter);
-        binding.recyclerCaptainSelection.setHasFixedSize(true);
-        binding.recyclerCaptainSelection.setItemViewCacheSize(20);
-        RecyclerView.ItemAnimator anim = binding.recyclerCaptainSelection.getItemAnimator();
-        if (anim instanceof SimpleItemAnimator) {
-            ((SimpleItemAnimator) anim).setSupportsChangeAnimations(false);
-        }
         
         binding.editTeamNames.addTextChangedListener(new TextWatcher() {
             @Override
@@ -233,14 +227,17 @@ public class BalanceFragment extends Fragment {
 
     private void filter(String query) {
         List<Player> newFilteredList = new ArrayList<>();
-        if (query.isEmpty()) {
+        String lowerQuery = query.toLowerCase().trim();
+        
+        if (lowerQuery.isEmpty()) {
+            // Show ONLY current captains when not searching
             for (Player player : availablePlayers) {
                 if (player.isCaptain) {
                     newFilteredList.add(player);
                 }
             }
         } else {
-            String lowerQuery = query.toLowerCase();
+            // Show all available players matching the search query
             for (Player player : availablePlayers) {
                 if (player.name.toLowerCase().contains(lowerQuery)) {
                     newFilteredList.add(player);
@@ -253,7 +250,7 @@ public class BalanceFragment extends Fragment {
         captainAdapter.updatePlayers(newFilteredList);
     }
 
-    private void showEditPlayerDialog(int position, Player player) {
+    private void showEditPlayerDialog(Player player) {
         View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_edit_player, null);
         AutoCompleteTextView editStyle = dialogView.findViewById(R.id.editStyle);
         AutoCompleteTextView editCategory = dialogView.findViewById(R.id.editCategory);
@@ -263,7 +260,9 @@ public class BalanceFragment extends Fragment {
         editStyle.setText(player.style.toString(), false);
 
         Player.Category[] categories = Player.Category.values();
-        editCategory.setAdapter(new ArrayAdapter<>(requireContext(), R.layout.item_simple_list, categories));
+        List<String> categoryNames = new ArrayList<>();
+        for (Player.Category cat : categories) categoryNames.add(cat.displayName);
+        editCategory.setAdapter(new ArrayAdapter<>(requireContext(), R.layout.item_simple_list, categoryNames));
         editCategory.setText(player.category.displayName, false);
 
         new AlertDialog.Builder(requireContext())
@@ -287,7 +286,7 @@ public class BalanceFragment extends Fragment {
         for (Player.Category cat : Player.Category.values()) {
             if (cat.displayName.equals(displayName)) return cat;
         }
-        return Player.Category.PROMISING_TALENT;
+        return Player.Category.REGULAR;
     }
 
     private Player.Style findStyleByDisplayName(String displayName) {
@@ -303,54 +302,40 @@ public class BalanceFragment extends Fragment {
             return;
         }
 
-        List<String> selectedTeams = getSelectedTeamNames();
-        if (selectedTeams.size() < 2) {
+        List<String> selectedTeamNames = getSelectedTeamNames();
+        int numTeams = selectedTeamNames.size();
+        if (numTeams < 2) {
             Toast.makeText(requireContext(), "Please select at least 2 teams", Toast.LENGTH_SHORT).show();
             return;
         }
-        String[] teamNames = selectedTeams.toArray(new String[0]);
 
-        long captainCount = availablePlayers.stream().filter(p -> p.isCaptain).count();
-        if (captainCount != teamNames.length) {
-            Toast.makeText(requireContext(), "Please select exactly " + teamNames.length + " captains (one for each team)", Toast.LENGTH_LONG).show();
+        List<Player> captains = availablePlayers.stream().filter(p -> p.isCaptain).collect(Collectors.toList());
+        if (captains.size() != numTeams) {
+            Toast.makeText(requireContext(), "Selected " + numTeams + " teams but have " + captains.size() + " captains. They must match.", Toast.LENGTH_LONG).show();
             return;
         }
 
-        Map<String, List<Player>> assignedMap = availablePlayers.stream()
-                .filter(p -> p.isCaptain && p.assignedTeam != null)
-                .collect(Collectors.groupingBy(p -> p.assignedTeam));
-        
-        for (String team : assignedMap.keySet()) {
-            if (assignedMap.get(team).size() > 1) {
-                Toast.makeText(requireContext(), "Multiple captains assigned to " + team, Toast.LENGTH_LONG).show();
-                return;
-            }
+        List<Team> teams = balanceTeams(availablePlayers, selectedTeamNames);
+        String selectedSport = binding.spinnerSport.getText().toString();
+
+        // Save to History
+        if (currentClub != null) {
+            String date = new SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault()).format(new Date());
+            Club.TeamHistory history = new Club.TeamHistory(date, teams, selectedSport);
+            currentClub.history.add(history);
+            dataManager.updateClub(currentClub);
         }
 
-        List<Player> playersSnapshot = new ArrayList<>(availablePlayers);
-        int clubId = currentClub.id;
-        String clubName = currentClub.name;
-
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            List<Team> balancedTeams = balanceTeams(playersSnapshot, teamNames);
-            String date = new SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault()).format(new Date());
-            if (getActivity() == null) return;
-            getActivity().runOnUiThread(() -> {
-                if (!isAdded() || currentClub == null || binding == null) return;
-                currentClub.history.add(new Club.TeamHistory(date, balancedTeams));
-                dataManager.updateClub(currentClub);
-                ResultsFragment resultsFragment = ResultsFragment.newInstance(
-                        clubId, clubName, new ArrayList<>(balancedTeams));
-                getParentFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, resultsFragment)
-                        .addToBackStack(null)
-                        .commit();
-            });
-        });
+        // Navigate to Results
+        ResultsFragment resultsFragment = ResultsFragment.newInstance(currentClub.id, currentClub.name, new ArrayList<>(teams));
+        getParentFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, resultsFragment)
+                .addToBackStack(null)
+                .commit();
     }
 
-    private List<Team> balanceTeams(List<Player> allPlayers, String[] teamNames) {
-        int numTeams = teamNames.length;
+    private List<Team> balanceTeams(List<Player> allPlayers, List<String> teamNames) {
+        int numTeams = teamNames.size();
         List<List<Player>> teamLists = new ArrayList<>();
         int[] teamStrengths = new int[numTeams];
         for (int i = 0; i < numTeams; i++) teamLists.add(new ArrayList<>());
@@ -358,38 +343,34 @@ public class BalanceFragment extends Fragment {
         List<Player> captains = allPlayers.stream().filter(p -> p.isCaptain).collect(Collectors.toList());
         List<Player> regulars = allPlayers.stream().filter(p -> !p.isCaptain).collect(Collectors.toList());
 
-        List<Player> unassignedCaptains = new ArrayList<>();
+        // Assign captains to their preferred teams or distribute them
+        Collections.shuffle(captains);
+        List<String> remainingTeamNames = new ArrayList<>(teamNames);
+        
+        // First pass: assign captains who already have an assigned team
         for (Player captain : captains) {
-            if (captain.assignedTeam != null) {
-                int teamIndex = -1;
-                for (int i = 0; i < teamNames.length; i++) {
-                    if (teamNames[i].equals(captain.assignedTeam)) {
-                        teamIndex = i;
-                        break;
-                    }
-                }
-                if (teamIndex != -1) {
-                    teamLists.get(teamIndex).add(captain);
-                    teamStrengths[teamIndex] += captain.getPower();
-                } else {
-                    unassignedCaptains.add(captain);
-                }
+            if (captain.assignedTeam != null && remainingTeamNames.contains(captain.assignedTeam)) {
+                int teamIndex = teamNames.indexOf(captain.assignedTeam);
+                teamLists.get(teamIndex).add(captain);
+                teamStrengths[teamIndex] += captain.getPower();
+                remainingTeamNames.remove(captain.assignedTeam);
+                captain.isProcessed = true;
             } else {
-                unassignedCaptains.add(captain);
+                captain.isProcessed = false;
             }
         }
 
-        Collections.shuffle(unassignedCaptains);
-        for (Player captain : unassignedCaptains) {
-            for (int i = 0; i < numTeams; i++) {
-                if (teamLists.get(i).isEmpty()) {
-                    teamLists.get(i).add(captain);
-                    teamStrengths[i] += captain.getPower();
-                    break;
-                }
+        // Second pass: assign remaining captains to remaining teams
+        for (Player captain : captains) {
+            if (!captain.isProcessed) {
+                String teamName = remainingTeamNames.remove(0);
+                int teamIndex = teamNames.indexOf(teamName);
+                teamLists.get(teamIndex).add(captain);
+                teamStrengths[teamIndex] += captain.getPower();
             }
         }
 
+        // Balance regulars based on power
         Map<Integer, List<Player>> powerGroups = regulars.stream()
                 .collect(Collectors.groupingBy(Player::getPower));
 
@@ -399,7 +380,6 @@ public class BalanceFragment extends Fragment {
         for (int power : sortedPowerLevels) {
             List<Player> group = powerGroups.get(power);
             Collections.shuffle(group);
-
             for (Player player : group) {
                 int weakestTeamIndex = 0;
                 for (int i = 1; i < numTeams; i++) {
@@ -416,11 +396,11 @@ public class BalanceFragment extends Fragment {
             }
         }
 
-        List<Team> teams = new ArrayList<>();
+        List<Team> teamsRes = new ArrayList<>();
         for (int i = 0; i < numTeams; i++) {
-            teams.add(new Team(teamNames[i], teamLists.get(i), teamStrengths[i]));
+            teamsRes.add(new Team(teamNames.get(i), teamLists.get(i), teamStrengths[i]));
         }
-        return teams;
+        return teamsRes;
     }
 
     @Override

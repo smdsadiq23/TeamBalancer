@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingBottom="12dp">
+            android:paddingBottom="8dp">
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -33,29 +33,29 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_stat_pill"
-                    android:paddingHorizontal="10dp"
-                    android:paddingVertical="5dp"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="4dp"
                     android:text="COMMAND"
                     android:textAllCaps="true"
                     android:textColor="@color/white"
-                    android:textSize="10sp"
+                    android:textSize="9sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="6dp"
                     android:text="GamXen"
-                    android:textAppearance="@style/TextAppearance.TeamBalancer.HeadlineLarge"
+                    android:textAppearance="@style/TextAppearance.TeamBalancer.HeadlineMedium"
                     android:textColor="@color/on_surface" />
 
                 <TextView
                     android:id="@+id/txtUsername"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
+                    android:layout_marginTop="0dp"
                     android:text="Guest"
-                    android:textAppearance="@style/TextAppearance.TeamBalancer.BodyLarge"
+                    android:textAppearance="@style/TextAppearance.TeamBalancer.BodyMedium"
                     android:textColor="@color/on_surface_variant" />
             </LinearLayout>
 
@@ -66,10 +66,10 @@
                 android:orientation="vertical">
 
                 <com.google.android.material.card.MaterialCardView
-                    android:layout_width="122dp"
-                    android:layout_height="72dp"
+                    android:layout_width="100dp"
+                    android:layout_height="56dp"
                     app:cardBackgroundColor="@android:color/transparent"
-                    app:cardCornerRadius="@dimen/card_corner_lg"
+                    app:cardCornerRadius="@dimen/card_corner"
                     app:cardElevation="0dp">
 
                     <ImageView
@@ -77,22 +77,22 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:adjustViewBounds="true"
-                        android:background="@drawable/bg_surface_panel"
-                        android:paddingHorizontal="8dp"
-                        android:paddingVertical="12dp"
+                        android:background="@drawable/bg_glass_card"
+                        android:paddingHorizontal="6dp"
+                        android:paddingVertical="8dp"
                         android:scaleType="fitCenter"
                         android:src="@drawable/gamxem_logo" />
                 </com.google.android.material.card.MaterialCardView>
 
                 <ImageButton
                     android:id="@+id/btnUserMenu"
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
                     android:layout_gravity="end"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="6dp"
                     android:background="@drawable/bg_stat_pill"
                     android:contentDescription="Open user menu"
-                    android:padding="10dp"
+                    android:padding="8dp"
                     android:scaleType="centerInside"
                     android:src="@drawable/ic_person"
                     app:tint="@color/accent_pink" />
@@ -103,8 +103,8 @@
             android:id="@+id/cardBalance"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="@dimen/section_gap"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="12dp"
             android:clickable="true"
             android:focusable="true"
             app:cardBackgroundColor="@android:color/transparent"
@@ -116,41 +116,41 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_glass_card"
                 android:orientation="vertical"
-                android:padding="20dp">
+                android:padding="16dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_stat_pill"
-                    android:paddingHorizontal="10dp"
-                    android:paddingVertical="5dp"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="4dp"
                     android:text="LIVE SESSION"
                     android:textAllCaps="true"
                     android:textColor="@color/white"
-                    android:textSize="10sp"
+                    android:textSize="9sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
+                    android:layout_marginTop="10dp"
                     android:text="Launch balanced teams fast."
-                    android:textAppearance="@style/TextAppearance.TeamBalancer.HeadlineMedium"
+                    android:textAppearance="@style/TextAppearance.TeamBalancer.TitleLarge"
                     android:textColor="@color/on_surface" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
+                    android:layout_marginTop="4dp"
                     android:maxLines="2"
-                    android:text="Pick captains, confirm names, and create a fair split in one tap."
-                    android:textAppearance="@style/TextAppearance.TeamBalancer.BodyMedium"
+                    android:text="Pick captains, confirm names, and create a fair split."
+                    android:textAppearance="@style/TextAppearance.TeamBalancer.BodySmall"
                     android:textColor="@color/on_surface_variant" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="12dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
@@ -160,30 +160,30 @@
                         android:layout_weight="1"
                         android:background="@drawable/bg_stat_pill"
                         android:orientation="vertical"
-                        android:paddingHorizontal="14dp"
-                        android:paddingVertical="12dp">
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="8dp">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Current club"
-                            android:textAppearance="@style/TextAppearance.TeamBalancer.LabelMedium"
+                            android:textAppearance="@style/TextAppearance.TeamBalancer.LabelSmall"
                             android:textColor="@color/on_surface_variant" />
 
                         <TextView
                             android:id="@+id/txtHomeCurrentClub"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
+                            android:layout_marginTop="1dp"
                             android:text="No Club Selected"
                             android:textAppearance="@style/TextAppearance.TeamBalancer.TitleSmall"
                             android:textColor="@color/on_surface" />
                     </LinearLayout>
 
                     <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginStart="12dp"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginStart="10dp"
                         android:src="@drawable/ic_share"
                         app:tint="@color/accent_cyan" />
                 </LinearLayout>
@@ -193,9 +193,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="8dp"
             android:text="Workspace"
-            android:textAppearance="@style/TextAppearance.TeamBalancer.LabelLarge"
+            android:textAppearance="@style/TextAppearance.TeamBalancer.LabelMedium"
             android:textColor="@color/on_surface_variant" />
 
         <LinearLayout
@@ -207,90 +208,90 @@
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardPlayers"
                 android:layout_width="0dp"
-                android:layout_height="152dp"
-                android:layout_marginEnd="8dp"
+                android:layout_height="124dp"
+                android:layout_marginEnd="6dp"
                 android:layout_weight="1"
                 android:clickable="true"
                 android:focusable="true"
                 app:cardBackgroundColor="@android:color/transparent"
-                app:cardCornerRadius="@dimen/card_corner_lg"
+                app:cardCornerRadius="@dimen/card_corner"
                 app:cardElevation="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/bg_surface_panel"
+                    android:background="@drawable/bg_glass_card"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="12dp">
 
                     <ImageView
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:src="@drawable/ic_edit"
                         app:tint="@color/accent_cyan" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
+                        android:layout_marginTop="8dp"
                         android:text="Players"
-                        android:textAppearance="@style/TextAppearance.TeamBalancer.TitleMedium"
+                        android:textAppearance="@style/TextAppearance.TeamBalancer.TitleSmall"
                         android:textColor="@color/on_surface" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
+                        android:layout_marginTop="4dp"
                         android:maxLines="2"
-                        android:text="Edit squads and captain status."
-                        android:textAppearance="@style/TextAppearance.TeamBalancer.BodyMedium"
+                        android:text="Edit squads and captains."
+                        android:textAppearance="@style/TextAppearance.TeamBalancer.BodySmall"
                         android:textColor="@color/on_surface_variant"
-                        android:textSize="12sp" />
+                        android:textSize="11sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardTeams"
                 android:layout_width="0dp"
-                android:layout_height="152dp"
-                android:layout_marginStart="8dp"
+                android:layout_height="124dp"
+                android:layout_marginStart="6dp"
                 android:layout_weight="1"
                 android:clickable="true"
                 android:focusable="true"
                 app:cardBackgroundColor="@android:color/transparent"
-                app:cardCornerRadius="@dimen/card_corner_lg"
+                app:cardCornerRadius="@dimen/card_corner"
                 app:cardElevation="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/bg_surface_panel"
+                    android:background="@drawable/bg_glass_card"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="12dp">
 
                     <ImageView
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:src="@drawable/ic_add"
                         app:tint="@color/accent_purple" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
+                        android:layout_marginTop="8dp"
                         android:text="Teams"
-                        android:textAppearance="@style/TextAppearance.TeamBalancer.TitleMedium"
+                        android:textAppearance="@style/TextAppearance.TeamBalancer.TitleSmall"
                         android:textColor="@color/on_surface" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
+                        android:layout_marginTop="4dp"
                         android:maxLines="2"
-                        android:text="Manage reusable team setups."
-                        android:textAppearance="@style/TextAppearance.TeamBalancer.BodyMedium"
+                        android:text="Manage reusable setups."
+                        android:textAppearance="@style/TextAppearance.TeamBalancer.BodySmall"
                         android:textColor="@color/on_surface_variant"
-                        android:textSize="12sp" />
+                        android:textSize="11sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
@@ -298,99 +299,158 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
+            android:layout_marginTop="12dp"
             android:baselineAligned="false"
             android:orientation="horizontal">
 
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardHistory"
+                android:id="@+id/cardFixtures"
                 android:layout_width="0dp"
-                android:layout_height="152dp"
-                android:layout_marginEnd="8dp"
+                android:layout_height="124dp"
+                android:layout_marginEnd="6dp"
                 android:layout_weight="1"
                 android:clickable="true"
                 android:focusable="true"
                 app:cardBackgroundColor="@android:color/transparent"
-                app:cardCornerRadius="@dimen/card_corner_lg"
+                app:cardCornerRadius="@dimen/card_corner"
                 app:cardElevation="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/bg_surface_panel"
+                    android:background="@drawable/bg_glass_card"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="12dp">
 
                     <ImageView
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_stat"
+                        app:tint="@color/accent_pink" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Fixtures"
+                        android:textAppearance="@style/TextAppearance.TeamBalancer.TitleSmall"
+                        android:textColor="@color/on_surface" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:maxLines="2"
+                        android:text="Update scores and match schedules."
+                        android:textAppearance="@style/TextAppearance.TeamBalancer.BodySmall"
+                        android:textColor="@color/on_surface_variant"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardHistory"
+                android:layout_width="0dp"
+                android:layout_height="124dp"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardBackgroundColor="@android:color/transparent"
+                app:cardCornerRadius="@dimen/card_corner"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_glass_card"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:src="@drawable/ic_history"
                         app:tint="@color/warning" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
+                        android:layout_marginTop="8dp"
                         android:text="History"
-                        android:textAppearance="@style/TextAppearance.TeamBalancer.TitleMedium"
+                        android:textAppearance="@style/TextAppearance.TeamBalancer.TitleSmall"
                         android:textColor="@color/on_surface" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
+                        android:layout_marginTop="4dp"
                         android:maxLines="2"
-                        android:text="Review previous balances."
-                        android:textAppearance="@style/TextAppearance.TeamBalancer.BodyMedium"
+                        android:text="Review previous results."
+                        android:textAppearance="@style/TextAppearance.TeamBalancer.BodySmall"
                         android:textColor="@color/on_surface_variant"
-                        android:textSize="12sp" />
+                        android:textSize="11sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardClubs"
                 android:layout_width="0dp"
-                android:layout_height="152dp"
-                android:layout_marginStart="8dp"
-                android:layout_weight="1"
+                android:layout_height="124dp"
+                android:layout_marginEnd="6dp"
+                android:layout_weight="0.5"
                 android:clickable="true"
                 android:focusable="true"
                 app:cardBackgroundColor="@android:color/transparent"
-                app:cardCornerRadius="@dimen/card_corner_lg"
+                app:cardCornerRadius="@dimen/card_corner"
                 app:cardElevation="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/bg_surface_panel"
+                    android:background="@drawable/bg_glass_card"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="12dp">
 
                     <ImageView
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:src="@drawable/ic_clubs"
-                        app:tint="@color/accent_pink" />
+                        app:tint="@color/accent_cyan" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
+                        android:layout_marginTop="8dp"
                         android:text="Clubs"
-                        android:textAppearance="@style/TextAppearance.TeamBalancer.TitleMedium"
+                        android:textAppearance="@style/TextAppearance.TeamBalancer.TitleSmall"
                         android:textColor="@color/on_surface" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
+                        android:layout_marginTop="4dp"
                         android:maxLines="2"
                         android:text="Switch and organize clubs."
-                        android:textAppearance="@style/TextAppearance.TeamBalancer.BodyMedium"
+                        android:textAppearance="@style/TextAppearance.TeamBalancer.BodySmall"
                         android:textColor="@color/on_surface_variant"
-                        android:textSize="12sp" />
+                        android:textSize="11sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="124dp"
+                android:layout_marginStart="6dp"
+                android:layout_weight="0.5" />
         </LinearLayout>
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

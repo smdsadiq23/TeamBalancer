@@ -60,7 +60,7 @@
                             android:background="@drawable/bg_stat_pill"
                             android:paddingHorizontal="12dp"
                             android:paddingVertical="6dp"
-                            android:text="TEAM RESULT"
+                            android:text="GENERATED RESULTS"
                             android:textAllCaps="true"
                             android:textColor="@color/white"
                             android:textSize="11sp"
@@ -79,23 +79,32 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
-                            android:text="Review each team, move players if needed, and regenerate if the balance needs another pass."
+                            android:text="Review teams below. You can move players or regenerate if needed."
                             android:textAppearance="@style/TextAppearance.TeamBalancer.BodyMedium"
                             android:textColor="@color/on_surface_variant" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:text="Balanced Teams"
+                    android:textAppearance="@style/TextAppearance.TeamBalancer.TitleMedium"
+                    android:textColor="@color/accent_cyan" />
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerTeams"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="24dp"
                     android:nestedScrollingEnabled="false" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnSaveChanges"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/cta_height"
-                    android:layout_marginTop="24dp"
+                    android:layout_marginTop="32dp"
                     android:background="@drawable/bg_button_gradient"
                     android:text="SAVE CHANGES"
                     android:textColor="@android:color/white"

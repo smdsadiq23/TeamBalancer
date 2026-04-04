@@ -94,17 +94,8 @@ public class ClubsFragment extends Fragment {
                 ListView listView = new ListView(requireContext());
                 listView.setPadding(32, 32, 32, 32);
                 
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(requireContext(),
-                        android.R.layout.simple_list_item_1, playerNames) {
-                    @NonNull
-                    @Override
-                    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                        View view = super.getView(position, convertView, parent);
-                        TextView textView = view.findViewById(android.R.id.text1);
-                        textView.setTextColor(Color.WHITE);
-                        return view;
-                    }
-                };
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(),
+                        R.layout.item_simple_list, playerNames);
                 listView.setAdapter(adapter);
 
                 new AlertDialog.Builder(requireContext())

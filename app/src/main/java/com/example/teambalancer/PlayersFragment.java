@@ -5,17 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SimpleItemAnimator;
 import com.example.teambalancer.databinding.FragmentPlayersBinding;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,15 +17,7 @@ public class PlayersFragment extends Fragment {
 
     private FragmentPlayersBinding binding;
     private DataManager dataManager;
-    private PlayerAdapter adapter;
-    private final List<Player> playersList = new ArrayList<>();
     private Club currentClub;
-    private LiveData<List<Player>> observedPlayersLiveData;
-    private final Observer<List<Player>> playersObserver = players -> {
-        if (players == null || binding == null) return;
-        adapter.updatePlayers(players);
-        binding.txtPlayerCount.setText("Total: " + players.size());
-    };
 
     @Nullable
     @Override
@@ -47,7 +32,6 @@ public class PlayersFragment extends Fragment {
         dataManager = new DataManager(requireContext());
 
         setupDropdowns();
-        setupRecyclerView();
         observeData();
         setupListeners();
     }
@@ -76,45 +60,6 @@ public class PlayersFragment extends Fragment {
         binding.autoCompleteFielding.setText("1", false);
     }
 
-    private void setupRecyclerView() {
-        adapter = new PlayerAdapter(playersList, new PlayerAdapter.OnPlayerActionListener() {
-            @Override
-            public void onPlayerDelete(int position) {
-                dataManager.deletePlayer(playersList.get(position));
-            }
-
-            @Override
-            public void onPlayerAvailabilityChanged(int position, boolean isAvailable) {
-                Player player = playersList.get(position);
-                player.isAvailable = isAvailable;
-                dataManager.updatePlayer(player);
-            }
-
-            @Override
-            public void onPlayerCaptaincyChanged(int position, boolean isCaptain) {
-                Player player = playersList.get(position);
-                player.isCaptain = isCaptain;
-                dataManager.updatePlayer(player);
-            }
-
-            @Override
-            public void onPlayerEdit(int position, Player player) {
-                showEditPlayerDialog(player);
-            }
-        });
-
-        LinearLayoutManager lm = new LinearLayoutManager(requireContext());
-        lm.setInitialPrefetchItemCount(8);
-        binding.recyclerPlayers.setLayoutManager(lm);
-        binding.recyclerPlayers.setAdapter(adapter);
-        binding.recyclerPlayers.setHasFixedSize(true);
-        binding.recyclerPlayers.setItemViewCacheSize(20);
-        RecyclerView.ItemAnimator animator = binding.recyclerPlayers.getItemAnimator();
-        if (animator instanceof SimpleItemAnimator) {
-            ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
-        }
-    }
-
     private void observeData() {
         dataManager.getClubs().observe(getViewLifecycleOwner(), clubs -> {
             if (clubs != null && !clubs.isEmpty()) {
@@ -129,17 +74,8 @@ public class PlayersFragment extends Fragment {
             if (club != null) {
                 currentClub = club;
                 binding.editClubName.setText(club.name, false);
-                observePlayers(club.id);
             }
         });
-    }
-
-    private void observePlayers(int clubId) {
-        if (observedPlayersLiveData != null) {
-            observedPlayersLiveData.removeObserver(playersObserver);
-        }
-        observedPlayersLiveData = dataManager.getPlayersForClub(clubId);
-        observedPlayersLiveData.observe(getViewLifecycleOwner(), playersObserver);
     }
 
     private void setupListeners() {
@@ -182,63 +118,18 @@ public class PlayersFragment extends Fragment {
             binding.checkIsCaptain.setChecked(false);
             Toast.makeText(requireContext(), "Player added", Toast.LENGTH_SHORT).show();
         });
-    }
 
-    private void showEditPlayerDialog(Player player) {
-        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_edit_player, null);
-        AutoCompleteTextView editStyle = dialogView.findViewById(R.id.editStyle);
-        AutoCompleteTextView editCategory = dialogView.findViewById(R.id.editCategory);
-        AutoCompleteTextView editBatting = dialogView.findViewById(R.id.editBatting);
-        AutoCompleteTextView editBowling = dialogView.findViewById(R.id.editBowling);
-        AutoCompleteTextView editFielding = dialogView.findViewById(R.id.editFielding);
-
-        String[] styles = {"Batsman", "Bowler", "All-rounder"};
-        editStyle.setAdapter(new ArrayAdapter<>(requireContext(), R.layout.item_simple_list, styles));
-        editStyle.setText(player.style.toString(), false);
-
-        Player.Category[] categories = Player.Category.values();
-        List<String> categoryNames = new ArrayList<>();
-        for (Player.Category cat : categories) categoryNames.add(cat.displayName);
-        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(requireContext(), R.layout.item_simple_list, categoryNames);
-        editCategory.setAdapter(categoryAdapter);
-        editCategory.setText(player.category != null ? player.category.displayName : Player.Category.REGULAR.displayName, false);
-
-        String[] ratings = {"1", "2", "3", "4"};
-        ArrayAdapter<String> ratingAdapter = new ArrayAdapter<>(requireContext(), R.layout.item_simple_list, ratings);
-        editBatting.setAdapter(ratingAdapter);
-        editBowling.setAdapter(ratingAdapter);
-        editFielding.setAdapter(ratingAdapter);
-
-        editBatting.setText(String.valueOf(player.battingRating), false);
-        editBowling.setText(String.valueOf(player.bowlingRating), false);
-        editFielding.setText(String.valueOf(player.fieldingRating), false);
-
-        new AlertDialog.Builder(requireContext())
-                .setTitle("Edit " + player.name)
-                .setView(dialogView)
-                .setPositiveButton("Save", (dialog, which) -> {
-                    String styleStr = editStyle.getText().toString();
-                    if (styleStr.equals("Bowler")) player.style = Player.Style.BOWLER;
-                    else if (styleStr.equals("All-rounder")) player.style = Player.Style.ALL_ROUNDER;
-                    else player.style = Player.Style.BATSMAN;
-
-                    String categoryStr = editCategory.getText().toString();
-                    for (Player.Category cat : Player.Category.values()) {
-                        if (cat.displayName.equals(categoryStr)) {
-                            player.category = cat;
-                            break;
-                        }
-                    }
-
-                    player.battingRating = Integer.parseInt(editBatting.getText().toString());
-                    player.bowlingRating = Integer.parseInt(editBowling.getText().toString());
-                    player.fieldingRating = Integer.parseInt(editFielding.getText().toString());
-
-                    dataManager.updatePlayer(player);
-                    Toast.makeText(requireContext(), "Player updated", Toast.LENGTH_SHORT).show();
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
+        binding.btnViewPlayerList.setOnClickListener(v -> {
+            if (currentClub != null) {
+                PlayerListFragment listFragment = PlayerListFragment.newInstance(currentClub.id, currentClub.name);
+                getParentFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, listFragment)
+                        .addToBackStack(null)
+                        .commit();
+            } else {
+                Toast.makeText(requireContext(), "Select a club first", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
