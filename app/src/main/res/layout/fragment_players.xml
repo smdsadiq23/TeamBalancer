@@ -68,9 +68,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
                         android:hint="Select Club"
-                        app:boxBackgroundColor="@color/surface_elevated"
-                        app:boxStrokeColor="@color/accent"
-                        app:hintTextColor="@color/accent"
                         app:startIconDrawable="@drawable/ic_clubs"
                         app:startIconTint="@color/on_surface_variant">
 
@@ -115,9 +112,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="14dp"
                         android:hint="Name"
-                        app:boxBackgroundColor="@color/surface_elevated"
-                        app:boxStrokeColor="@color/accent"
-                        app:hintTextColor="@color/accent">
+                        app:startIconTint="@color/on_surface_variant">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/editPlayerName"
@@ -139,10 +134,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:hint="Style"
-                            app:boxBackgroundColor="@color/surface_elevated"
-                            app:boxStrokeColor="@color/accent"
-                            app:hintTextColor="@color/accent">
+                            android:hint="Style">
 
                             <AutoCompleteTextView
                                 android:id="@+id/autoCompleteStyle"
@@ -160,10 +152,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
                             android:layout_weight="1"
-                            android:hint="Category"
-                            app:boxBackgroundColor="@color/surface_elevated"
-                            app:boxStrokeColor="@color/accent"
-                            app:hintTextColor="@color/accent">
+                            android:hint="Category">
 
                             <AutoCompleteTextView
                                 android:id="@+id/autoCompleteCategory"
@@ -187,10 +176,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:hint="Batting"
-                            app:boxBackgroundColor="@color/surface_elevated"
-                            app:boxStrokeColor="@color/accent"
-                            app:hintTextColor="@color/accent">
+                            android:hint="Batting">
 
                             <AutoCompleteTextView
                                 android:id="@+id/autoCompleteBatting"
@@ -207,10 +193,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
                             android:layout_weight="1"
-                            android:hint="Bowling"
-                            app:boxBackgroundColor="@color/surface_elevated"
-                            app:boxStrokeColor="@color/accent"
-                            app:hintTextColor="@color/accent">
+                            android:hint="Bowling">
 
                             <AutoCompleteTextView
                                 android:id="@+id/autoCompleteBowling"
@@ -227,10 +210,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
                             android:layout_weight="1"
-                            android:hint="Fielding"
-                            app:boxBackgroundColor="@color/surface_elevated"
-                            app:boxStrokeColor="@color/accent"
-                            app:hintTextColor="@color/accent">
+                            android:hint="Fielding">
 
                             <AutoCompleteTextView
                                 android:id="@+id/autoCompleteFielding"
@@ -249,7 +229,7 @@
                         android:layout_marginTop="10dp"
                         android:text="Mark as Captain"
                         android:textColor="@color/on_surface_variant"
-                        app:buttonTint="@color/accent" />
+                        app:buttonTint="@color/accent_cyan" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnAddPlayer"
@@ -259,7 +239,9 @@
                         android:letterSpacing="0.05"
                         android:text="ADD PLAYER"
                         android:textColor="@color/white"
-                        app:backgroundTint="@color/accent"
+                        android:textStyle="bold"
+                        android:background="@drawable/bg_button_gradient"
+                        app:backgroundTint="@null"
                         app:cornerRadius="@dimen/card_corner_lg" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -279,7 +261,7 @@
                     android:layout_weight="1"
                     android:text="CLUB PLAYERS"
                     android:textAppearance="@style/TextAppearance.TeamBalancer.LabelLarge"
-                    android:textColor="@color/ch_text_primary" />
+                    android:textColor="@color/on_surface" />
 
                 <TextView
                     android:id="@+id/txtPlayerCount"
@@ -287,7 +269,7 @@
                     android:layout_height="wrap_content"
                     android:text="Total: 0"
                     android:textAppearance="@style/TextAppearance.TeamBalancer.TitleMedium"
-                    android:textColor="@color/accent" />
+                    android:textColor="@color/accent_cyan" />
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView

@@ -1,22 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:drawable="@color/background" />
-    <item android:top="-160dp" android:left="-160dp">
+
+    <!-- Top Left Glow -->
+    <item android:top="-150dp" android:left="-150dp">
         <shape android:shape="oval">
-            <size android:width="420dp" android:height="420dp" />
-            <solid android:color="#3800F5FF" />
+            <size android:width="400dp" android:height="400dp" />
+            <solid android:color="#4D00D2FF" /> <!-- 30% Cyan -->
         </shape>
     </item>
-    <item android:gravity="end|top" android:right="-100dp" android:top="20dp">
+
+    <!-- Top Right Glow -->
+    <item android:gravity="end|top" android:right="-80dp" android:top="40dp">
         <shape android:shape="oval">
-            <size android:width="340dp" android:height="340dp" />
-            <solid android:color="#357C3AED" />
+            <size android:width="300dp" android:height="300dp" />
+            <solid android:color="#33FF00CC" /> <!-- 20% Pink -->
         </shape>
     </item>
-    <item android:gravity="end|bottom" android:right="-80dp" android:bottom="-140dp">
+
+    <!-- Center Left Glow -->
+    <item android:gravity="start|center_vertical" android:left="-120dp">
         <shape android:shape="oval">
-            <size android:width="360dp" android:height="360dp" />
-            <solid android:color="#2838BDF8" />
+            <size android:width="350dp" android:height="350dp" />
+            <solid android:color="#1A9D50BB" /> <!-- 10% Purple -->
+        </shape>
+    </item>
+
+    <!-- Bottom Right Glow -->
+    <item android:gravity="end|bottom" android:right="-100dp" android:bottom="-120dp">
+        <shape android:shape="oval">
+            <size android:width="380dp" android:height="380dp" />
+            <solid android:color="#4000D2FF" /> <!-- 25% Cyan -->
         </shape>
     </item>
 </layer-list>

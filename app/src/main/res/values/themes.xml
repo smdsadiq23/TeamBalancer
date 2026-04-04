@@ -97,6 +97,8 @@
         <item name="boxCornerRadiusBottomEnd">18dp</item>
         <item name="boxStrokeWidth">1dp</item>
         <item name="boxStrokeWidthFocused">2dp</item>
+        <item name="boxStrokeColor">@color/divider</item>
+        <item name="boxBackgroundColor">@color/surface_elevated</item>
     </style>
 
     <style name="Widget.TeamBalancer.TextInputLayout.ExposedDropdownMenu" parent="Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
@@ -106,6 +108,8 @@
         <item name="boxCornerRadiusBottomEnd">18dp</item>
         <item name="boxStrokeWidth">1dp</item>
         <item name="boxStrokeWidthFocused">2dp</item>
+        <item name="boxStrokeColor">@color/divider</item>
+        <item name="boxBackgroundColor">@color/surface_elevated</item>
     </style>
 
     <style name="TextAppearance.TeamBalancer.DisplayHero" parent="TextAppearance.Material3.DisplaySmall">

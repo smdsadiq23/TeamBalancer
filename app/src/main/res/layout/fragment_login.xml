@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="18dp"
                 android:text="Build fair lineups with GamXen."
-                android:textAppearance="@style/TextAppearance.TeamBalancer.DisplayHero"
+                android:textAppearance="@style/TextAppearance.TeamBalancer.HeadlineLarge"
                 android:textColor="@color/on_surface" />
 
             <TextView
@@ -45,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="Login, pick a club, and run balanced match-day planning."
-                android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                android:textAppearance="@style/TextAppearance.TeamBalancer.BodyLarge"
                 android:textColor="@color/on_surface_variant" />
         </LinearLayout>
 
@@ -78,7 +78,7 @@
                 android:layout_marginTop="6dp"
                 android:layout_marginBottom="24dp"
                 android:text="Sign in to continue planning balanced squads."
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                android:textAppearance="@style/TextAppearance.TeamBalancer.BodyMedium"
                 android:textColor="@color/on_surface_variant" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -87,9 +87,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Username"
-                app:boxBackgroundColor="@color/surface_elevated"
-                app:boxStrokeColor="@color/accent"
-                app:hintTextColor="@color/accent"
                 app:startIconDrawable="@drawable/ic_person"
                 app:startIconTint="@color/on_surface_variant">
 
@@ -109,12 +106,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:hint="Password"
-                app:boxBackgroundColor="@color/surface_elevated"
-                app:boxStrokeColor="@color/accent"
                 app:endIconMode="password_toggle"
                 app:endIconTint="@color/on_surface_variant"
-                app:hintTextColor="@color/accent"
-                app:startIconDrawable="@drawable/ic_delete"
+                app:startIconDrawable="@drawable/ic_edit"
                 app:startIconTint="@color/on_surface_variant">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -133,9 +127,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:hint="Club"
-                app:boxBackgroundColor="@color/surface_elevated"
-                app:boxStrokeColor="@color/accent"
-                app:hintTextColor="@color/accent"
                 app:startIconDrawable="@drawable/ic_clubs"
                 app:startIconTint="@color/on_surface_variant">
 
@@ -154,7 +145,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/cta_height"
                 android:layout_marginTop="24dp"
-                android:background="@drawable/bg_cta_gradient"
+                android:background="@drawable/bg_button_gradient"
                 android:letterSpacing="0.06"
                 android:text="LOGIN"
                 android:textColor="@color/white"
@@ -169,7 +160,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="Create a new account"
-                android:textColor="@color/secondary" />
+                android:textColor="@color/accent_cyan"
+                android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

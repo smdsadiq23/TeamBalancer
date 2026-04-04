@@ -79,7 +79,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/cta_height"
                         android:layout_marginTop="14dp"
-                        android:background="@drawable/bg_cta_gradient"
+                        android:background="@drawable/bg_button_gradient"
                         android:letterSpacing="0.05"
                         android:text="ADD TEAM"
                         android:textColor="@color/white"

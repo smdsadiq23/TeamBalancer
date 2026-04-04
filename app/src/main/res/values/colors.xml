@@ -3,60 +3,67 @@
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
 
-    <!-- Engagement palette: Neon Blue + Purple on dark base -->
-    <color name="neon_blue">#00F5FF</color>
-    <color name="purple_brand">#7C3AED</color>
-    <color name="dark_base">#0B0F1A</color>
-    <color name="soft_white">#E5E7EB</color>
+    <!-- Vibrant Modern Palette: Deep Violet + Electric Cyan + Hot Pink -->
+    <color name="primary_dark">#0F0C29</color>
+    <color name="primary_mid">#302B63</color>
+    <color name="primary_light">#24243E</color>
 
-    <color name="primary">#0B0F1A</color>
-    <color name="primary_variant">#151B2E</color>
-    <color name="accent">#00F5FF</color>
-    <color name="secondary">#7C3AED</color>
+    <color name="accent_cyan">#00D2FF</color>
+    <color name="neon_blue">#00D2FF</color>
+    <color name="accent_pink">#FF00CC</color>
+    <color name="accent_purple">#9D50BB</color>
 
-    <color name="background">#0B0F1A</color>
-    <color name="surface">#12182A</color>
-    <color name="surface_elevated">#1B2440</color>
-    <color name="surface_soft">#252F4D</color>
+    <color name="primary">#302B63</color>
+    <color name="primary_variant">#24243E</color>
+    <color name="accent">#00D2FF</color>
+    <color name="secondary">#FF00CC</color>
 
-    <color name="on_primary">#E5E7EB</color>
+    <color name="background">#0F0C29</color>
+    <color name="surface">#1A1A2E</color>
+    <color name="surface_elevated">#252545</color>
+    <color name="surface_soft">#2E2E5A</color>
+
+    <color name="on_primary">#FFFFFF</color>
     <color name="on_secondary">#FFFFFF</color>
-    <color name="on_surface">#E5E7EB</color>
-    <color name="on_surface_variant">#94A3B8</color>
-    <color name="color_disabled">#6B7280</color>
+    <color name="on_surface">#F0F0F0</color>
+    <color name="on_surface_variant">#B0B0D0</color>
+    <color name="color_disabled">#4A4A6A</color>
 
-    <!-- CTA gradient: neon → info → purple (energetic) -->
-    <color name="red_gradient_start">#00F5FF</color>
-    <color name="red_gradient_center">#38BDF8</color>
-    <color name="red_gradient_end">#7C3AED</color>
-    <color name="teal_gradient_start">#8B5CF6</color>
-    <color name="teal_gradient_end">#5B21B6</color>
-    <color name="hero_glow">#4000F5FF</color>
-    <color name="hero_glow_secondary">#557C3AED</color>
+    <!-- CTA gradient: Electric Cyan → Purple → Pink -->
+    <color name="red_gradient_start">#00D2FF</color>
+    <color name="red_gradient_center">#9D50BB</color>
+    <color name="red_gradient_end">#FF00CC</color>
 
-    <color name="success">#22C55E</color>
-    <color name="warning">#F59E0B</color>
-    <color name="error">#EF4444</color>
-    <color name="info">#38BDF8</color>
+    <color name="teal_gradient_start">#3A1C71</color>
+    <color name="teal_gradient_end">#D76D77</color>
 
-    <color name="divider">#2A3150</color>
-    <color name="ripple_surface">#50FFFFFF</color>
-    <color name="stroke_glow">#6600F5FF</color>
+    <color name="hero_glow">#3300D2FF</color>
+    <color name="hero_glow_secondary">#33FF00CC</color>
 
-    <color name="ch_primary">#0B0F1A</color>
-    <color name="ch_primary_dark">#151B2E</color>
-    <color name="ch_accent">#00F5FF</color>
-    <color name="ch_background">#0B0F1A</color>
-    <color name="ch_card_bg">#12182A</color>
-    <color name="ch_text_primary">#E5E7EB</color>
-    <color name="ch_text_secondary">#94A3B8</color>
-    <color name="ch_red">#00F5FF</color>
-    <color name="card_white">#1B2440</color>
-    <color name="text_dark">#E5E7EB</color>
+    <color name="success">#00F2FE</color> <!-- Bright Cyan/Blue success -->
+    <color name="warning">#F9D423</color>
+    <color name="error">#FF4B2B</color>
+    <color name="info">#4FACFE</color>
 
-    <color name="cricket_red">#00F5FF</color>
-    <color name="cricket_ivory">#E5E7EB</color>
-    <color name="cricket_green">#22C55E</color>
-    <color name="onSurfaceVariant">#94A3B8</color>
-    <color name="delete_red">#EF4444</color>
+    <color name="divider">#3F3F6F</color>
+    <color name="ripple_surface">#33FFFFFF</color>
+    <color name="stroke_glow">#4D00D2FF</color>
+
+    <!-- Compat/Legacy mapping -->
+    <color name="ch_primary">#0F0C29</color>
+    <color name="ch_primary_dark">#0F0C29</color>
+    <color name="ch_accent">#00D2FF</color>
+    <color name="ch_background">#0F0C29</color>
+    <color name="ch_card_bg">#1A1A2E</color>
+    <color name="ch_text_primary">#FFFFFF</color>
+    <color name="ch_text_secondary">#B0B0D0</color>
+    <color name="ch_red">#FF00CC</color>
+    <color name="card_white">#252545</color>
+    <color name="text_dark">#FFFFFF</color>
+
+    <color name="cricket_red">#FF00CC</color>
+    <color name="cricket_ivory">#F0F0F0</color>
+    <color name="cricket_green">#00F2FE</color>
+    <color name="onSurfaceVariant">#B0B0D0</color>
+    <color name="delete_red">#FF4B2B</color>
 </resources>
