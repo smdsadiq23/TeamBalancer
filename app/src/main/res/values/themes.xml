@@ -47,7 +47,6 @@
         <!-- Dropdown styling -->
         <item name="autoCompleteTextViewStyle">@style/Widget.TeamBalancer.AutoCompleteTextView</item>
 
-        <item name="materialToolbarStyle">@style/Widget.TeamBalancer.Toolbar</item>
         <item name="toolbarStyle">@style/Widget.TeamBalancer.Toolbar</item>
         <item name="android:colorControlHighlight">@color/ripple_surface</item>
     </style>
