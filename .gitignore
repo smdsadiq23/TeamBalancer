@@ -13,3 +13,6 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Release outputs (kept on disk, not in version control)
+app/release/
