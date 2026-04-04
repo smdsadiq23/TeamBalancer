@@ -3,17 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginVertical="@dimen/list_item_vertical_gap"
-    app:cardBackgroundColor="@color/surface"
-    app:cardCornerRadius="@dimen/card_corner"
-    app:cardElevation="2dp"
-    app:rippleColor="@color/ripple_surface"
-    app:strokeColor="@color/stroke_glow"
-    app:strokeWidth="1dp">
+    android:layout_marginVertical="6dp"
+    app:cardBackgroundColor="@android:color/transparent"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="0dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/bg_surface_panel"
         android:orientation="vertical"
         android:padding="16dp">
 
@@ -29,19 +27,17 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="12 Oct 2023, 18:30"
-                android:textAppearance="@style/TextAppearance.TeamBalancer.TitleLarge"
-                android:textColor="@color/white" />
+                android:textAppearance="@style/TextAppearance.TeamBalancer.TitleMedium"
+                android:textColor="@color/on_surface" />
 
-            <com.google.android.material.button.MaterialButton
+            <ImageButton
                 android:id="@+id/btnDeleteHistory"
-                style="@style/Widget.Material3.Button.IconButton"
-                android:layout_width="42dp"
-                android:layout_height="42dp"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                app:icon="@drawable/ic_delete"
-                app:iconTint="@color/accent"
-                app:iconSize="20dp" />
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_delete"
+                app:tint="@color/accent_pink" />
         </LinearLayout>
 
         <TextView
@@ -72,9 +68,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="8dp"
             android:text="VIEW DETAILS"
-            android:textColor="@color/secondary" />
+            android:textColor="@color/accent_cyan"
+            android:textStyle="bold" />
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

@@ -55,7 +55,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:text="Guest"
-                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                    android:textAppearance="@style/TextAppearance.TeamBalancer.BodyLarge"
                     android:textColor="@color/on_surface_variant" />
             </LinearLayout>
 
@@ -68,18 +68,16 @@
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="122dp"
                     android:layout_height="72dp"
-                    app:cardBackgroundColor="@color/surface_elevated"
+                    app:cardBackgroundColor="@android:color/transparent"
                     app:cardCornerRadius="@dimen/card_corner_lg"
-                    app:cardElevation="2dp"
-                    app:rippleColor="@color/ripple_surface"
-                    app:strokeColor="@color/stroke_glow"
-                    app:strokeWidth="1dp">
+                    app:cardElevation="0dp">
 
                     <ImageView
                         android:id="@+id/imgLogo"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:adjustViewBounds="true"
+                        android:background="@drawable/bg_surface_panel"
                         android:paddingHorizontal="8dp"
                         android:paddingVertical="12dp"
                         android:scaleType="fitCenter"
@@ -97,7 +95,7 @@
                     android:padding="10dp"
                     android:scaleType="centerInside"
                     android:src="@drawable/ic_person"
-                    app:tint="@color/secondary" />
+                    app:tint="@color/accent_pink" />
             </LinearLayout>
         </LinearLayout>
 
@@ -111,8 +109,7 @@
             android:focusable="true"
             app:cardBackgroundColor="@android:color/transparent"
             app:cardCornerRadius="@dimen/glass_corner"
-            app:cardElevation="0dp"
-            app:rippleColor="@color/ripple_surface">
+            app:cardElevation="0dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -147,7 +144,7 @@
                     android:layout_marginTop="6dp"
                     android:maxLines="2"
                     android:text="Pick captains, confirm names, and create a fair split in one tap."
-                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                    android:textAppearance="@style/TextAppearance.TeamBalancer.BodyMedium"
                     android:textColor="@color/on_surface_variant" />
 
                 <LinearLayout
@@ -170,7 +167,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Current club"
-                            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                            android:textAppearance="@style/TextAppearance.TeamBalancer.LabelMedium"
                             android:textColor="@color/on_surface_variant" />
 
                         <TextView
@@ -188,7 +185,7 @@
                         android:layout_height="40dp"
                         android:layout_marginStart="12dp"
                         android:src="@drawable/ic_share"
-                        app:tint="@color/secondary" />
+                        app:tint="@color/accent_cyan" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -215,16 +212,14 @@
                 android:layout_weight="1"
                 android:clickable="true"
                 android:focusable="true"
-                app:cardBackgroundColor="@color/surface"
+                app:cardBackgroundColor="@android:color/transparent"
                 app:cardCornerRadius="@dimen/card_corner_lg"
-                app:cardElevation="3dp"
-                app:rippleColor="@color/ripple_surface"
-                app:strokeColor="@color/stroke_glow"
-                app:strokeWidth="1dp">
+                app:cardElevation="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:background="@drawable/bg_surface_panel"
                     android:orientation="vertical"
                     android:padding="16dp">
 
@@ -232,7 +227,7 @@
                         android:layout_width="28dp"
                         android:layout_height="28dp"
                         android:src="@drawable/ic_edit"
-                        app:tint="@color/accent" />
+                        app:tint="@color/accent_cyan" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -248,8 +243,9 @@
                         android:layout_marginTop="6dp"
                         android:maxLines="2"
                         android:text="Edit squads and captain status."
-                        android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                        android:textColor="@color/on_surface_variant" />
+                        android:textAppearance="@style/TextAppearance.TeamBalancer.BodyMedium"
+                        android:textColor="@color/on_surface_variant"
+                        android:textSize="12sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -261,16 +257,14 @@
                 android:layout_weight="1"
                 android:clickable="true"
                 android:focusable="true"
-                app:cardBackgroundColor="@color/surface"
+                app:cardBackgroundColor="@android:color/transparent"
                 app:cardCornerRadius="@dimen/card_corner_lg"
-                app:cardElevation="3dp"
-                app:rippleColor="@color/ripple_surface"
-                app:strokeColor="@color/stroke_glow"
-                app:strokeWidth="1dp">
+                app:cardElevation="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:background="@drawable/bg_surface_panel"
                     android:orientation="vertical"
                     android:padding="16dp">
 
@@ -278,7 +272,7 @@
                         android:layout_width="28dp"
                         android:layout_height="28dp"
                         android:src="@drawable/ic_add"
-                        app:tint="@color/secondary" />
+                        app:tint="@color/accent_purple" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -294,8 +288,9 @@
                         android:layout_marginTop="6dp"
                         android:maxLines="2"
                         android:text="Manage reusable team setups."
-                        android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                        android:textColor="@color/on_surface_variant" />
+                        android:textAppearance="@style/TextAppearance.TeamBalancer.BodyMedium"
+                        android:textColor="@color/on_surface_variant"
+                        android:textSize="12sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
@@ -315,16 +310,14 @@
                 android:layout_weight="1"
                 android:clickable="true"
                 android:focusable="true"
-                app:cardBackgroundColor="@color/surface"
+                app:cardBackgroundColor="@android:color/transparent"
                 app:cardCornerRadius="@dimen/card_corner_lg"
-                app:cardElevation="3dp"
-                app:rippleColor="@color/ripple_surface"
-                app:strokeColor="@color/stroke_glow"
-                app:strokeWidth="1dp">
+                app:cardElevation="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:background="@drawable/bg_surface_panel"
                     android:orientation="vertical"
                     android:padding="16dp">
 
@@ -348,8 +341,9 @@
                         android:layout_marginTop="6dp"
                         android:maxLines="2"
                         android:text="Review previous balances."
-                        android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                        android:textColor="@color/on_surface_variant" />
+                        android:textAppearance="@style/TextAppearance.TeamBalancer.BodyMedium"
+                        android:textColor="@color/on_surface_variant"
+                        android:textSize="12sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -361,16 +355,14 @@
                 android:layout_weight="1"
                 android:clickable="true"
                 android:focusable="true"
-                app:cardBackgroundColor="@color/surface"
+                app:cardBackgroundColor="@android:color/transparent"
                 app:cardCornerRadius="@dimen/card_corner_lg"
-                app:cardElevation="3dp"
-                app:rippleColor="@color/ripple_surface"
-                app:strokeColor="@color/stroke_glow"
-                app:strokeWidth="1dp">
+                app:cardElevation="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:background="@drawable/bg_surface_panel"
                     android:orientation="vertical"
                     android:padding="16dp">
 
@@ -378,7 +370,7 @@
                         android:layout_width="28dp"
                         android:layout_height="28dp"
                         android:src="@drawable/ic_clubs"
-                        app:tint="@color/secondary" />
+                        app:tint="@color/accent_pink" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -394,8 +386,9 @@
                         android:layout_marginTop="6dp"
                         android:maxLines="2"
                         android:text="Switch and organize clubs."
-                        android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                        android:textColor="@color/on_surface_variant" />
+                        android:textAppearance="@style/TextAppearance.TeamBalancer.BodyMedium"
+                        android:textColor="@color/on_surface_variant"
+                        android:textSize="12sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>

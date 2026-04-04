@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/list_item_vertical_gap"
+    android:layout_margin="8dp"
     android:background="@drawable/bg_team_card_modern"
     android:orientation="vertical">
 
-    <RelativeLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="52dp"
+        android:layout_height="54dp"
         android:background="@drawable/bg_team_header_modern">
 
         <TextView
@@ -19,38 +19,44 @@
             android:ellipsize="end"
             android:gravity="center"
             android:maxLines="1"
-            android:paddingHorizontal="44dp"
-            android:text="TEAM A"
+            android:paddingHorizontal="48dp"
+            android:text="TEAM NAME"
             android:textAllCaps="true"
             android:textAppearance="@style/TextAppearance.TeamBalancer.TitleMedium"
-            android:textColor="@color/on_surface" />
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:letterSpacing="0.1" />
 
         <ImageButton
             android:id="@+id/btnDeleteTeam"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="6dp"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@android:drawable/ic_menu_delete"
+            android:src="@drawable/ic_delete"
             android:visibility="gone"
-            app:tint="@android:color/white" />
-    </RelativeLayout>
+            app:tint="@color/white" />
+    </FrameLayout>
 
     <LinearLayout
         android:id="@+id/layoutTeamPlayersContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="8dp" />
+        android:padding="12dp" />
 
     <com.google.android.material.chip.Chip
         android:id="@+id/chipTeamStrength"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginBottom="12dp"
         android:textColor="@color/white"
+        android:textSize="11sp"
+        android:textStyle="bold"
         android:visibility="visible"
-        app:chipBackgroundColor="@color/surface_soft" />
+        app:chipBackgroundColor="@color/surface_soft"
+        app:chipStrokeWidth="0dp"
+        app:chipCornerRadius="12dp"/>
 </LinearLayout>

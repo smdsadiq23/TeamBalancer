@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/surface"
+    android:background="@drawable/bg_surface_panel"
     android:orientation="vertical"
     android:padding="20dp">
 
@@ -11,8 +11,8 @@
         android:id="@+id/txtPlayerName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="Edit Player"
+        android:layout_marginBottom="20dp"
+        android:text="Edit Player Stats"
         android:textAppearance="@style/TextAppearance.TeamBalancer.TitleLarge"
         android:textColor="@color/on_surface" />
 
@@ -21,10 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Style"
-        app:boxBackgroundColor="@color/surface_elevated"
-        app:boxStrokeColor="@color/accent"
-        app:hintTextColor="@color/accent"
-        app:startIconDrawable="@drawable/ic_move"
+        app:startIconDrawable="@drawable/ic_edit"
         app:startIconTint="@color/on_surface_variant">
 
         <AutoCompleteTextView
@@ -33,7 +30,8 @@
             android:layout_height="wrap_content"
             android:inputType="none"
             android:paddingVertical="14dp"
-            android:textColor="@color/on_surface" />
+            android:textColor="@color/on_surface"
+            android:textStyle="bold" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -42,9 +40,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:hint="Category"
-        app:boxBackgroundColor="@color/surface_elevated"
-        app:boxStrokeColor="@color/accent"
-        app:hintTextColor="@color/accent"
         app:startIconDrawable="@drawable/ic_clubs"
         app:startIconTint="@color/on_surface_variant">
 
@@ -54,7 +49,8 @@
             android:layout_height="wrap_content"
             android:inputType="none"
             android:paddingVertical="14dp"
-            android:textColor="@color/on_surface" />
+            android:textColor="@color/on_surface"
+            android:textStyle="bold" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <LinearLayout
@@ -68,10 +64,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="Batting"
-            app:boxBackgroundColor="@color/surface_elevated"
-            app:boxStrokeColor="@color/accent"
-            app:hintTextColor="@color/accent">
+            android:hint="Batting">
 
             <AutoCompleteTextView
                 android:id="@+id/editBatting"
@@ -88,10 +81,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_weight="1"
-            android:hint="Bowling"
-            app:boxBackgroundColor="@color/surface_elevated"
-            app:boxStrokeColor="@color/accent"
-            app:hintTextColor="@color/accent">
+            android:hint="Bowling">
 
             <AutoCompleteTextView
                 android:id="@+id/editBowling"
@@ -108,10 +98,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_weight="1"
-            android:hint="Fielding"
-            app:boxBackgroundColor="@color/surface_elevated"
-            app:boxStrokeColor="@color/accent"
-            app:hintTextColor="@color/accent">
+            android:hint="Fielding">
 
             <AutoCompleteTextView
                 android:id="@+id/editFielding"

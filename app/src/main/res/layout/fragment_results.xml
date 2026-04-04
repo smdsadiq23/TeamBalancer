@@ -44,7 +44,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="14dp"
                     app:cardBackgroundColor="@android:color/transparent"
-                    app:cardCornerRadius="26dp"
+                    app:cardCornerRadius="@dimen/glass_corner"
                     app:cardElevation="0dp">
 
                     <LinearLayout
@@ -72,16 +72,15 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="14dp"
                             android:text="CLUB NAME"
-                            android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
-                            android:textColor="@color/white"
-                            android:textStyle="bold" />
+                            android:textAppearance="@style/TextAppearance.TeamBalancer.HeadlineMedium"
+                            android:textColor="@color/white" />
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
                             android:text="Review each team, move players if needed, and regenerate if the balance needs another pass."
-                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                            android:textAppearance="@style/TextAppearance.TeamBalancer.BodyMedium"
                             android:textColor="@color/on_surface_variant" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -95,40 +94,45 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnSaveChanges"
                     android:layout_width="match_parent"
-                    android:layout_height="58dp"
+                    android:layout_height="@dimen/cta_height"
                     android:layout_marginTop="24dp"
-                    android:background="@drawable/bg_gradient_secondary"
+                    android:background="@drawable/bg_button_gradient"
                     android:text="SAVE CHANGES"
                     android:textColor="@android:color/white"
                     android:textStyle="bold"
+                    android:letterSpacing="0.05"
                     android:visibility="gone"
                     app:backgroundTint="@null"
-                    app:cornerRadius="18dp" />
+                    app:cornerRadius="@dimen/card_corner_lg" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnRegenerate"
                     android:layout_width="match_parent"
-                    android:layout_height="58dp"
+                    android:layout_height="@dimen/cta_height"
                     android:layout_marginTop="12dp"
-                    android:background="@drawable/bg_gradient_accent"
+                    android:background="@drawable/bg_gradient_secondary"
                     android:text="REGENERATE TEAMS"
                     android:textColor="@android:color/white"
                     android:textStyle="bold"
+                    android:letterSpacing="0.05"
                     android:visibility="gone"
                     app:backgroundTint="@null"
-                    app:cornerRadius="18dp" />
+                    app:cornerRadius="@dimen/card_corner_lg" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnBack"
                     android:layout_width="match_parent"
-                    android:layout_height="58dp"
+                    android:layout_height="@dimen/cta_height"
                     android:layout_marginTop="12dp"
-                    android:background="@drawable/bg_gradient_error"
+                    android:background="@drawable/bg_surface_panel"
                     android:text="BACK TO HOME"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/accent_pink"
                     android:textStyle="bold"
+                    android:letterSpacing="0.05"
                     app:backgroundTint="@null"
-                    app:cornerRadius="18dp" />
+                    app:cornerRadius="@dimen/card_corner_lg"
+                    app:strokeColor="@color/accent_pink"
+                    app:strokeWidth="1dp" />
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

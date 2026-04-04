@@ -79,7 +79,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/cta_height"
                         android:layout_marginTop="14dp"
-                        android:background="@drawable/bg_gradient_secondary"
+                        android:background="@drawable/bg_button_gradient"
                         android:letterSpacing="0.05"
                         android:text="CREATE CLUB"
                         android:textColor="@color/white"
