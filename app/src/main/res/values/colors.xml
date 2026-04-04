@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+
+    <!-- Next-gen sports: carbon arena + electric mint + voltage blue -->
+    <color name="primary">#0B101A</color>
+    <color name="primary_variant">#141C2A</color>
+    <color name="accent">#00E8B8</color>
+    <color name="secondary">#4D9FFF</color>
+
+    <color name="background">#03060C</color>
+    <color name="surface">#090E16</color>
+    <color name="surface_elevated">#121A26</color>
+    <color name="surface_soft">#1A2433</color>
+
+    <color name="on_primary">#FFFFFF</color>
+    <color name="on_secondary">#FFFFFF</color>
+    <color name="on_surface">#EEF2F8</color>
+    <color name="on_surface_variant">#8E9DB3</color>
+    <color name="color_disabled">#5A6678</color>
+
+    <color name="red_gradient_start">#5DFFC8</color>
+    <color name="red_gradient_center">#00E8B8</color>
+    <color name="red_gradient_end">#00C4E0</color>
+    <color name="teal_gradient_start">#4D9FFF</color>
+    <color name="teal_gradient_end">#2B6FD9</color>
+    <color name="hero_glow">#3300E8B8</color>
+    <color name="hero_glow_secondary">#454D9FFF</color>
+
+    <color name="success">#3DFF9A</color>
+    <color name="warning">#FFC14D</color>
+    <color name="error">#FF5C7A</color>
+    <color name="divider">#1E2A3A</color>
+
+    <color name="ch_primary">#0B101A</color>
+    <color name="ch_primary_dark">#141C2A</color>
+    <color name="ch_accent">#00E8B8</color>
+    <color name="ch_background">#03060C</color>
+    <color name="ch_card_bg">#090E16</color>
+    <color name="ch_text_primary">#EEF2F8</color>
+    <color name="ch_text_secondary">#8E9DB3</color>
+    <color name="ch_red">#00E8B8</color>
+    <color name="card_white">#121A26</color>
+    <color name="text_dark">#EEF2F8</color>
+
+    <color name="cricket_red">#00E8B8</color>
+    <color name="cricket_ivory">#E8ECF2</color>
+    <color name="cricket_green">#00C978</color>
+    <color name="onSurfaceVariant">#8E9DB3</color>
+    <color name="delete_red">#FF5C7A</color>
+</resources>

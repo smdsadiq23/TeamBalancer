@@ -1,0 +1,136 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Base.Theme.TeamBalancer" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/primary_variant</item>
+        <item name="colorOnPrimaryContainer">@color/white</item>
+
+        <item name="colorSecondary">@color/secondary</item>
+        <item name="colorOnSecondary">@color/on_secondary</item>
+        <item name="colorSecondaryContainer">@color/surface_soft</item>
+        <item name="colorOnSecondaryContainer">@color/white</item>
+
+        <item name="colorTertiary">@color/accent</item>
+        <item name="colorOnTertiary">@color/white</item>
+
+        <item name="android:windowBackground">@drawable/bg_app_shell</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorOnSurface">@color/white</item>
+        <item name="colorSurfaceVariant">@color/divider</item>
+        <item name="colorOnSurfaceVariant">@color/on_surface_variant</item>
+        <item name="colorOutline">@color/divider</item>
+
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:navigationBarColor">@color/background</item>
+        <item name="android:windowLightNavigationBar">false</item>
+
+        <item name="alertDialogTheme">@style/ThemeOverlay.TeamBalancer.Dialog</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.TeamBalancer.Dialog</item>
+        <item name="popupMenuStyle">@style/Widget.TeamBalancer.PopupMenu</item>
+        <item name="listPopupWindowStyle">@style/Widget.TeamBalancer.PopupMenu</item>
+        <item name="materialButtonStyle">@style/Widget.TeamBalancer.Button</item>
+
+        <item name="textAppearanceHeadlineLarge">@style/TextAppearance.TeamBalancer.HeadlineLarge</item>
+        <item name="textAppearanceHeadlineMedium">@style/TextAppearance.TeamBalancer.HeadlineMedium</item>
+        <item name="textAppearanceTitleLarge">@style/TextAppearance.TeamBalancer.TitleLarge</item>
+        <item name="textAppearanceTitleMedium">@style/TextAppearance.TeamBalancer.TitleMedium</item>
+        <item name="textAppearanceBodyLarge">@style/TextAppearance.TeamBalancer.BodyLarge</item>
+        <item name="textAppearanceBodyMedium">@style/TextAppearance.TeamBalancer.BodyMedium</item>
+        <item name="textAppearanceLabelLarge">@style/TextAppearance.TeamBalancer.LabelLarge</item>
+        <item name="textAppearanceLabelMedium">@style/TextAppearance.TeamBalancer.LabelMedium</item>
+
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.TeamBalancer.Small</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.TeamBalancer.Medium</item>
+
+        <!-- Dropdown styling -->
+        <item name="autoCompleteTextViewStyle">@style/Widget.TeamBalancer.AutoCompleteTextView</item>
+    </style>
+
+    <style name="Theme.TeamBalancer" parent="Base.Theme.TeamBalancer" />
+
+    <style name="ThemeOverlay.TeamBalancer.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="android:background">@color/surface</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorOnSurface">@color/white</item>
+        <item name="colorPrimary">@color/accent</item>
+        <item name="colorSecondary">@color/accent</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.TeamBalancer.Button.Text</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.TeamBalancer.Button.Text</item>
+        <item name="buttonBarNeutralButtonStyle">@style/Widget.TeamBalancer.Button.Text</item>
+    </style>
+
+    <style name="Widget.TeamBalancer.PopupMenu" parent="Widget.Material3.PopupMenu">
+        <item name="android:popupBackground">@color/surface_elevated</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textColorPrimary">@color/white</item>
+    </style>
+
+    <style name="Widget.TeamBalancer.AutoCompleteTextView" parent="Widget.Material3.AutoCompleteTextView.OutlinedBox">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textColorHint">@color/on_surface_variant</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="Widget.TeamBalancer.Button.Text" parent="Widget.Material3.Button.TextButton">
+        <item name="android:textColor">@color/accent</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Widget.TeamBalancer.Button" parent="Widget.Material3.Button">
+        <item name="cornerRadius">22dp</item>
+        <item name="backgroundTint">@color/accent</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.03</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+    </style>
+
+    <style name="TextAppearance.TeamBalancer.HeadlineLarge" parent="TextAppearance.Material3.HeadlineLarge">
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.0</item>
+    </style>
+
+    <style name="TextAppearance.TeamBalancer.HeadlineMedium" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.0</item>
+    </style>
+
+    <style name="TextAppearance.TeamBalancer.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.01</item>
+    </style>
+
+    <style name="TextAppearance.TeamBalancer.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.01</item>
+    </style>
+
+    <style name="TextAppearance.TeamBalancer.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:letterSpacing">0.01</item>
+    </style>
+
+    <style name="TextAppearance.TeamBalancer.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:letterSpacing">0.01</item>
+    </style>
+
+    <style name="TextAppearance.TeamBalancer.LabelLarge" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.08</item>
+    </style>
+
+    <style name="TextAppearance.TeamBalancer.LabelMedium" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.06</item>
+    </style>
+
+    <style name="ShapeAppearance.TeamBalancer.Small" parent="ShapeAppearance.Material3.SmallComponent">
+        <item name="cornerSize">10dp</item>
+    </style>
+
+    <style name="ShapeAppearance.TeamBalancer.Medium" parent="ShapeAppearance.Material3.MediumComponent">
+        <item name="cornerSize">20dp</item>
+    </style>
+</resources>
