@@ -9,6 +9,7 @@ import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -97,7 +98,7 @@ public class ClubAdapter extends RecyclerView.Adapter<ClubAdapter.ClubViewHolder
         
         holder.btnSelect.setOnClickListener(v -> listener.onClubSelect(club));
         holder.btnDelete.setOnClickListener(v -> {
-            int pos = holder.getAdapterPosition();
+            int pos = holder.getBindingAdapterPosition();
             if (pos != RecyclerView.NO_POSITION) {
                 listener.onClubDelete(pos);
             }
@@ -112,7 +113,8 @@ public class ClubAdapter extends RecyclerView.Adapter<ClubAdapter.ClubViewHolder
     static class ClubViewHolder extends RecyclerView.ViewHolder {
         MaterialCardView cardRoot;
         TextView txtName, txtDetails;
-        MaterialButton btnSelect, btnDelete;
+        MaterialButton btnSelect;
+        ImageButton btnDelete;
 
         public ClubViewHolder(@NonNull View itemView) {
             super(itemView);
