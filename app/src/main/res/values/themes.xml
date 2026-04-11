@@ -209,4 +209,42 @@
     <style name="ShapeAppearance.TeamBalancer.Large" parent="ShapeAppearance.Material3.MediumComponent">
         <item name="cornerSize">28dp</item>
     </style>
+
+    <!-- Live cricket scoring: outlined keys with clear touch targets -->
+    <style name="Widget.TeamBalancer.Button.ScoringKey" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="strokeColor">@color/accent_cyan</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="android:textColor">@color/accent_cyan</item>
+        <item name="backgroundTint">@color/scoring_key_fill</item>
+        <item name="android:minHeight">@dimen/scoring_key_min_height</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="cornerRadius">@dimen/scoring_key_corner</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="Widget.TeamBalancer.Button.ScoringExtra" parent="Widget.TeamBalancer.Button.ScoringKey">
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="Widget.TeamBalancer.Button.ScoringWicket" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/accent_pink</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:minHeight">@dimen/scoring_key_min_height</item>
+        <item name="cornerRadius">@dimen/scoring_key_corner</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="Widget.TeamBalancer.Button.ScoringPrimary" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/accent_cyan</item>
+        <item name="android:textColor">@color/primary_dark</item>
+        <item name="android:minHeight">@dimen/cta_height</item>
+        <item name="cornerRadius">26dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
 </resources>

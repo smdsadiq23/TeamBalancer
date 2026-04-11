@@ -22,4 +22,13 @@
     <string name="scoring_tab_scoreboard">Full scoreboard</string>
     <string name="playing_xi_title">Squad</string>
     <string name="squad_player_role_default">Player</string>
+    <string name="scoring_section_batsmen">Batsmen</string>
+    <string name="scoring_section_bowler">Bowler</string>
+    <string name="scoring_runs_extras">Runs &amp; extras</string>
+    <string name="scoring_wide">WD</string>
+    <string name="scoring_wicket">WKT</string>
+    <string name="scoring_nb">NB</string>
+    <string name="scoring_bye">BYE</string>
+    <string name="scoring_lb">LB</string>
+    <string name="scoring_undo">Undo</string>
 </resources>

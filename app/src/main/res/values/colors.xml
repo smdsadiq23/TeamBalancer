@@ -51,4 +51,7 @@
     <!-- Missing Colors -->
     <color name="stroke_glow">#00D2FF</color>
     <color name="warning">#FFC107</color>
+
+    <!-- Live scoring keypad -->
+    <color name="scoring_key_fill">#142536</color>
 </resources>

@@ -11,4 +11,7 @@
     <dimen name="content_bottom_inset">20dp</dimen>
     <dimen name="cta_height">52dp</dimen>
     <dimen name="toolbar_min_height">56dp</dimen>
+    <dimen name="scoring_hero_score">52sp</dimen>
+    <dimen name="scoring_key_min_height">48dp</dimen>
+    <dimen name="scoring_key_corner">12dp</dimen>
 </resources>
