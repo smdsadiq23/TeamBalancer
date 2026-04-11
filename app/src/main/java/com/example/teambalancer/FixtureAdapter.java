@@ -48,9 +48,6 @@ public class FixtureAdapter extends RecyclerView.Adapter<FixtureAdapter.MatchVie
         holder.txtTeam1.setText(match.team1);
         holder.txtTeam2.setText(match.team2);
 
-        boolean hasScores = match.score1 > 0 || match.score2 > 0 || match.wickets1 > 0 || match.wickets2 > 0;
-        boolean isStarted = match.isCompleted || match.hasStarted || hasScores || (match.ballHistory != null && !match.ballHistory.isEmpty());
-
         if (match.isCompleted) {
             holder.txtStatus.setVisibility(View.VISIBLE);
             holder.txtStatus.setText("COMPLETED");
@@ -71,7 +68,7 @@ public class FixtureAdapter extends RecyclerView.Adapter<FixtureAdapter.MatchVie
             }
             
             holder.btnDeleteMatch.setVisibility(View.VISIBLE);
-        } else if (isStarted) {
+        } else if (MatchCompletionHelper.hasRecordedPlay(match)) {
             holder.txtStatus.setVisibility(View.VISIBLE);
             holder.txtStatus.setText("LIVE");
             holder.txtStatus.setBackgroundResource(R.drawable.bg_stat_pill);
@@ -89,8 +86,25 @@ public class FixtureAdapter extends RecyclerView.Adapter<FixtureAdapter.MatchVie
             }
             
             holder.btnDeleteMatch.setVisibility(View.VISIBLE);
+        } else if (MatchCompletionHelper.isPreBallSetup(match)) {
+            holder.txtStatus.setVisibility(View.VISIBLE);
+            holder.txtStatus.setText("READY");
+            holder.txtStatus.setBackgroundResource(R.drawable.bg_stat_pill);
+
+            holder.layoutScores.setVisibility(View.VISIBLE);
+            holder.txtVs.setVisibility(View.GONE);
+            holder.txtResult.setVisibility(View.GONE);
+
+            if ("Cricket".equalsIgnoreCase(match.sport)) {
+                holder.txtScore1.setText(match.score1 + "/" + match.wickets1);
+                holder.txtScore2.setText(match.score2 + "/" + match.wickets2);
+            } else {
+                holder.txtScore1.setText(String.valueOf(match.score1));
+                holder.txtScore2.setText(String.valueOf(match.score2));
+            }
+
+            holder.btnDeleteMatch.setVisibility(View.VISIBLE);
         } else {
-            // Scheduled: always show scoreboard (0–0 / 0/0) so scores are visible before start
             holder.txtStatus.setVisibility(View.VISIBLE);
             holder.txtStatus.setText("SCHEDULED");
             holder.txtStatus.setBackgroundResource(R.drawable.bg_stat_pill);

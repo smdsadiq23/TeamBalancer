@@ -16,6 +16,10 @@ public final class MatchFixtureHelper {
         if (m == null) {
             return;
         }
+        if (m.isCompleted) {
+            m.isFixtureSchedule = false;
+            return;
+        }
         m.isFixtureSchedule = !hasMatchProgress(m);
     }
 

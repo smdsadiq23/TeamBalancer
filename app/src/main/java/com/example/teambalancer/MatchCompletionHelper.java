@@ -10,6 +10,38 @@ public final class MatchCompletionHelper {
 
     private MatchCompletionHelper() {}
 
+    /** True once any ball, run, wicket, or over has been recorded (not just toss/setup). */
+    public static boolean hasRecordedPlay(Match match) {
+        if (match == null) {
+            return false;
+        }
+        if (match.ballHistory != null && !match.ballHistory.isEmpty()) {
+            return true;
+        }
+        return match.score1 != 0
+                || match.score2 != 0
+                || match.wickets1 != 0
+                || match.wickets2 != 0
+                || match.overs1 > 0
+                || match.overs2 > 0;
+    }
+
+    /**
+     * Toss or lineup is set but no delivery yet — avoid showing "LIVE" for 0/0 scorecards.
+     */
+    public static boolean isPreBallSetup(Match match) {
+        if (match == null || match.isCompleted) {
+            return false;
+        }
+        if (hasRecordedPlay(match)) {
+            return false;
+        }
+        return match.tossWinner != null
+                || match.battingTeam != null
+                || match.bowlingTeam != null
+                || match.hasStarted;
+    }
+
     public static int getMaxWickets(Match match) {
         if (match.battingTeam == null || match.team1 == null) {
             return 10;
@@ -64,8 +96,14 @@ public final class MatchCompletionHelper {
         if ("Test".equalsIgnoreCase(match.matchType)) {
             return false;
         }
-        if (match.battingTeam == null || match.team1 == null) {
+        if (match.team1 == null) {
             return false;
+        }
+        boolean hadBatting = match.battingTeam != null;
+        recoverBattingAndBowlingTeamsIfNull(match);
+        boolean recoveredTeams = !hadBatting && match.battingTeam != null;
+        if (match.battingTeam == null) {
+            return recoveredTeams;
         }
 
         int battingScore = (match.battingTeam.equals(match.team1)) ? match.score1 : match.score2;
@@ -79,6 +117,66 @@ public final class MatchCompletionHelper {
             match.hasStarted = true;
             match.isCompleted = true;
             return true;
+        }
+        return recoveredTeams;
+    }
+
+    /**
+     * Gson / edge cases can drop battingTeam while ballHistory still has striker names — recover so chase rules run.
+     */
+    private static void recoverBattingAndBowlingTeamsIfNull(Match match) {
+        if (match.battingTeam != null) {
+            return;
+        }
+        if (match.ballHistory == null || match.ballHistory.isEmpty()) {
+            return;
+        }
+        for (int i = match.ballHistory.size() - 1; i >= 0; i--) {
+            BallEvent e = match.ballHistory.get(i);
+            String name = e.striker;
+            if (name == null) {
+                name = e.nonStriker;
+            }
+            if (name == null) {
+                continue;
+            }
+            if (teamContainsPlayer(match, match.team1, name)) {
+                match.battingTeam = match.team1;
+                match.bowlingTeam = match.team2;
+                return;
+            }
+            if (teamContainsPlayer(match, match.team2, name)) {
+                match.battingTeam = match.team2;
+                match.bowlingTeam = match.team1;
+                return;
+            }
+        }
+        BallEvent last = match.ballHistory.get(match.ballHistory.size() - 1);
+        if (last.bowler != null) {
+            if (teamContainsPlayer(match, match.team1, last.bowler)) {
+                match.bowlingTeam = match.team1;
+                match.battingTeam = match.team2;
+                return;
+            }
+            if (teamContainsPlayer(match, match.team2, last.bowler)) {
+                match.bowlingTeam = match.team2;
+                match.battingTeam = match.team1;
+                return;
+            }
+        }
+    }
+
+    private static boolean teamContainsPlayer(Match match, String teamName, String playerName) {
+        if (playerName == null || teamName == null) {
+            return false;
+        }
+        List<String> squad = teamName.equals(match.team1) ? match.squad1 : match.squad2;
+        if (squad != null) {
+            for (String n : squad) {
+                if (playerName.equals(n)) {
+                    return true;
+                }
+            }
         }
         return false;
     }

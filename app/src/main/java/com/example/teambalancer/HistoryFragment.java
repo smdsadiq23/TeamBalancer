@@ -44,7 +44,12 @@ public class HistoryFragment extends Fragment {
             @Override
             public void onHistoryClick(Club.TeamHistory history) {
                 if (currentClub != null) {
-                    ResultsFragment resultsFragment = ResultsFragment.newInstance(currentClub.id, currentClub.name, (ArrayList<Team>) history.teams);
+                    int idx = currentClub.history.indexOf(history);
+                    if (idx < 0) {
+                        idx = currentClub.history.size() - 1;
+                    }
+                    ResultsFragment resultsFragment = ResultsFragment.newInstance(
+                            currentClub.id, currentClub.name, (ArrayList<Team>) history.teams, idx);
                     getParentFragmentManager().beginTransaction()
                             .replace(R.id.fragment_container, resultsFragment)
                             .addToBackStack(null)

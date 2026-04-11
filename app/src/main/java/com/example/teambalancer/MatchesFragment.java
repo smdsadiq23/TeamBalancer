@@ -126,12 +126,12 @@ public class MatchesFragment extends Fragment {
             }
 
             if (latestHistory.matches != null) {
+                updated |= MatchCompletionHelper.normalizeStartedFlags(latestHistory.matches);
                 for (Match m : latestHistory.matches) {
                     if (MatchCompletionHelper.applyInningsCompletionRules(m)) {
                         updated = true;
                     }
                 }
-                updated |= MatchCompletionHelper.normalizeStartedFlags(latestHistory.matches);
                 for (Match m : latestHistory.matches) {
                     MatchFixtureHelper.normalizeFixtureScheduleOnLoad(m);
                 }

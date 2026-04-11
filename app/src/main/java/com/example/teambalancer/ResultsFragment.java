@@ -23,6 +23,8 @@ public class ResultsFragment extends Fragment {
     private static final String ARG_CLUB_ID = "club_id";
     private static final String ARG_CLUB_NAME = "club_name";
     private static final String ARG_TEAMS = "teams";
+    /** Index into {@link Club#history} for this scorecard; never mix with another session. */
+    private static final String ARG_HISTORY_INDEX = "history_index";
 
     private FragmentResultsBinding binding;
     private ArrayList<Team> teams;
@@ -30,13 +32,19 @@ public class ResultsFragment extends Fragment {
     private DataManager dataManager;
     private Club currentClub;
     private int clubId;
+    private int historyIndex = -1;
 
     public static ResultsFragment newInstance(int clubId, String clubName, ArrayList<Team> teams) {
+        return newInstance(clubId, clubName, teams, -1);
+    }
+
+    public static ResultsFragment newInstance(int clubId, String clubName, ArrayList<Team> teams, int historyIndex) {
         ResultsFragment fragment = new ResultsFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_CLUB_ID, clubId);
         args.putString(ARG_CLUB_NAME, clubName);
         args.putSerializable(ARG_TEAMS, teams);
+        args.putInt(ARG_HISTORY_INDEX, historyIndex);
         fragment.setArguments(args);
         return fragment;
     }
@@ -56,6 +64,7 @@ public class ResultsFragment extends Fragment {
         clubId = getArguments().getInt(ARG_CLUB_ID);
         String clubName = getArguments().getString(ARG_CLUB_NAME);
         teams = (ArrayList<Team>) getArguments().getSerializable(ARG_TEAMS);
+        historyIndex = getArguments().getInt(ARG_HISTORY_INDEX, -1);
 
         binding.txtResultClubName.setText(clubName.isEmpty() ? "BALANCED TEAMS" : clubName.toUpperCase());
         
@@ -173,22 +182,32 @@ public class ResultsFragment extends Fragment {
 
     private void saveChangesToHistory(boolean forceRegenerateMatches) {
         if (currentClub != null && !currentClub.history.isEmpty()) {
-            int lastIndex = currentClub.history.size() - 1;
-            Club.TeamHistory latest = currentClub.history.get(lastIndex);
-            
-            latest.teams = new ArrayList<>(teams);
-            
-            if (forceRegenerateMatches || latest.matches == null || latest.matches.isEmpty()) {
-                latest.matches = new ArrayList<>();
+            int idx = historyIndex;
+            if (idx < 0 || idx >= currentClub.history.size()) {
+                idx = currentClub.history.size() - 1;
+            }
+            Club.TeamHistory session = currentClub.history.get(idx);
+
+            session.teams = new ArrayList<>(teams);
+
+            if (session.matches == null) {
+                session.matches = new ArrayList<>();
+            }
+            if (forceRegenerateMatches) {
+                session.matches = new ArrayList<>();
             } else {
-                for (Match m : latest.matches) {
+                for (Match m : session.matches) {
                     Team t1 = teams.stream().filter(t -> t.name.equals(m.team1)).findFirst().orElse(null);
                     Team t2 = teams.stream().filter(t -> t.name.equals(m.team2)).findFirst().orElse(null);
-                    if (t1 != null) m.squad1 = t1.players.stream().map(p -> p.name).collect(Collectors.toList());
-                    if (t2 != null) m.squad2 = t2.players.stream().map(p -> p.name).collect(Collectors.toList());
+                    if (t1 != null) {
+                        m.squad1 = t1.players.stream().map(p -> p.name).collect(Collectors.toList());
+                    }
+                    if (t2 != null) {
+                        m.squad2 = t2.players.stream().map(p -> p.name).collect(Collectors.toList());
+                    }
                 }
             }
-            
+
             dataManager.updateClub(currentClub);
         }
     }

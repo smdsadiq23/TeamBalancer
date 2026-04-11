@@ -319,15 +319,18 @@ public class BalanceFragment extends Fragment {
         String selectedSport = binding.spinnerSport.getText().toString();
 
         // Save to History
+        int newHistoryIndex = 0;
         if (currentClub != null) {
             String date = new SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault()).format(new Date());
             Club.TeamHistory history = new Club.TeamHistory(date, teams, selectedSport);
             currentClub.history.add(history);
+            newHistoryIndex = currentClub.history.size() - 1;
             dataManager.updateClub(currentClub);
         }
 
         // Navigate to Results
-        ResultsFragment resultsFragment = ResultsFragment.newInstance(currentClub.id, currentClub.name, new ArrayList<>(teams));
+        ResultsFragment resultsFragment = ResultsFragment.newInstance(
+                currentClub.id, currentClub.name, new ArrayList<>(teams), newHistoryIndex);
         getParentFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, resultsFragment)
                 .addToBackStack(null)
