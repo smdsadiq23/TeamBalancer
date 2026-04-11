@@ -20,6 +20,6 @@
     <string name="cricket_scoring_title">Scoring</string>
     <string name="scoring_tab_live">Live</string>
     <string name="scoring_tab_scoreboard">Full scoreboard</string>
-    <string name="playing_xi_title">Playing XI</string>
+    <string name="playing_xi_title">Squad</string>
     <string name="squad_player_role_default">Player</string>
 </resources>

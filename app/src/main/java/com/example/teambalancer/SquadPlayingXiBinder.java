@@ -8,7 +8,7 @@ import androidx.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-/** Inflates the two-column Playing XI squad rows (mirrored layout like broadcast UIs). */
+/** Inflates the two-column squad rows (mirrored layout like broadcast UIs). */
 public final class SquadPlayingXiBinder {
 
     private SquadPlayingXiBinder() {}
