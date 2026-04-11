@@ -107,6 +107,32 @@ public final class MatchCompletionHelper {
      *
      * @return true if anything was changed (club should be saved).
      */
+    /**
+     * After totals are repaired from ball history, keep {@link Match#hasFinalScoreSnapshot} fields aligned
+     * for {@link MatchScoreDisplay} and JSON mirrors.
+     */
+    public static boolean refreshFinalSnapshotFromLive(Match match) {
+        if (match == null || !match.hasFinalScoreSnapshot || !isEffectivelyCompleted(match)) {
+            return false;
+        }
+        match.finalRuns1 = match.score1;
+        match.finalRuns2 = match.score2;
+        match.finalWickets1 = match.wickets1;
+        match.finalWickets2 = match.wickets2;
+        match.finalOvers1 = match.overs1;
+        match.finalOvers2 = match.overs2;
+        match.scoreboardSnapshot = new ArrayList<>();
+        List<BallEvent> src =
+                match.ballHistory != null && !match.ballHistory.isEmpty()
+                        ? match.ballHistory
+                        : MatchBallEvents.forStats(match);
+        for (BallEvent e : src) {
+            match.scoreboardSnapshot.add(BallEvent.copyOf(e));
+        }
+        MatchPersistenceHelper.syncJsonFromLists(match);
+        return true;
+    }
+
     public static boolean restoreDisplayStateFromSnapshot(Match match) {
         if (match == null || !isEffectivelyCompleted(match) || !match.hasFinalScoreSnapshot) {
             return false;

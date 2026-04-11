@@ -74,7 +74,7 @@ public class MatchesFragment extends Fragment {
             public void onEditMatch(Match match, int position) {
                 if ("Cricket".equalsIgnoreCase(match.sport)) {
                     if (MatchCompletionHelper.isEffectivelyCompleted(match)) {
-                        showCricketScoringDialog(match);
+                        CompletedMatchScoreboardDialog.show(MatchesFragment.this, match);
                     } else if (!match.hasStarted
                             && match.tossWinner == null
                             && (match.ballHistory == null || match.ballHistory.isEmpty())) {
@@ -246,6 +246,7 @@ public class MatchesFragment extends Fragment {
                     }
 
                     MatchFixtureHelper.promoteToMatch(match);
+                    MatchPersistenceHelper.syncJsonFromLists(match);
                     dataManager.updateClub(currentClub);
                     showCricketScoringDialog(match);
                 })
@@ -253,6 +254,10 @@ public class MatchesFragment extends Fragment {
     }
 
     private void showCricketScoringDialog(Match match) {
+        if (MatchCompletionHelper.isEffectivelyCompleted(match)) {
+            CompletedMatchScoreboardDialog.show(MatchesFragment.this, match);
+            return;
+        }
         View view = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_cricket_scoring, null);
         TextView txtMatchInfo = view.findViewById(R.id.txtMatchInfo);
         TextView txtLiveScore = view.findViewById(R.id.txtLiveScore);
@@ -496,29 +501,7 @@ public class MatchesFragment extends Fragment {
     }
 
     private String getWinnerString(Match match) {
-        int s1 = MatchScoreDisplay.runs1(match);
-        int s2 = MatchScoreDisplay.runs2(match);
-        int w1 = MatchScoreDisplay.wickets1(match);
-        int w2 = MatchScoreDisplay.wickets2(match);
-        if (s1 == s2) return "Match Tied";
-
-        boolean team1Chasing = match.currentInnings == 2 && match.battingTeam != null && match.battingTeam.equals(match.team1);
-
-        if (s1 > s2) {
-            if (team1Chasing) {
-                int wkts = MatchCompletionHelper.getMaxWickets(match) - w1;
-                return match.team1 + " won by " + wkts + " wickets";
-            } else {
-                return match.team1 + " won by " + (s1 - s2) + " runs";
-            }
-        } else {
-            if (!team1Chasing) {
-                int wkts = MatchCompletionHelper.getMaxWickets(match) - w2;
-                return match.team2 + " won by " + wkts + " wickets";
-            } else {
-                return match.team2 + " won by " + (s2 - s1) + " runs";
-            }
-        }
+        return CricketMatchResultFormatter.formatResult(match);
     }
 
     private void updatePlayerSection(Match match, TextView txtStr, TextView txtStrStats, TextView txtNonStr, TextView txtNonStrStats, TextView txtBowler, TextView txtBowlerStats) {

@@ -6,6 +6,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * One persisted row = one fixture/match for its lifetime (scheduled → live → completed). There is
+ * no second "match instance" for the same fixture; {@link MatchFixtureHelper} only toggles list visibility.
+ */
 public class Match implements Serializable {
     public String id;
     public String team1;

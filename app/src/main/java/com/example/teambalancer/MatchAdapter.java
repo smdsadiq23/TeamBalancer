@@ -57,7 +57,7 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
             holder.txtVs.setVisibility(View.GONE);
             
             holder.txtResult.setVisibility(View.VISIBLE);
-            holder.txtResult.setText(getWinnerString(match));
+            holder.txtResult.setText(getResultLine(match));
 
             if ("Cricket".equalsIgnoreCase(match.sport)) {
                 holder.txtScore1.setText(MatchScoreDisplay.cricketScoreWithOvers(match, true));
@@ -139,23 +139,16 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
         });
     }
 
-    private String getWinnerString(Match match) {
+    private String getResultLine(Match match) {
+        if ("Cricket".equalsIgnoreCase(match.sport)) {
+            return CricketMatchResultFormatter.formatCardSubtitle(match);
+        }
         int s1 = MatchScoreDisplay.runs1(match);
         int s2 = MatchScoreDisplay.runs2(match);
-        if (MatchCompletionHelper.isEffectivelyCompleted(match) && s1 == 0 && s2 == 0 && !match.hasFinalScoreSnapshot) {
-            return "Completed";
+        if (s1 == s2) {
+            return "Match tied";
         }
-        if (s1 == s2) return "Match Tied";
-        
-        boolean team1Won = s1 > s2;
-        String winner = team1Won ? match.team1 : match.team2;
-        
-        if ("Cricket".equalsIgnoreCase(match.sport)) {
-            // Detailed winner string for cricket can be complex, keeping it simple for adapter
-            return winner + " won";
-        } else {
-            return winner + " won";
-        }
+        return (s1 > s2 ? match.team1 : match.team2) + " won";
     }
 
     @Override

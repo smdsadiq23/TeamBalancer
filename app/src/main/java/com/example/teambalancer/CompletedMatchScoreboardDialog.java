@@ -27,8 +27,12 @@ public final class CompletedMatchScoreboardDialog {
         tv.setText(CricketScoreboardFormatter.formatFull(match));
         scroll.addView(tv);
 
+        String title = (match.team1 != null ? match.team1 : "") + " vs " + (match.team2 != null ? match.team2 : "");
+        if (MatchCompletionHelper.isEffectivelyCompleted(match)) {
+            title = CricketMatchResultFormatter.formatResult(match);
+        }
         new AlertDialog.Builder(fragment.requireContext())
-                .setTitle((match.team1 != null ? match.team1 : "") + " vs " + (match.team2 != null ? match.team2 : ""))
+                .setTitle(title)
                 .setView(scroll)
                 .setPositiveButton(android.R.string.ok, null)
                 .show();

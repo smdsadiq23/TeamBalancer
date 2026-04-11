@@ -41,12 +41,22 @@ public final class SessionMatchLoader {
             }
         }
         for (Match m : matches) {
+            if (MatchCompletionHelper.restoreDisplayStateFromSnapshot(m)) {
+                updated = true;
+            }
+        }
+        for (Match m : matches) {
+            if (CricketTotalsRecomputer.recomputeFromStoredEvents(m)) {
+                updated = true;
+            }
+        }
+        for (Match m : matches) {
             if (MatchCompletionHelper.ensureSnapshotForCompletedMatch(m)) {
                 updated = true;
             }
         }
         for (Match m : matches) {
-            if (MatchCompletionHelper.restoreDisplayStateFromSnapshot(m)) {
+            if (MatchCompletionHelper.refreshFinalSnapshotFromLive(m)) {
                 updated = true;
             }
         }

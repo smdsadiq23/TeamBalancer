@@ -4,6 +4,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Legacy type kept for migration only. Scheduled and live cricket games use a single {@link Match}
+ * row in {@link Club.TeamHistory#matches}; do not duplicate state here for new code paths.
+ */
 public class Fixture implements Serializable {
     public String id;
     public String team1;

@@ -27,6 +27,20 @@ public final class MatchPersistenceHelper {
         if (m.scoreboardSnapshot == null) {
             m.scoreboardSnapshot = new ArrayList<>();
         }
+        coalesceJsonStrings(m);
+    }
+
+    /** Gson may leave JSON mirror fields null when keys were missing in older stored rows. */
+    public static void coalesceJsonStrings(Match m) {
+        if (m == null) {
+            return;
+        }
+        if (m.ballHistoryJson == null) {
+            m.ballHistoryJson = "";
+        }
+        if (m.scoreboardSnapshotJson == null) {
+            m.scoreboardSnapshotJson = "";
+        }
     }
 
     /** Call after any change to {@link Match#ballHistory} or {@link Match#scoreboardSnapshot}. */
