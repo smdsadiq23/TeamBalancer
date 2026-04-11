@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Same glass treatment as bg_glass_card but corners match @dimen/card_corner to avoid double-edge with MaterialCardView. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <corners android:radius="@dimen/card_corner" />
+    <gradient
+        android:angle="135"
+        android:centerColor="#12FFFFFF"
+        android:endColor="#08FFFFFF"
+        android:startColor="#33FFFFFF"
+        android:type="linear" />
+    <stroke
+        android:width="1dp"
+        android:color="#55FFFFFF" />
+</shape>

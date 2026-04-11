@@ -303,22 +303,25 @@
             android:layout_marginTop="12dp"
             android:clickable="true"
             android:focusable="true"
-            android:minHeight="124dp"
             app:cardBackgroundColor="@android:color/transparent"
             app:cardCornerRadius="@dimen/card_corner"
-            app:cardElevation="0dp">
+            app:cardElevation="3dp"
+            app:cardMaxElevation="6dp"
+            app:cardUseCompatPadding="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_glass_card"
+                android:background="@drawable/bg_glass_card_matched"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:padding="14dp">
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="12dp">
 
                 <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_gravity="center_vertical"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:importantForAccessibility="no"
                     android:src="@drawable/ic_stat"
                     app:tint="@color/accent_pink" />
 
@@ -327,6 +330,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
                     android:layout_weight="1"
+                    android:gravity="center_vertical"
                     android:orientation="vertical">
 
                     <TextView
@@ -339,11 +343,12 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
+                        android:layout_marginTop="2dp"
+                        android:lineSpacingMultiplier="1.15"
                         android:text="Scheduled fixtures, live scoring, and finished games in one place."
                         android:textAppearance="@style/TextAppearance.TeamBalancer.BodySmall"
-                        android:textColor="@color/on_surface_variant"
-                        android:textSize="11sp" />
+                        android:textColor="@color/on_surface_secondary"
+                        android:textSize="12sp" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
