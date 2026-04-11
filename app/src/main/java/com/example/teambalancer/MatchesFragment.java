@@ -17,11 +17,8 @@ import com.example.teambalancer.databinding.FragmentFixturesBinding;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class MatchesFragment extends Fragment {
 
@@ -46,11 +43,12 @@ public class MatchesFragment extends Fragment {
 
         binding.toolbarFixtures.setTitle("Matches");
         binding.toolbarFixtures.setNavigationOnClickListener(v -> getParentFragmentManager().popBackStack());
+        binding.txtSessionBlurb.setText("Live and completed games for this session.");
+        binding.txtSectionTitle.setText("Live & completed");
+        binding.btnAddFixture.setVisibility(View.GONE);
 
         setupRecyclerView();
         observeCurrentClub();
-
-        binding.btnAddFixture.setOnClickListener(v -> showAddMatchDialog());
     }
 
     private void setupRecyclerView() {
@@ -126,8 +124,7 @@ public class MatchesFragment extends Fragment {
                 latestHistory.matches = new ArrayList<>();
                 updated = true;
             }
-            
-            updated |= deduplicateMatches(latestHistory);
+
             if (latestHistory.matches != null) {
                 for (Match m : latestHistory.matches) {
                     if (MatchCompletionHelper.applyInningsCompletionRules(m)) {
@@ -135,111 +132,28 @@ public class MatchesFragment extends Fragment {
                     }
                 }
                 updated |= MatchCompletionHelper.normalizeStartedFlags(latestHistory.matches);
+                for (Match m : latestHistory.matches) {
+                    MatchFixtureHelper.normalizeFixtureScheduleOnLoad(m);
+                }
             }
 
-            currentMatches.addAll(latestHistory.matches);
+            for (Match m : latestHistory.matches) {
+                if (!MatchFixtureHelper.isScheduledFixture(m)) {
+                    currentMatches.add(m);
+                }
+            }
             if (updated) {
                 dataManager.updateClub(currentClub);
             }
         }
 
         if (currentMatches.isEmpty()) {
-            binding.txtEmptyFixtures.setText("No matches found");
+            binding.txtEmptyFixtures.setText("No matches yet.\nAdd a fixture on the Fixtures screen, then start scoring.");
             binding.txtEmptyFixtures.setVisibility(View.VISIBLE);
         } else {
             binding.txtEmptyFixtures.setVisibility(View.GONE);
         }
         matchAdapter.notifyDataSetChanged();
-    }
-
-    private void showAddMatchDialog() {
-        if (currentClub == null || currentClub.history == null || currentClub.history.isEmpty()) {
-            Toast.makeText(requireContext(), "No active session. Generate teams first.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        Club.TeamHistory latestHistory = currentClub.history.get(currentClub.history.size() - 1);
-        List<String> teamNames = latestHistory.teams.stream().map(t -> t.name).collect(Collectors.toList());
-
-        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_fixture, null);
-        AutoCompleteTextView spinnerSport = dialogView.findViewById(R.id.spinnerSport);
-        AutoCompleteTextView spinnerTeam1 = dialogView.findViewById(R.id.spinnerTeam1);
-        AutoCompleteTextView spinnerTeam2 = dialogView.findViewById(R.id.spinnerTeam2);
-
-        String[] sports = {"Cricket", "Football", "Basketball", "Other"};
-        spinnerSport.setAdapter(new ArrayAdapter<>(requireContext(), R.layout.dropdown_item, sports));
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), R.layout.dropdown_item, teamNames);
-        spinnerTeam1.setAdapter(adapter);
-        spinnerTeam2.setAdapter(adapter);
-
-        new AlertDialog.Builder(requireContext())
-                .setTitle("Add New Match")
-                .setView(dialogView)
-                .setPositiveButton("Add", (dialog, which) -> {
-                    String sport = spinnerSport.getText().toString();
-                    String t1 = spinnerTeam1.getText().toString();
-                    String t2 = spinnerTeam2.getText().toString();
-
-                    if (t1.isEmpty() || t2.isEmpty() || t1.equals(t2)) {
-                        Toast.makeText(requireContext(), "Select two different teams", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
-                    Match newMatch = new Match(t1, t2, sport);
-                    
-                    Team team1Obj = latestHistory.teams.stream().filter(t -> t.name.equals(t1)).findFirst().orElse(null);
-                    Team team2Obj = latestHistory.teams.stream().filter(t -> t.name.equals(t2)).findFirst().orElse(null);
-                    if (team1Obj != null) {
-                        newMatch.squad1 = team1Obj.players.stream().map(p -> p.name).collect(Collectors.toList());
-                    }
-                    if (team2Obj != null) {
-                        newMatch.squad2 = team2Obj.players.stream().map(p -> p.name).collect(Collectors.toList());
-                    }
-
-                    if (latestHistory.matches == null) latestHistory.matches = new ArrayList<>();
-                    latestHistory.matches.add(newMatch);
-                    
-                    dataManager.updateClub(currentClub);
-                    loadMatches(currentClub);
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
-    }
-
-    private boolean deduplicateMatches(Club.TeamHistory history) {
-        if (history.matches == null || history.matches.isEmpty()) {
-            return false;
-        }
-
-        Map<String, Match> uniqueMatches = new LinkedHashMap<>();
-        for (Match match : history.matches) {
-            String key = buildMatchKey(match.team1, match.team2);
-
-            Match existing = uniqueMatches.get(key);
-            if (existing == null || (!existing.isCompleted && match.isCompleted)) {
-                uniqueMatches.put(key, match);
-            }
-        }
-
-        if (uniqueMatches.size() == history.matches.size()) {
-            return false;
-        }
-
-        history.matches = new ArrayList<>(uniqueMatches.values());
-        return true;
-    }
-
-    private String buildMatchKey(String team1, String team2) {
-        String normalizedTeam1 = normalizeTeamName(team1);
-        String normalizedTeam2 = normalizeTeamName(team2);
-        return normalizedTeam1.compareTo(normalizedTeam2) <= 0
-                ? normalizedTeam1 + "::" + normalizedTeam2
-                : normalizedTeam2 + "::" + normalizedTeam1;
-    }
-
-    private String normalizeTeamName(String teamName) {
-        return teamName == null ? "" : teamName.trim().toLowerCase(Locale.ROOT);
     }
 
     private void showCricketSetupDialog(Match match) {
@@ -250,7 +164,11 @@ public class MatchesFragment extends Fragment {
         View view = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_setup_cricket_match, null);
         AutoCompleteTextView spinnerMatchType = view.findViewById(R.id.spinnerMatchType);
         TextInputEditText editMaxOvers = view.findViewById(R.id.editMaxOvers);
-        
+        TextInputEditText editMaxOversPerBowler = view.findViewById(R.id.editMaxOversPerBowler);
+        if (match.maxOversPerBowler > 0) {
+            editMaxOversPerBowler.setText(String.valueOf(match.maxOversPerBowler));
+        }
+
         String[] types = {"T20", "ODI", "Test", "Box Cricket", "Custom"};
         spinnerMatchType.setAdapter(new ArrayAdapter<>(requireContext(), R.layout.dropdown_item, types));
 
@@ -263,6 +181,12 @@ public class MatchesFragment extends Fragment {
                     try {
                         match.maxOvers = Integer.parseInt(editMaxOvers.getText().toString());
                     } catch (Exception e) { match.maxOvers = 20; }
+                    try {
+                        match.maxOversPerBowler = Integer.parseInt(editMaxOversPerBowler.getText().toString().trim());
+                    } catch (Exception e) { match.maxOversPerBowler = 0; }
+                    if (match.maxOversPerBowler < 0) {
+                        match.maxOversPerBowler = 0;
+                    }
                     showTossDialog(match);
                 })
                 .setNegativeButton("Cancel", null)
@@ -304,7 +228,8 @@ public class MatchesFragment extends Fragment {
                             match.bowlingTeam = match.team2;
                         }
                     }
-                    
+
+                    MatchFixtureHelper.promoteToMatch(match);
                     dataManager.updateClub(currentClub);
                     showCricketScoringDialog(match);
                 })
@@ -396,6 +321,16 @@ public class MatchesFragment extends Fragment {
                 return;
             }
 
+            if (match.maxOversPerBowler > 0 && match.currentBowler != null
+                    && BowlingQuotaHelper.isAtOrOverQuota(match, match.currentBowler)) {
+                Toast.makeText(requireContext(),
+                        "This bowler has bowled their maximum overs for this innings.",
+                        Toast.LENGTH_SHORT).show();
+                match.currentBowler = null;
+                checkAndPromptInitialPlayers(match, updateUI);
+                return;
+            }
+
             BallEvent event = new BallEvent();
             event.striker = match.striker;
             event.nonStriker = match.nonStriker;
@@ -424,7 +359,31 @@ public class MatchesFragment extends Fragment {
                 event.extraType = BallEvent.ExtraType.LEG_BYE;
                 event.isLegalBall = true;
             } else if (v.getId() == R.id.btnWicket) {
+                if (match.maxOversPerBowler > 0 && match.currentBowler != null
+                        && BowlingQuotaHelper.isAtOrOverQuota(match, match.currentBowler)) {
+                    Toast.makeText(requireContext(),
+                            "This bowler has bowled their maximum overs for this innings.",
+                            Toast.LENGTH_SHORT).show();
+                    match.currentBowler = null;
+                    checkAndPromptInitialPlayers(match, updateUI);
+                    return;
+                }
+                if (match.maxOversPerBowler > 0 && match.currentBowler != null
+                        && BowlingQuotaHelper.wouldExceedQuotaAfterLegalBall(match, match.currentBowler)) {
+                    Toast.makeText(requireContext(),
+                            "This delivery would exceed the bowler's over limit for this innings.",
+                            Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 showWicketTypeDialog(match, updateUI);
+                return;
+            }
+
+            if (match.maxOversPerBowler > 0 && event.isLegalBall && match.currentBowler != null
+                    && BowlingQuotaHelper.wouldExceedQuotaAfterLegalBall(match, match.currentBowler)) {
+                Toast.makeText(requireContext(),
+                        "This delivery would exceed the bowler's over limit for this innings.",
+                        Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -465,6 +424,7 @@ public class MatchesFragment extends Fragment {
             }
             
             if (match.currentInnings == 1 && !"Test".equals(match.matchType)) {
+                match.inningsTwoFirstBallIndex = match.ballHistory.size();
                 match.currentInnings = 2;
                 String temp = match.battingTeam;
                 match.battingTeam = match.bowlingTeam;
@@ -579,7 +539,15 @@ public class MatchesFragment extends Fragment {
         }
         int overs = balls / 6;
         int remainingBalls = balls % 6;
-        return String.format(Locale.getDefault(), "%d.%d - %d - %d", overs, remainingBalls, runsConceded, wickets);
+        String line = String.format(Locale.getDefault(), "%d.%d - %d - %d", overs, remainingBalls, runsConceded, wickets);
+        if (match.maxOversPerBowler > 0) {
+            int capBalls = BowlingQuotaHelper.maxLegalBallsPerBowler(match);
+            int bowled = BowlingQuotaHelper.legalBallsBowledInCurrentInnings(match, playerName);
+            if (capBalls > 0 && bowled >= 0) {
+                line += String.format(Locale.getDefault(), " · %d/%d", bowled, capBalls);
+            }
+        }
+        return line;
     }
 
     private void checkAndPromptInitialPlayers(Match match, Runnable updateUI) {
@@ -593,7 +561,11 @@ public class MatchesFragment extends Fragment {
                 match.nonStriker = name;
                 checkAndPromptInitialPlayers(match, updateUI);
             });
-        } else if (match.currentBowler == null) {
+        } else if (match.currentBowler == null
+                || (match.maxOversPerBowler > 0 && BowlingQuotaHelper.isAtOrOverQuota(match, match.currentBowler))) {
+            if (match.currentBowler != null && match.maxOversPerBowler > 0) {
+                match.currentBowler = null;
+            }
             promptPlayerSelection(match, "Select Bowler", false, name -> {
                 match.currentBowler = name;
                 updateUI.run();
@@ -603,11 +575,17 @@ public class MatchesFragment extends Fragment {
     }
 
     private void promptPlayerSelection(Match match, String title, boolean isBattingTeam, OnPlayerSelectedListener listener) {
+        if (match.battingTeam == null || match.bowlingTeam == null) {
+            return;
+        }
         List<String> squad = isBattingTeam ? 
             (match.battingTeam.equals(match.team1) ? match.squad1 : match.squad2) :
             (match.bowlingTeam.equals(match.team1) ? match.squad1 : match.squad2);
         
         List<String> available = new ArrayList<>(squad);
+        if (!isBattingTeam && match.maxOversPerBowler > 0) {
+            available.removeIf(name -> BowlingQuotaHelper.isAtOrOverQuota(match, name));
+        }
         if (isBattingTeam) {
             if (match.striker != null) available.remove(match.striker);
             if (match.nonStriker != null) available.remove(match.nonStriker);
@@ -621,7 +599,11 @@ public class MatchesFragment extends Fragment {
         }
 
         if (available.isEmpty()) {
-            Toast.makeText(requireContext(), "No available players", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(),
+                    !isBattingTeam && match.maxOversPerBowler > 0
+                            ? "No bowlers left under the per-bowler over limit"
+                            : "No available players",
+                    Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -689,6 +671,13 @@ public class MatchesFragment extends Fragment {
         new AlertDialog.Builder(requireContext())
                 .setTitle("Select Wicket Type")
                 .setItems(types, (dialog, which) -> {
+                    if (match.maxOversPerBowler > 0 && match.currentBowler != null
+                            && BowlingQuotaHelper.wouldExceedQuotaAfterLegalBall(match, match.currentBowler)) {
+                        Toast.makeText(requireContext(),
+                                "This delivery would exceed the bowler's over limit for this innings.",
+                                Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     BallEvent event = new BallEvent();
                     event.striker = match.striker;
                     event.nonStriker = match.nonStriker;
@@ -805,6 +794,7 @@ public class MatchesFragment extends Fragment {
                 .setView(dialogView)
                 .setPositiveButton("Save & Finish", (dialog, which) -> {
                     try {
+                        MatchFixtureHelper.promoteToMatch(match);
                         match.score1 = Integer.parseInt(editScore1.getText().toString());
                         match.score2 = Integer.parseInt(editScore2.getText().toString());
                         match.hasStarted = true;

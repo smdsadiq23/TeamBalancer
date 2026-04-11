@@ -70,7 +70,7 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
                 holder.txtScore2.setText(String.valueOf(match.score2));
             }
             
-            holder.btnDeleteMatch.setVisibility(View.GONE);
+            holder.btnDeleteMatch.setVisibility(View.VISIBLE);
         } else if (isStarted) {
             holder.txtStatus.setVisibility(View.VISIBLE);
             holder.txtStatus.setText("LIVE");

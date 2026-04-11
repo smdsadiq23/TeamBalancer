@@ -22,6 +22,17 @@ public class Match implements Serializable {
     public double overs2 = 0.0;
     public String matchType = "T20"; // T20, ODI, Test, Box Cricket, Custom
     public int maxOvers = 20;
+    /** Max overs each bowler may bowl per innings; 0 means no limit. */
+    public int maxOversPerBowler = 0;
+    /**
+     * Index in {@link #ballHistory} of the first ball of the second innings.
+     * Set when moving from innings 1 to 2; -1 until then. Used for per-bowler quotas per innings.
+     */
+    public int inningsTwoFirstBallIndex = -1;
+    /**
+     * True until the match is promoted (toss/scoring started); then it is listed under Matches, not Fixtures.
+     */
+    public boolean isFixtureSchedule = true;
     public boolean hasStarted = false;
     public boolean isCompleted = false;
     public String tossWinner;

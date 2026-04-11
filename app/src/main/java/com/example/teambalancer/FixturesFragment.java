@@ -41,7 +41,11 @@ public class FixturesFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         dataManager = new DataManager(requireContext());
 
+        binding.toolbarFixtures.setTitle("Fixtures");
         binding.toolbarFixtures.setNavigationOnClickListener(v -> getParentFragmentManager().popBackStack());
+        binding.txtSessionBlurb.setText("Schedule games for this session. When you start scoring, they move to Matches.");
+        binding.txtSectionTitle.setText("Scheduled");
+        binding.btnAddFixture.setVisibility(View.VISIBLE);
 
         setupRecyclerView();
         observeCurrentClub();
@@ -117,25 +121,33 @@ public class FixturesFragment extends Fragment {
         currentMatches.clear();
         if (club.history != null && !club.history.isEmpty()) {
             Club.TeamHistory latestHistory = club.history.get(club.history.size() - 1);
+            boolean updated = false;
             if (latestHistory.matches == null) {
                 latestHistory.matches = new ArrayList<>();
+                updated = true;
             }
-            boolean updated = false;
             for (Match m : latestHistory.matches) {
                 if (MatchCompletionHelper.applyInningsCompletionRules(m)) {
                     updated = true;
                 }
             }
             updated |= MatchCompletionHelper.normalizeStartedFlags(latestHistory.matches);
+            for (Match m : latestHistory.matches) {
+                MatchFixtureHelper.normalizeFixtureScheduleOnLoad(m);
+            }
+            for (Match m : latestHistory.matches) {
+                if (MatchFixtureHelper.isScheduledFixture(m)) {
+                    currentMatches.add(m);
+                }
+            }
             if (updated) {
                 dataManager.updateClub(club);
             }
-            currentMatches.addAll(latestHistory.matches);
         }
         fixtureAdapter.updateMatches(currentMatches);
 
         if (currentMatches.isEmpty()) {
-            binding.txtEmptyFixtures.setText("No matches found");
+            binding.txtEmptyFixtures.setText("No scheduled fixtures.\nTap Add New to create one.");
             binding.txtEmptyFixtures.setVisibility(View.VISIBLE);
         } else {
             binding.txtEmptyFixtures.setVisibility(View.GONE);
@@ -205,7 +217,11 @@ public class FixturesFragment extends Fragment {
         View view = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_setup_cricket_match, null);
         AutoCompleteTextView spinnerMatchType = view.findViewById(R.id.spinnerMatchType);
         TextInputEditText editMaxOvers = view.findViewById(R.id.editMaxOvers);
-        
+        TextInputEditText editMaxOversPerBowler = view.findViewById(R.id.editMaxOversPerBowler);
+        if (match.maxOversPerBowler > 0) {
+            editMaxOversPerBowler.setText(String.valueOf(match.maxOversPerBowler));
+        }
+
         String[] types = {"T20", "ODI", "Test", "Box Cricket", "Custom"};
         spinnerMatchType.setAdapter(new ArrayAdapter<>(requireContext(), R.layout.dropdown_item, types));
 
@@ -218,6 +234,12 @@ public class FixturesFragment extends Fragment {
                     try {
                         match.maxOvers = Integer.parseInt(editMaxOvers.getText().toString());
                     } catch (Exception e) { match.maxOvers = 20; }
+                    try {
+                        match.maxOversPerBowler = Integer.parseInt(editMaxOversPerBowler.getText().toString().trim());
+                    } catch (Exception e) { match.maxOversPerBowler = 0; }
+                    if (match.maxOversPerBowler < 0) {
+                        match.maxOversPerBowler = 0;
+                    }
                     showTossDialog(match);
                 })
                 .setNegativeButton("Cancel", null)
@@ -259,7 +281,8 @@ public class FixturesFragment extends Fragment {
                             match.bowlingTeam = match.team2;
                         }
                     }
-                    
+
+                    MatchFixtureHelper.promoteToMatch(match);
                     dataManager.updateClub(currentClub);
                     showCricketScoringDialog(match);
                 })
@@ -354,6 +377,16 @@ public class FixturesFragment extends Fragment {
                 return;
             }
 
+            if (match.maxOversPerBowler > 0 && match.currentBowler != null
+                    && BowlingQuotaHelper.isAtOrOverQuota(match, match.currentBowler)) {
+                Toast.makeText(requireContext(),
+                        "This bowler has bowled their maximum overs for this innings.",
+                        Toast.LENGTH_SHORT).show();
+                match.currentBowler = null;
+                checkAndPromptInitialPlayers(match, updateUI);
+                return;
+            }
+
             BallEvent event = new BallEvent();
             event.striker = match.striker;
             event.nonStriker = match.nonStriker;
@@ -382,7 +415,31 @@ public class FixturesFragment extends Fragment {
                 event.extraType = BallEvent.ExtraType.LEG_BYE;
                 event.isLegalBall = true;
             } else if (v.getId() == R.id.btnWicket) {
+                if (match.maxOversPerBowler > 0 && match.currentBowler != null
+                        && BowlingQuotaHelper.isAtOrOverQuota(match, match.currentBowler)) {
+                    Toast.makeText(requireContext(),
+                            "This bowler has bowled their maximum overs for this innings.",
+                            Toast.LENGTH_SHORT).show();
+                    match.currentBowler = null;
+                    checkAndPromptInitialPlayers(match, updateUI);
+                    return;
+                }
+                if (match.maxOversPerBowler > 0 && match.currentBowler != null
+                        && BowlingQuotaHelper.wouldExceedQuotaAfterLegalBall(match, match.currentBowler)) {
+                    Toast.makeText(requireContext(),
+                            "This delivery would exceed the bowler's over limit for this innings.",
+                            Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 showWicketTypeDialog(match, updateUI);
+                return;
+            }
+
+            if (match.maxOversPerBowler > 0 && event.isLegalBall && match.currentBowler != null
+                    && BowlingQuotaHelper.wouldExceedQuotaAfterLegalBall(match, match.currentBowler)) {
+                Toast.makeText(requireContext(),
+                        "This delivery would exceed the bowler's over limit for this innings.",
+                        Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -423,6 +480,7 @@ public class FixturesFragment extends Fragment {
             }
             
             if (match.currentInnings == 1 && !"Test".equals(match.matchType)) {
+                match.inningsTwoFirstBallIndex = match.ballHistory.size();
                 match.currentInnings = 2;
                 String temp = match.battingTeam;
                 match.battingTeam = match.bowlingTeam;
@@ -549,7 +607,15 @@ public class FixturesFragment extends Fragment {
         }
         int overs = balls / 6;
         int remainingBalls = balls % 6;
-        return String.format(Locale.getDefault(), "%d.%d - %d - %d", overs, remainingBalls, runsConceded, wickets);
+        String line = String.format(Locale.getDefault(), "%d.%d - %d - %d", overs, remainingBalls, runsConceded, wickets);
+        if (match.maxOversPerBowler > 0) {
+            int capBalls = BowlingQuotaHelper.maxLegalBallsPerBowler(match);
+            int bowled = BowlingQuotaHelper.legalBallsBowledInCurrentInnings(match, playerName);
+            if (capBalls > 0 && bowled >= 0) {
+                line += String.format(Locale.getDefault(), " · %d/%d", bowled, capBalls);
+            }
+        }
+        return line;
     }
 
     private void checkAndPromptInitialPlayers(Match match, Runnable updateUI) {
@@ -563,7 +629,11 @@ public class FixturesFragment extends Fragment {
                 match.nonStriker = name;
                 checkAndPromptInitialPlayers(match, updateUI);
             });
-        } else if (match.currentBowler == null) {
+        } else if (match.currentBowler == null
+                || (match.maxOversPerBowler > 0 && BowlingQuotaHelper.isAtOrOverQuota(match, match.currentBowler))) {
+            if (match.currentBowler != null && match.maxOversPerBowler > 0) {
+                match.currentBowler = null;
+            }
             promptPlayerSelection(match, "Select Bowler", false, name -> {
                 match.currentBowler = name;
                 updateUI.run();
@@ -579,6 +649,9 @@ public class FixturesFragment extends Fragment {
             (match.bowlingTeam.equals(match.team1) ? match.squad1 : match.squad2);
         
         List<String> available = new ArrayList<>(squad);
+        if (!isBattingTeam && match.maxOversPerBowler > 0) {
+            available.removeIf(name -> BowlingQuotaHelper.isAtOrOverQuota(match, name));
+        }
         if (isBattingTeam) {
             if (match.striker != null) available.remove(match.striker);
             if (match.nonStriker != null) available.remove(match.nonStriker);
@@ -592,7 +665,11 @@ public class FixturesFragment extends Fragment {
         }
 
         if (available.isEmpty()) {
-            Toast.makeText(requireContext(), "No available players", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(),
+                    !isBattingTeam && match.maxOversPerBowler > 0
+                            ? "No bowlers left under the per-bowler over limit"
+                            : "No available players",
+                    Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -661,15 +738,22 @@ public class FixturesFragment extends Fragment {
         new AlertDialog.Builder(requireContext())
                 .setTitle("Select Wicket Type")
                 .setItems(types, (dialog, which) -> {
+                    if (match.maxOversPerBowler > 0 && match.currentBowler != null
+                            && BowlingQuotaHelper.wouldExceedQuotaAfterLegalBall(match, match.currentBowler)) {
+                        Toast.makeText(requireContext(),
+                                "This delivery would exceed the bowler's over limit for this innings.",
+                                Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     BallEvent event = new BallEvent();
                     event.striker = match.striker;
                     event.nonStriker = match.nonStriker;
                     event.bowler = match.currentBowler;
                     event.wicketType = BallEvent.WicketType.valueOf(types[which].toUpperCase().replace(" ", "_"));
-                    
+
                     processBallAndUpdateRotation(match, event);
                     checkMatchStatus(match);
-                    
+
                     int currentWickets = (match.battingTeam != null && match.battingTeam.equals(match.team1)) ? match.wickets1 : match.wickets2;
                     if (!match.isCompleted && currentWickets <= MatchCompletionHelper.getMaxWickets(match)) {
                         match.striker = null; 
@@ -770,7 +854,7 @@ public class FixturesFragment extends Fragment {
         View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_edit_score, null);
         TextInputEditText editScore1 = dialogView.findViewById(R.id.editScore1);
         TextInputEditText editScore2 = dialogView.findViewById(R.id.editScore2);
-        
+
         editScore1.setText(String.valueOf(match.score1));
         editScore2.setText(String.valueOf(match.score2));
 
@@ -778,6 +862,7 @@ public class FixturesFragment extends Fragment {
                 .setView(dialogView)
                 .setPositiveButton("Save & Finish", (dialog, which) -> {
                     try {
+                        MatchFixtureHelper.promoteToMatch(match);
                         match.score1 = Integer.parseInt(editScore1.getText().toString());
                         match.score2 = Integer.parseInt(editScore2.getText().toString());
                         match.hasStarted = true;

@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:navigationIcon="@drawable/ic_back"
-            app:title="MATCH FIXTURES"
+            app:title="Fixtures"
             app:titleCentered="true" />
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -59,10 +59,11 @@
                         android:textColor="@color/white" />
 
                     <TextView
+                        android:id="@+id/txtSessionBlurb"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Manage match scores and schedules for your current session."
+                        android:text="Schedule games for this session. When you start scoring, they move to Matches."
                         android:textAppearance="@style/TextAppearance.TeamBalancer.BodySmall"
                         android:textColor="@color/on_surface_variant" />
                 </LinearLayout>
@@ -76,10 +77,11 @@
                 android:layout_marginBottom="12dp">
 
                 <TextView
+                    android:id="@+id/txtSectionTitle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Fixtures List"
+                    android:text="Scheduled"
                     android:textAppearance="@style/TextAppearance.TeamBalancer.TitleMedium"
                     android:textColor="@color/accent_pink" />
 

@@ -10,7 +10,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import com.example.teambalancer.databinding.FragmentResultsBinding;
 import java.util.ArrayList;
@@ -86,9 +85,7 @@ public class ResultsFragment extends Fragment {
             Toast.makeText(requireContext(), "Changes Saved!", Toast.LENGTH_SHORT).show();
         });
 
-        binding.btnBack.setOnClickListener(v -> {
-            getParentFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        });
+        binding.btnBack.setOnClickListener(v -> getParentFragmentManager().popBackStack());
     }
 
     private void setupTeamRecyclerView() {

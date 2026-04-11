@@ -341,7 +341,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:maxLines="2"
-                        android:text="Update scores and match schedules."
+                        android:text="Schedule upcoming games for this session."
                         android:textAppearance="@style/TextAppearance.TeamBalancer.BodySmall"
                         android:textColor="@color/on_surface_variant"
                         android:textSize="11sp" />
@@ -349,10 +349,63 @@
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardHistory"
+                android:id="@+id/cardMatches"
                 android:layout_width="0dp"
                 android:layout_height="124dp"
                 android:layout_marginStart="6dp"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardBackgroundColor="@android:color/transparent"
+                app:cardCornerRadius="@dimen/card_corner"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_glass_card"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_share"
+                        app:tint="@color/accent_cyan" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Matches"
+                        android:textAppearance="@style/TextAppearance.TeamBalancer.TitleSmall"
+                        android:textColor="@color/on_surface" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:maxLines="2"
+                        android:text="Live and completed games."
+                        android:textAppearance="@style/TextAppearance.TeamBalancer.BodySmall"
+                        android:textColor="@color/on_surface_variant"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardHistory"
+                android:layout_width="0dp"
+                android:layout_height="124dp"
+                android:layout_marginEnd="6dp"
                 android:layout_weight="1"
                 android:clickable="true"
                 android:focusable="true"
@@ -392,21 +445,13 @@
                         android:textSize="11sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:baselineAligned="false"
-            android:orientation="horizontal">
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardClubs"
                 android:layout_width="0dp"
                 android:layout_height="124dp"
-                android:layout_marginEnd="6dp"
-                android:layout_weight="0.5"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
                 android:clickable="true"
                 android:focusable="true"
                 app:cardBackgroundColor="@android:color/transparent"
@@ -445,12 +490,6 @@
                         android:textSize="11sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="124dp"
-                android:layout_marginStart="6dp"
-                android:layout_weight="0.5" />
         </LinearLayout>
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
