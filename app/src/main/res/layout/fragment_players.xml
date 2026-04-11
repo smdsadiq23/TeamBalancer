@@ -36,6 +36,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <!-- Active Club Selector -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -78,12 +79,12 @@
                             android:inputType="textCapWords"
                             android:paddingVertical="14dp"
                             android:textColor="@color/on_surface"
-                            android:textStyle="bold"
-                            android:textCursorDrawable="@null" />
+                            android:textStyle="bold" />
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- Add Player Section -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -94,8 +95,8 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/bg_surface_panel"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_glass_card"
                     android:orientation="vertical"
                     android:padding="18dp">
 
@@ -119,8 +120,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="textPersonName"
-                            android:textColor="@color/on_surface"
-                            android:textCursorDrawable="@null" />
+                            android:textColor="@color/on_surface" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <LinearLayout
@@ -142,8 +142,7 @@
                                 android:layout_height="wrap_content"
                                 android:inputType="none"
                                 android:textColor="@color/on_surface"
-                                android:textSize="15sp"
-                                android:textCursorDrawable="@null" />
+                                android:textSize="15sp" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
@@ -160,8 +159,7 @@
                                 android:layout_height="wrap_content"
                                 android:inputType="none"
                                 android:textColor="@color/on_surface"
-                                android:textSize="15sp"
-                                android:textCursorDrawable="@null" />
+                                android:textSize="15sp" />
                         </com.google.android.material.textfield.TextInputLayout>
                     </LinearLayout>
 
@@ -246,37 +244,64 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- View Player List Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnViewPlayerList"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="#20FFFFFF"
+                android:text="VIEW ADDED LIST"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                app:cornerRadius="24dp"
+                app:icon="@drawable/ic_person"
+                app:iconGravity="textStart"
+                app:iconTint="@color/accent_cyan"
+                app:strokeColor="#40FFFFFF"
+                app:strokeWidth="1dp" />
+
             <LinearLayout
+                android:id="@+id/layoutPlayerListContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="18dp"
                 android:layout_marginBottom="8dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="vertical"
+                android:visibility="gone">
 
-                <TextView
-                    android:id="@+id/txtPlayerListHeader"
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="CLUB PLAYERS"
-                    android:textAppearance="@style/TextAppearance.TeamBalancer.LabelLarge"
-                    android:textColor="@color/on_surface" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/txtPlayerCount"
-                    android:layout_width="wrap_content"
+                    <TextView
+                        android:id="@+id/txtPlayerListHeader"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="CLUB PLAYERS"
+                        android:textAppearance="@style/TextAppearance.TeamBalancer.LabelLarge"
+                        android:textColor="@color/on_surface" />
+
+                    <TextView
+                        android:id="@+id/txtPlayerCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Total: 0"
+                        android:textAppearance="@style/TextAppearance.TeamBalancer.TitleMedium"
+                        android:textColor="@color/accent_cyan" />
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerPlayers"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Total: 0"
-                    android:textAppearance="@style/TextAppearance.TeamBalancer.TitleMedium"
-                    android:textColor="@color/accent_cyan" />
+                    android:layout_marginTop="8dp"
+                    android:nestedScrollingEnabled="false" />
             </LinearLayout>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerPlayers"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

@@ -28,6 +28,8 @@ public class Player implements Serializable {
 
     @Ignore
     public String assignedTeam; // Not persisted in DB, used for team balancing flow
+    @Ignore
+    public boolean isProcessed; // Not persisted in DB, used for team balancing algorithm
 
     public enum Style {
         BATSMAN("Batsman"), 

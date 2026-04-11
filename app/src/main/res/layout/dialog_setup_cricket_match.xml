@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/surface">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Match Configuration"
+            android:textAppearance="@style/TextAppearance.TeamBalancer.TitleMedium"
+            android:textColor="@color/on_surface"
+            android:layout_marginBottom="16dp"/>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Match Type"
+            android:layout_marginBottom="12dp"
+            app:hintTextColor="@color/accent"
+            app:boxStrokeColor="@color/accent">
+            <AutoCompleteTextView
+                android:id="@+id/spinnerMatchType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"
+                android:text="Box Cricket"
+                android:textColor="@color/on_surface"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Overs per Innings"
+            android:layout_marginBottom="12dp"
+            app:hintTextColor="@color/accent"
+            app:boxStrokeColor="@color/accent">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editMaxOvers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:text="6"
+                android:textColor="@color/on_surface"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Specific Rules"
+            android:textAppearance="@style/TextAppearance.TeamBalancer.LabelLarge"
+            android:textColor="@color/on_surface_variant"
+            android:layout_marginBottom="8dp"/>
+
+        <CheckBox
+            android:id="@+id/cbOneBounce"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="One-bounce catch out (Box)"
+            android:textColor="@color/on_surface"
+            android:buttonTint="@color/accent"
+            android:checked="true"/>
+
+        <CheckBox
+            android:id="@+id/cbNetRuns"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Net/Side wall runs"
+            android:textColor="@color/on_surface"
+            android:buttonTint="@color/accent"
+            android:checked="true"/>
+
+        <CheckBox
+            android:id="@+id/cbNoRunning"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No running mode"
+            android:buttonTint="@color/accent"
+            android:textColor="@color/on_surface"/>
+
+    </LinearLayout>
+</ScrollView>

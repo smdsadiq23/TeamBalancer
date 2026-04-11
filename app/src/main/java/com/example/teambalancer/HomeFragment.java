@@ -40,6 +40,7 @@ public class HomeFragment extends Fragment {
         binding.cardBalance.setOnClickListener(v -> navigateTo(new BalanceFragment()));
         binding.cardHistory.setOnClickListener(v -> navigateTo(new HistoryFragment()));
         binding.cardClubs.setOnClickListener(v -> navigateTo(new ClubsFragment()));
+        binding.cardFixtures.setOnClickListener(v -> navigateTo(new MatchesFragment()));
     }
 
     private void showUserMenu(View v) {

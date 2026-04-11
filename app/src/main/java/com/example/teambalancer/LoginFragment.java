@@ -102,7 +102,7 @@ public class LoginFragment extends Fragment {
                 }
                 
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(),
-                        android.R.layout.simple_dropdown_item_1line, clubNames);
+                        R.layout.item_simple_list, clubNames);
                 binding.autoCompleteClub.setAdapter(adapter);
                 
                 // Pre-select the first club if available and nothing is typed yet

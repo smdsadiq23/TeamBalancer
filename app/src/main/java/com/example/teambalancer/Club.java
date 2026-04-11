@@ -12,8 +12,6 @@ public class Club implements Serializable {
     public int id;
     public String name;
     
-    // For simplicity in this migration, we'll keep these as converted fields
-    // In a fully optimized "million user" design, these would be separate tables
     public List<String> teamNames;
     public List<TeamHistory> history;
 
@@ -25,11 +23,19 @@ public class Club implements Serializable {
 
     public static class TeamHistory implements Serializable {
         public String date;
+        public String sport = "Other";
         public List<Team> teams;
+        public List<Match> matches;
 
         public TeamHistory(String date, List<Team> teams) {
+            this(date, teams, "Other");
+        }
+
+        public TeamHistory(String date, List<Team> teams, String sport) {
             this.date = date;
             this.teams = teams;
+            this.sport = sport;
+            this.matches = new ArrayList<>();
         }
     }
 }

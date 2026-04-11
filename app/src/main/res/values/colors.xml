@@ -3,7 +3,7 @@
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
 
-    <!-- Vibrant Modern Palette: Deep Violet + Electric Cyan + Hot Pink -->
+    <!-- Vibrant Modern Palette -->
     <color name="primary_dark">#0F0C29</color>
     <color name="primary_mid">#302B63</color>
     <color name="primary_light">#24243E</color>
@@ -17,6 +17,8 @@
     <color name="primary_variant">#24243E</color>
     <color name="accent">#00D2FF</color>
     <color name="secondary">#FF00CC</color>
+    <color name="cricket_green">#00C853</color>
+    <color name="cricket_red">#E63946</color>
 
     <color name="background">#0F0C29</color>
     <color name="surface">#1A1A2E</color>
@@ -29,41 +31,22 @@
     <color name="on_surface_variant">#B0B0D0</color>
     <color name="color_disabled">#4A4A6A</color>
 
-    <!-- CTA gradient: Electric Cyan → Purple → Pink -->
-    <color name="red_gradient_start">#00D2FF</color>
-    <color name="red_gradient_center">#9D50BB</color>
-    <color name="red_gradient_end">#FF00CC</color>
-
-    <color name="teal_gradient_start">#3A1C71</color>
-    <color name="teal_gradient_end">#D76D77</color>
-
-    <color name="hero_glow">#3300D2FF</color>
-    <color name="hero_glow_secondary">#33FF00CC</color>
-
-    <color name="success">#00F2FE</color> <!-- Bright Cyan/Blue success -->
-    <color name="warning">#F9D423</color>
-    <color name="error">#FF4B2B</color>
-    <color name="info">#4FACFE</color>
-
     <color name="divider">#3F3F6F</color>
     <color name="ripple_surface">#33FFFFFF</color>
-    <color name="stroke_glow">#4D00D2FF</color>
 
-    <!-- Compat/Legacy mapping -->
-    <color name="ch_primary">#0F0C29</color>
-    <color name="ch_primary_dark">#0F0C29</color>
-    <color name="ch_accent">#00D2FF</color>
-    <color name="ch_background">#0F0C29</color>
-    <color name="ch_card_bg">#1A1A2E</color>
-    <color name="ch_text_primary">#FFFFFF</color>
-    <color name="ch_text_secondary">#B0B0D0</color>
-    <color name="ch_red">#FF00CC</color>
-    <color name="card_white">#252545</color>
-    <color name="text_dark">#FFFFFF</color>
+    <!-- State colors for inputs -->
+    <color name="input_stroke_default">#3F3F6F</color>
+    <color name="input_stroke_focused">#00D2FF</color>
 
-    <color name="cricket_red">#FF00CC</color>
-    <color name="cricket_ivory">#F0F0F0</color>
-    <color name="cricket_green">#00F2FE</color>
-    <color name="onSurfaceVariant">#B0B0D0</color>
-    <color name="delete_red">#FF4B2B</color>
+    <!-- Gradient Colors -->
+    <color name="red_gradient_start">#FF4D5A</color>
+    <color name="red_gradient_center">#E63946</color>
+    <color name="red_gradient_end">#B71C2B</color>
+
+    <color name="teal_gradient_start">#14B8A6</color>
+    <color name="teal_gradient_end">#0F766E</color>
+
+    <!-- Missing Colors -->
+    <color name="stroke_glow">#00D2FF</color>
+    <color name="warning">#FFC107</color>
 </resources>

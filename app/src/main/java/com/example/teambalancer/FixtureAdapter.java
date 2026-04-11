@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 import java.util.Locale;
 
-public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHolder> {
+public class FixtureAdapter extends RecyclerView.Adapter<FixtureAdapter.MatchViewHolder> {
 
     private List<Match> matches;
     private OnMatchActionListener listener;
@@ -21,7 +21,7 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
         void onViewMatch(Match match, int position);
     }
 
-    public MatchAdapter(List<Match> matches) {
+    public FixtureAdapter(List<Match> matches) {
         this.matches = matches;
     }
 
@@ -63,8 +63,8 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
             holder.txtResult.setText(getWinnerString(match));
 
             if ("Cricket".equalsIgnoreCase(match.sport)) {
-                holder.txtScore1.setText(String.format(Locale.getDefault(), "%d/%d", match.score1, match.wickets1));
-                holder.txtScore2.setText(String.format(Locale.getDefault(), "%d/%d", match.score2, match.wickets2));
+                holder.txtScore1.setText(match.score1 + "/" + match.wickets1);
+                holder.txtScore2.setText(match.score2 + "/" + match.wickets2);
             } else {
                 holder.txtScore1.setText(String.valueOf(match.score1));
                 holder.txtScore2.setText(String.valueOf(match.score2));
@@ -81,8 +81,8 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
             holder.txtResult.setVisibility(View.GONE);
 
             if ("Cricket".equalsIgnoreCase(match.sport)) {
-                holder.txtScore1.setText(String.format(Locale.getDefault(), "%d/%d", match.score1, match.wickets1));
-                holder.txtScore2.setText(String.format(Locale.getDefault(), "%d/%d", match.score2, match.wickets2));
+                holder.txtScore1.setText(match.score1 + "/" + match.wickets1);
+                holder.txtScore2.setText(match.score2 + "/" + match.wickets2);
             } else {
                 holder.txtScore1.setText(String.valueOf(match.score1));
                 holder.txtScore2.setText(String.valueOf(match.score2));
@@ -90,6 +90,7 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
             
             holder.btnDeleteMatch.setVisibility(View.VISIBLE);
         } else {
+            // Scheduled: always show scoreboard (0–0 / 0/0) so scores are visible before start
             holder.txtStatus.setVisibility(View.VISIBLE);
             holder.txtStatus.setText("SCHEDULED");
             holder.txtStatus.setBackgroundResource(R.drawable.bg_stat_pill);
@@ -99,8 +100,8 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
             holder.txtResult.setVisibility(View.GONE);
 
             if ("Cricket".equalsIgnoreCase(match.sport)) {
-                holder.txtScore1.setText(String.format(Locale.getDefault(), "%d/%d", match.score1, match.wickets1));
-                holder.txtScore2.setText(String.format(Locale.getDefault(), "%d/%d", match.score2, match.wickets2));
+                holder.txtScore1.setText(match.score1 + "/" + match.wickets1);
+                holder.txtScore2.setText(match.score2 + "/" + match.wickets2);
             } else {
                 holder.txtScore1.setText(String.valueOf(match.score1));
                 holder.txtScore2.setText(String.valueOf(match.score2));
@@ -127,14 +128,10 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
     private String getWinnerString(Match match) {
         if (match.score1 == match.score2) return "Match Tied";
         
-        boolean team1Won = match.score1 > match.score2;
-        String winner = team1Won ? match.team1 : match.team2;
-        
-        if ("Cricket".equalsIgnoreCase(match.sport)) {
-            // Detailed winner string for cricket can be complex, keeping it simple for adapter
-            return winner + " won";
+        if (match.score1 > match.score2) {
+            return match.team1 + " won";
         } else {
-            return winner + " won";
+            return match.team2 + " won";
         }
     }
 

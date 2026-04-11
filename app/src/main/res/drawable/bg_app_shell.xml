@@ -1,36 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@color/background" />
+    <!-- Deep midnight background -->
+    <item android:drawable="@color/primary_dark" />
 
-    <!-- Top Left Glow -->
-    <item android:top="-150dp" android:left="-150dp">
+    <!-- Vibrant Mesh/Glow Gradients -->
+
+    <!-- Top Left Cyan Glow -->
+    <item android:top="-180dp" android:left="-180dp">
         <shape android:shape="oval">
-            <size android:width="400dp" android:height="400dp" />
-            <solid android:color="#4D00D2FF" /> <!-- 30% Cyan -->
+            <size android:width="450dp" android:height="450dp" />
+            <gradient
+                android:type="radial"
+                android:gradientRadius="225dp"
+                android:startColor="#6600D2FF"
+                android:endColor="#0000D2FF" />
         </shape>
     </item>
 
-    <!-- Top Right Glow -->
-    <item android:gravity="end|top" android:right="-80dp" android:top="40dp">
-        <shape android:shape="oval">
-            <size android:width="300dp" android:height="300dp" />
-            <solid android:color="#33FF00CC" /> <!-- 20% Pink -->
-        </shape>
-    </item>
-
-    <!-- Center Left Glow -->
-    <item android:gravity="start|center_vertical" android:left="-120dp">
+    <!-- Top Right Hot Pink Glow -->
+    <item android:gravity="end|top" android:right="-100dp" android:top="60dp">
         <shape android:shape="oval">
             <size android:width="350dp" android:height="350dp" />
-            <solid android:color="#1A9D50BB" /> <!-- 10% Purple -->
+            <gradient
+                android:type="radial"
+                android:gradientRadius="175dp"
+                android:startColor="#4DFF00CC"
+                android:endColor="#00FF00CC" />
         </shape>
     </item>
 
-    <!-- Bottom Right Glow -->
-    <item android:gravity="end|bottom" android:right="-100dp" android:bottom="-120dp">
+    <!-- Center Left Purple Glow -->
+    <item android:gravity="start|center_vertical" android:left="-140dp">
         <shape android:shape="oval">
-            <size android:width="380dp" android:height="380dp" />
-            <solid android:color="#4000D2FF" /> <!-- 25% Cyan -->
+            <size android:width="400dp" android:height="400dp" />
+            <gradient
+                android:type="radial"
+                android:gradientRadius="200dp"
+                android:startColor="#339D50BB"
+                android:endColor="#009D50BB" />
         </shape>
     </item>
+
+    <!-- Bottom Right Electric Blue Glow -->
+    <item android:gravity="end|bottom" android:right="-120dp" android:bottom="-140dp">
+        <shape android:shape="oval">
+            <size android:width="420dp" android:height="420dp" />
+            <gradient
+                android:type="radial"
+                android:gradientRadius="210dp"
+                android:startColor="#5900F2FE"
+                android:endColor="#0000F2FE" />
+        </shape>
+    </item>
+
+    <!-- Subtle texture/grain overlay could be added here if needed -->
 </layer-list>

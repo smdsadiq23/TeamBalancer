@@ -22,8 +22,10 @@
 
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">false</item>
-        <item name="android:navigationBarColor">@color/background</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
 
         <item name="alertDialogTheme">@style/ThemeOverlay.TeamBalancer.Dialog</item>
         <item name="materialAlertDialogTheme">@style/ThemeOverlay.TeamBalancer.Dialog</item>
@@ -33,13 +35,16 @@
 
         <item name="textAppearanceHeadlineLarge">@style/TextAppearance.TeamBalancer.HeadlineLarge</item>
         <item name="textAppearanceHeadlineMedium">@style/TextAppearance.TeamBalancer.HeadlineMedium</item>
+        <item name="textAppearanceHeadlineSmall">@style/TextAppearance.TeamBalancer.HeadlineSmall</item>
         <item name="textAppearanceTitleLarge">@style/TextAppearance.TeamBalancer.TitleLarge</item>
         <item name="textAppearanceTitleMedium">@style/TextAppearance.TeamBalancer.TitleMedium</item>
         <item name="textAppearanceTitleSmall">@style/TextAppearance.TeamBalancer.TitleSmall</item>
         <item name="textAppearanceBodyLarge">@style/TextAppearance.TeamBalancer.BodyLarge</item>
         <item name="textAppearanceBodyMedium">@style/TextAppearance.TeamBalancer.BodyMedium</item>
+        <item name="textAppearanceBodySmall">@style/TextAppearance.TeamBalancer.BodySmall</item>
         <item name="textAppearanceLabelLarge">@style/TextAppearance.TeamBalancer.LabelLarge</item>
         <item name="textAppearanceLabelMedium">@style/TextAppearance.TeamBalancer.LabelMedium</item>
+        <item name="textAppearanceLabelSmall">@style/TextAppearance.TeamBalancer.LabelSmall</item>
 
         <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.TeamBalancer.Small</item>
         <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.TeamBalancer.Medium</item>
@@ -99,6 +104,9 @@
         <item name="boxStrokeWidthFocused">2dp</item>
         <item name="boxStrokeColor">@color/divider</item>
         <item name="boxBackgroundColor">@color/surface_elevated</item>
+        <item name="hintTextColor">@color/accent</item>
+        <item name="android:textColorHint">@color/on_surface_variant</item>
+        <item name="startIconTint">@color/on_surface_variant</item>
     </style>
 
     <style name="Widget.TeamBalancer.TextInputLayout.ExposedDropdownMenu" parent="Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
@@ -110,8 +118,13 @@
         <item name="boxStrokeWidthFocused">2dp</item>
         <item name="boxStrokeColor">@color/divider</item>
         <item name="boxBackgroundColor">@color/surface_elevated</item>
+        <item name="hintTextColor">@color/accent</item>
+        <item name="android:textColorHint">@color/on_surface_variant</item>
+        <item name="startIconTint">@color/on_surface_variant</item>
+        <item name="endIconTint">@color/on_surface_variant</item>
     </style>
 
+    <!-- Rest of the styles remain the same -->
     <style name="TextAppearance.TeamBalancer.DisplayHero" parent="TextAppearance.Material3.DisplaySmall">
         <item name="android:textStyle">bold</item>
         <item name="android:letterSpacing">-0.02</item>
@@ -134,6 +147,11 @@
     </style>
 
     <style name="TextAppearance.TeamBalancer.HeadlineMedium" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.0</item>
+    </style>
+
+    <style name="TextAppearance.TeamBalancer.HeadlineSmall" parent="TextAppearance.Material3.HeadlineSmall">
         <item name="android:textStyle">bold</item>
         <item name="android:letterSpacing">0.0</item>
     </style>
@@ -161,6 +179,10 @@
         <item name="android:letterSpacing">0.01</item>
     </style>
 
+    <style name="TextAppearance.TeamBalancer.BodySmall" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:letterSpacing">0.01</item>
+    </style>
+
     <style name="TextAppearance.TeamBalancer.LabelLarge" parent="TextAppearance.Material3.LabelLarge">
         <item name="android:textStyle">bold</item>
         <item name="android:letterSpacing">0.08</item>
@@ -169,6 +191,11 @@
     <style name="TextAppearance.TeamBalancer.LabelMedium" parent="TextAppearance.Material3.LabelMedium">
         <item name="android:textStyle">bold</item>
         <item name="android:letterSpacing">0.06</item>
+    </style>
+
+    <style name="TextAppearance.TeamBalancer.LabelSmall" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.04</item>
     </style>
 
     <style name="ShapeAppearance.TeamBalancer.Small" parent="ShapeAppearance.Material3.SmallComponent">

@@ -27,7 +27,7 @@ public class ResultsFragment extends Fragment {
 
     private FragmentResultsBinding binding;
     private ArrayList<Team> teams;
-    private TeamAdapter adapter;
+    private TeamAdapter teamAdapter;
     private DataManager dataManager;
     private Club currentClub;
     private int clubId;
@@ -60,8 +60,40 @@ public class ResultsFragment extends Fragment {
 
         binding.txtResultClubName.setText(clubName.isEmpty() ? "BALANCED TEAMS" : clubName.toUpperCase());
         
-        adapter = new TeamAdapter(teams);
-        adapter.setOnTeamModifiedListener(new TeamAdapter.OnTeamModifiedListener() {
+        setupTeamRecyclerView();
+
+        dataManager.getClubById(clubId).observe(getViewLifecycleOwner(), club -> {
+            if (club != null) {
+                currentClub = club;
+            }
+        });
+
+        binding.swipeRefresh.setColorSchemeColors(
+                ContextCompat.getColor(requireContext(), R.color.accent),
+                ContextCompat.getColor(requireContext(), R.color.secondary));
+
+        binding.swipeRefresh.setOnRefreshListener(() -> {
+            regenerateTeams();
+            binding.swipeRefresh.setRefreshing(false);
+        });
+
+        binding.btnRegenerate.setOnClickListener(v -> regenerateTeams());
+        
+        binding.btnSaveChanges.setOnClickListener(v -> {
+            saveChangesToHistory(false);
+            binding.btnSaveChanges.setVisibility(View.GONE);
+            binding.btnRegenerate.setVisibility(View.GONE);
+            Toast.makeText(requireContext(), "Changes Saved!", Toast.LENGTH_SHORT).show();
+        });
+
+        binding.btnBack.setOnClickListener(v -> {
+            getParentFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        });
+    }
+
+    private void setupTeamRecyclerView() {
+        teamAdapter = new TeamAdapter(teams);
+        teamAdapter.setOnTeamModifiedListener(new TeamAdapter.OnTeamModifiedListener() {
             @Override
             public void onTeamModified() {
                 binding.btnSaveChanges.setVisibility(View.VISIBLE);
@@ -75,37 +107,7 @@ public class ResultsFragment extends Fragment {
         });
 
         binding.recyclerTeams.setLayoutManager(new GridLayoutManager(requireContext(), 2));
-        binding.recyclerTeams.setAdapter(adapter);
-
-        // Fetch the latest club data and ensure changes are saved
-        dataManager.getClubById(clubId).observe(getViewLifecycleOwner(), club -> {
-            if (club != null) {
-                currentClub = club;
-            }
-        });
-
-        binding.swipeRefresh.setColorSchemeColors(
-                ContextCompat.getColor(requireContext(), R.color.accent),
-                ContextCompat.getColor(requireContext(), R.color.secondary));
-
-        // Swipe to Refresh logic for regeneration
-        binding.swipeRefresh.setOnRefreshListener(() -> {
-            regenerateTeams();
-            binding.swipeRefresh.setRefreshing(false);
-        });
-
-        binding.btnRegenerate.setOnClickListener(v -> regenerateTeams());
-        
-        binding.btnSaveChanges.setOnClickListener(v -> {
-            saveChangesToHistory();
-            binding.btnSaveChanges.setVisibility(View.GONE);
-            binding.btnRegenerate.setVisibility(View.GONE);
-            Toast.makeText(requireContext(), "Changes Saved!", Toast.LENGTH_SHORT).show();
-        });
-
-        binding.btnBack.setOnClickListener(v -> {
-            getParentFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        });
+        binding.recyclerTeams.setAdapter(teamAdapter);
     }
 
     private void showMovePlayerDialog(Player player, Team fromTeam) {
@@ -139,7 +141,7 @@ public class ResultsFragment extends Fragment {
         fromTeam.totalStrength = fromTeam.players.stream().mapToInt(Player::getPower).sum();
         targetTeam.totalStrength = targetTeam.players.stream().mapToInt(Player::getPower).sum();
 
-        adapter.notifyDataSetChanged();
+        teamAdapter.notifyDataSetChanged();
         binding.btnSaveChanges.setVisibility(View.VISIBLE);
         binding.btnRegenerate.setVisibility(View.VISIBLE);
         
@@ -163,18 +165,33 @@ public class ResultsFragment extends Fragment {
         
         teams.clear();
         teams.addAll(newTeams);
-        adapter.notifyDataSetChanged();
+        teamAdapter.notifyDataSetChanged();
+
         binding.btnSaveChanges.setVisibility(View.VISIBLE);
         binding.btnRegenerate.setVisibility(View.VISIBLE);
         
-        Toast.makeText(requireContext(), "Teams Regenerated! Don't forget to save.", Toast.LENGTH_SHORT).show();
+        saveChangesToHistory(true);
+        Toast.makeText(requireContext(), "Teams Regenerated!", Toast.LENGTH_SHORT).show();
     }
 
-    private void saveChangesToHistory() {
+    private void saveChangesToHistory(boolean forceRegenerateMatches) {
         if (currentClub != null && !currentClub.history.isEmpty()) {
-            // Update the most recent history record with the current (regenerated or modified) teams
             int lastIndex = currentClub.history.size() - 1;
-            currentClub.history.get(lastIndex).teams = new ArrayList<>(teams);
+            Club.TeamHistory latest = currentClub.history.get(lastIndex);
+            
+            latest.teams = new ArrayList<>(teams);
+            
+            if (forceRegenerateMatches || latest.matches == null || latest.matches.isEmpty()) {
+                latest.matches = new ArrayList<>();
+            } else {
+                for (Match m : latest.matches) {
+                    Team t1 = teams.stream().filter(t -> t.name.equals(m.team1)).findFirst().orElse(null);
+                    Team t2 = teams.stream().filter(t -> t.name.equals(m.team2)).findFirst().orElse(null);
+                    if (t1 != null) m.squad1 = t1.players.stream().map(p -> p.name).collect(Collectors.toList());
+                    if (t2 != null) m.squad2 = t2.players.stream().map(p -> p.name).collect(Collectors.toList());
+                }
+            }
+            
             dataManager.updateClub(currentClub);
         }
     }
