@@ -24,6 +24,10 @@
             android:name=".ScorecardActivity"
             android:exported="false"
             android:theme="@style/Theme.TeamBalancer" />
+        <activity
+            android:name=".CricketScoringActivity"
+            android:exported="false"
+            android:theme="@style/Theme.TeamBalancer" />
     </application>
 
 </manifest>

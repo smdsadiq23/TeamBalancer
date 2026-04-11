@@ -17,4 +17,5 @@
     <string name="col_w">W</string>
     <string name="col_econ">Econ</string>
     <string name="scorecard_in_progress">Match in progress</string>
+    <string name="cricket_scoring_title">Scoring</string>
 </resources>

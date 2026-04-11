@@ -93,6 +93,43 @@ public class DataManager {
     }
 
     /**
+     * Replaces the {@link Match} with the same {@link Match#id} in the club JSON and persists.
+     * Used by {@link CricketScoringActivity} after each change so Room stays the source of truth.
+     */
+    public void replaceMatchInClubAndSave(String clubName, Match updated) {
+        if (clubName == null || updated == null || updated.id == null) {
+            return;
+        }
+        MatchPersistenceHelper.syncJsonFromLists(updated);
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            Club c = db.clubDao().getClubByNameSync(clubName);
+            if (c == null || !replaceMatchInClub(c, updated)) {
+                return;
+            }
+            db.clubDao().update(c);
+        });
+    }
+
+    private static boolean replaceMatchInClub(Club c, Match updated) {
+        if (c.history == null) {
+            return false;
+        }
+        for (Club.TeamHistory th : c.history) {
+            if (th.matches == null) {
+                continue;
+            }
+            for (int i = 0; i < th.matches.size(); i++) {
+                Match m = th.matches.get(i);
+                if (updated.id.equals(m.id)) {
+                    th.matches.set(i, updated);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Reads the current club from SQLite (after any pending writes), runs {@link SessionMatchLoader}
      * normalization, persists if needed, then delivers the result on the main thread. Use from
      * {@code onResume} so the UI matches DB after {@link ScorecardActivity} or async saves.
