@@ -82,38 +82,7 @@ public class CricketScoringActivity extends AppCompatActivity {
                 });
 
         WebView webFullScorecard = findViewById(R.id.webFullScorecard);
-        TextView txtFullExtras = findViewById(R.id.txtFullScoreboardExtras);
-        TextView txtFullTimeline = findViewById(R.id.txtFullScoreboardTimeline);
         TextView txtFullSquads = findViewById(R.id.txtFullScoreboardSquads);
-
-        TabLayout tabFullScoreboardSub = findViewById(R.id.tabFullScoreboardSub);
-        View layoutFullScoreboardScorecard = findViewById(R.id.layoutFullScoreboardScorecard);
-        View layoutFullScoreboardLog = findViewById(R.id.layoutFullScoreboardLog);
-        if (tabFullScoreboardSub != null
-                && layoutFullScoreboardScorecard != null
-                && layoutFullScoreboardLog != null) {
-            tabFullScoreboardSub.addTab(
-                    tabFullScoreboardSub.newTab().setText(R.string.scoring_subtab_scorecard));
-            tabFullScoreboardSub.addTab(
-                    tabFullScoreboardSub.newTab().setText(R.string.scoring_subtab_log));
-            tabFullScoreboardSub.addOnTabSelectedListener(
-                    new TabLayout.OnTabSelectedListener() {
-                        @Override
-                        public void onTabSelected(TabLayout.Tab tab) {
-                            boolean scorecard = tab.getPosition() == 0;
-                            layoutFullScoreboardScorecard.setVisibility(
-                                    scorecard ? View.VISIBLE : View.GONE);
-                            layoutFullScoreboardLog.setVisibility(
-                                    scorecard ? View.GONE : View.VISIBLE);
-                        }
-
-                        @Override
-                        public void onTabUnselected(TabLayout.Tab tab) {}
-
-                        @Override
-                        public void onTabReselected(TabLayout.Tab tab) {}
-                    });
-        }
 
         MaterialToolbar toolbar = findViewById(R.id.toolbarScoring);
         toolbar.setNavigationOnClickListener(v -> finishWithOk());
@@ -223,12 +192,6 @@ public class CricketScoringActivity extends AppCompatActivity {
 
                     if (webFullScorecard != null) {
                         loadProfessionalScorecard(webFullScorecard, match);
-                    }
-                    if (txtFullExtras != null) {
-                        txtFullExtras.setText(CricketFullScoreboardHelper.formatExtras(match));
-                    }
-                    if (txtFullTimeline != null) {
-                        txtFullTimeline.setText(CricketFullScoreboardHelper.formatTimeline(match));
                     }
                     if (txtFullSquads != null) {
                         txtFullSquads.setText(CricketFullScoreboardHelper.formatSquads(match));

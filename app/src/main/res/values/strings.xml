@@ -20,7 +20,5 @@
     <string name="cricket_scoring_title">Scoring</string>
     <string name="scoring_tab_live">Live</string>
     <string name="scoring_tab_scoreboard">Full scoreboard</string>
-    <string name="scoring_subtab_scorecard">Scorecard</string>
-    <string name="scoring_subtab_log">Extras &amp; timeline</string>
     <string name="scorecard_squads">Squads</string>
 </resources>

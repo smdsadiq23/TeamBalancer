@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Same as default: professional scorecard WebView + log tab + squads; wider padding. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -9,80 +7,13 @@
     android:paddingTop="8dp"
     android:paddingBottom="24dp">
 
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabFullScoreboardSub"
+    <android.webkit.WebView
+        android:id="@+id/webFullScorecard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
-        app:tabIndicatorColor="@color/accent_cyan"
-        app:tabMode="fixed"
-        app:tabSelectedTextColor="@color/accent_cyan"
-        app:tabTextColor="@color/on_surface_variant" />
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="120dp">
-
-        <LinearLayout
-            android:id="@+id/layoutFullScoreboardScorecard"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="visible">
-
-            <android.webkit.WebView
-                android:id="@+id/webFullScorecard"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:minHeight="320dp"
-                android:overScrollMode="never" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/layoutFullScoreboardLog"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/scorecard_extras"
-                android:textAppearance="@style/TextAppearance.TeamBalancer.TitleSmall"
-                android:textColor="@color/warning" />
-
-            <TextView
-                android:id="@+id/txtFullScoreboardExtras"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:text="Wd:0 Nb:0 B:0 Lb:0"
-                android:textColor="@color/on_surface_secondary"
-                android:textSize="13sp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="@string/scorecard_timeline"
-                android:textAppearance="@style/TextAppearance.TeamBalancer.TitleSmall"
-                android:textColor="@color/on_surface" />
-
-            <TextView
-                android:id="@+id/txtFullScoreboardTimeline"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:lineSpacingMultiplier="1.15"
-                android:text="—"
-                android:textColor="@color/on_surface_variant"
-                android:textSize="12sp"
-                android:typeface="monospace" />
-        </LinearLayout>
-    </FrameLayout>
+        android:minHeight="320dp"
+        android:overScrollMode="never" />
 
     <View
         android:layout_width="match_parent"
