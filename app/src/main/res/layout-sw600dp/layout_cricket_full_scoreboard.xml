@@ -1,35 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Tablet / large: two-column scoreboard + squads at bottom (no inner tabs). -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingHorizontal="16dp"
+    android:paddingHorizontal="24dp"
     android:paddingTop="8dp"
     android:paddingBottom="24dp">
 
-    <!-- Sub-tabs: scorecard stats vs extras/timeline (tablet-friendly split) -->
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabFullScoreboardSub"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        app:tabIndicatorColor="@color/accent_cyan"
-        app:tabMode="fixed"
-        app:tabSelectedTextColor="@color/accent_cyan"
-        app:tabTextColor="@color/on_surface_variant" />
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="100dp">
+        android:baselineAligned="false"
+        android:orientation="horizontal">
 
         <LinearLayout
-            android:id="@+id/layoutFullScoreboardScorecard"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:orientation="vertical"
-            android:visibility="visible">
+            android:paddingEnd="12dp">
 
             <TextView
                 android:layout_width="match_parent"
@@ -68,11 +58,11 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/layoutFullScoreboardLog"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:orientation="vertical"
-            android:visibility="gone">
+            android:paddingStart="12dp">
 
             <TextView
                 android:layout_width="match_parent"
@@ -109,7 +99,7 @@
                 android:textSize="12sp"
                 android:typeface="monospace" />
         </LinearLayout>
-    </FrameLayout>
+    </LinearLayout>
 
     <View
         android:layout_width="match_parent"
