@@ -47,6 +47,7 @@ public class FixtureAdapter extends RecyclerView.Adapter<FixtureAdapter.MatchVie
 
         holder.txtTeam1.setText(match.team1);
         holder.txtTeam2.setText(match.team2);
+        MatchDisplayHelper.bindFixtureMetaLine(holder.txtFixtureMeta, match);
 
         if (MatchCompletionHelper.isEffectivelyCompleted(match)) {
             holder.txtStatus.setVisibility(View.VISIBLE);
@@ -158,12 +159,13 @@ public class FixtureAdapter extends RecyclerView.Adapter<FixtureAdapter.MatchVie
     }
 
     static class MatchViewHolder extends RecyclerView.ViewHolder {
-        TextView txtTeam1, txtTeam2, txtScore1, txtScore2, txtVs, txtStatus, txtResult;
+        TextView txtTeam1, txtTeam2, txtScore1, txtScore2, txtVs, txtStatus, txtResult, txtFixtureMeta;
         View layoutScores;
         ImageButton btnDeleteMatch;
 
         MatchViewHolder(@NonNull View itemView) {
             super(itemView);
+            txtFixtureMeta = itemView.findViewById(R.id.txtFixtureMeta);
             txtTeam1 = itemView.findViewById(R.id.txtTeam1);
             txtTeam2 = itemView.findViewById(R.id.txtTeam2);
             txtScore1 = itemView.findViewById(R.id.txtScore1);

@@ -17,10 +17,21 @@ import com.example.teambalancer.databinding.FragmentFixturesBinding;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
 public class MatchesFragment extends Fragment {
+
+    private static final String ARG_EMBEDDED = "embedded";
+
+    public static MatchesFragment newInstance(boolean embedded) {
+        MatchesFragment f = new MatchesFragment();
+        Bundle args = new Bundle();
+        args.putBoolean(ARG_EMBEDDED, embedded);
+        f.setArguments(args);
+        return f;
+    }
 
     private FragmentFixturesBinding binding;
     private DataManager dataManager;
@@ -41,9 +52,14 @@ public class MatchesFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         dataManager = new DataManager(requireContext());
 
-        binding.toolbarFixtures.setTitle("Matches");
-        binding.toolbarFixtures.setNavigationOnClickListener(v -> getParentFragmentManager().popBackStack());
-        binding.txtSessionBlurb.setText("Live and completed games for this session.");
+        boolean embedded = getArguments() != null && getArguments().getBoolean(ARG_EMBEDDED, false);
+        if (embedded) {
+            binding.appBarFixtures.setVisibility(View.GONE);
+        } else {
+            binding.toolbarFixtures.setTitle("Matches");
+            binding.toolbarFixtures.setNavigationOnClickListener(v -> getParentFragmentManager().popBackStack());
+        }
+        binding.txtSessionBlurb.setText("Ball-by-ball scoring and finished games for this session.");
         binding.txtSectionTitle.setText("Live & completed");
         binding.btnAddFixture.setVisibility(View.GONE);
 
@@ -57,9 +73,11 @@ public class MatchesFragment extends Fragment {
             @Override
             public void onEditMatch(Match match, int position) {
                 if ("Cricket".equalsIgnoreCase(match.sport)) {
-                    if (match.isCompleted) {
+                    if (MatchCompletionHelper.isEffectivelyCompleted(match)) {
                         showCricketScoringDialog(match);
-                    } else if (!match.hasStarted && match.tossWinner == null && match.ballHistory.isEmpty()) {
+                    } else if (!match.hasStarted
+                            && match.tossWinner == null
+                            && (match.ballHistory == null || match.ballHistory.isEmpty())) {
                         showCricketSetupDialog(match);
                     } else {
                         showCricketScoringDialog(match);
@@ -95,6 +113,7 @@ public class MatchesFragment extends Fragment {
                     if (currentClub != null && !currentClub.history.isEmpty()) {
                         Club.TeamHistory latestHistory = currentClub.history.get(currentClub.history.size() - 1);
                         if (latestHistory.matches != null) {
+                            MatchCompletionHelper.forgetMatchCompletion(match);
                             latestHistory.matches.remove(match);
                             dataManager.updateClub(currentClub);
                             loadMatches(currentClub);
@@ -126,20 +145,7 @@ public class MatchesFragment extends Fragment {
             }
 
             if (latestHistory.matches != null) {
-                for (Match m : latestHistory.matches) {
-                    if (MatchCompletionHelper.syncCompletionFromTimestamp(m)) {
-                        updated = true;
-                    }
-                }
-                updated |= MatchCompletionHelper.normalizeStartedFlags(latestHistory.matches);
-                for (Match m : latestHistory.matches) {
-                    if (MatchCompletionHelper.applyInningsCompletionRules(m)) {
-                        updated = true;
-                    }
-                }
-                for (Match m : latestHistory.matches) {
-                    MatchFixtureHelper.normalizeFixtureScheduleOnLoad(m);
-                }
+                updated |= SessionMatchLoader.prepareMatchesForSession(latestHistory.matches);
             }
 
             for (Match m : latestHistory.matches) {
@@ -147,13 +153,14 @@ public class MatchesFragment extends Fragment {
                     currentMatches.add(m);
                 }
             }
+            Collections.sort(currentMatches, SessionMatchLoader.BY_SCHEDULE_THEN_TEAM);
             if (updated) {
                 dataManager.updateClub(currentClub);
             }
         }
 
         if (currentMatches.isEmpty()) {
-            binding.txtEmptyFixtures.setText("No matches yet.\nAdd a fixture on the Fixtures screen, then start scoring.");
+            binding.txtEmptyFixtures.setText("No matches in progress yet.\nAdd a fixture under Scheduled, then toss and score.");
             binding.txtEmptyFixtures.setVisibility(View.VISIBLE);
         } else {
             binding.txtEmptyFixtures.setVisibility(View.GONE);

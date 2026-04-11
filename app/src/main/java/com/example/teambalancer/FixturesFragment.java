@@ -1,5 +1,7 @@
 package com.example.teambalancer;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,12 +18,25 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.example.teambalancer.databinding.FragmentFixturesBinding;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class FixturesFragment extends Fragment {
+
+    private static final String ARG_EMBEDDED = "embedded";
+
+    public static FixturesFragment newInstance(boolean embedded) {
+        FixturesFragment f = new FixturesFragment();
+        Bundle args = new Bundle();
+        args.putBoolean(ARG_EMBEDDED, embedded);
+        f.setArguments(args);
+        return f;
+    }
 
     private FragmentFixturesBinding binding;
     private DataManager dataManager;
@@ -41,9 +56,14 @@ public class FixturesFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         dataManager = new DataManager(requireContext());
 
-        binding.toolbarFixtures.setTitle("Fixtures");
-        binding.toolbarFixtures.setNavigationOnClickListener(v -> getParentFragmentManager().popBackStack());
-        binding.txtSessionBlurb.setText("Schedule games for this session. When you start scoring, they move to Matches.");
+        boolean embedded = getArguments() != null && getArguments().getBoolean(ARG_EMBEDDED, false);
+        if (embedded) {
+            binding.appBarFixtures.setVisibility(View.GONE);
+        } else {
+            binding.toolbarFixtures.setTitle("Fixtures");
+            binding.toolbarFixtures.setNavigationOnClickListener(v -> getParentFragmentManager().popBackStack());
+        }
+        binding.txtSessionBlurb.setText("Schedule games for this session. Tap a fixture to toss and score; it then appears under Live & results.");
         binding.txtSectionTitle.setText("Scheduled");
         binding.btnAddFixture.setVisibility(View.VISIBLE);
 
@@ -59,9 +79,11 @@ public class FixturesFragment extends Fragment {
             @Override
             public void onEditMatch(Match match, int position) {
                 if ("Cricket".equalsIgnoreCase(match.sport)) {
-                    if (match.isCompleted) {
+                    if (MatchCompletionHelper.isEffectivelyCompleted(match)) {
                         showCricketScoringDialog(match);
-                    } else if (!match.hasStarted && match.tossWinner == null && match.ballHistory.isEmpty()) {
+                    } else if (!match.hasStarted
+                            && match.tossWinner == null
+                            && (match.ballHistory == null || match.ballHistory.isEmpty())) {
                         showCricketSetupDialog(match);
                     } else {
                         showCricketScoringDialog(match);
@@ -97,6 +119,7 @@ public class FixturesFragment extends Fragment {
                     if (currentClub != null && !currentClub.history.isEmpty()) {
                         Club.TeamHistory latestHistory = currentClub.history.get(currentClub.history.size() - 1);
                         if (latestHistory.matches != null) {
+                            MatchCompletionHelper.forgetMatchCompletion(match);
                             latestHistory.matches.remove(match);
                             dataManager.updateClub(currentClub);
                             loadFixtures(currentClub);
@@ -126,25 +149,13 @@ public class FixturesFragment extends Fragment {
                 latestHistory.matches = new ArrayList<>();
                 updated = true;
             }
-            for (Match m : latestHistory.matches) {
-                if (MatchCompletionHelper.syncCompletionFromTimestamp(m)) {
-                    updated = true;
-                }
-            }
-            updated |= MatchCompletionHelper.normalizeStartedFlags(latestHistory.matches);
-            for (Match m : latestHistory.matches) {
-                if (MatchCompletionHelper.applyInningsCompletionRules(m)) {
-                    updated = true;
-                }
-            }
-            for (Match m : latestHistory.matches) {
-                MatchFixtureHelper.normalizeFixtureScheduleOnLoad(m);
-            }
+            updated |= SessionMatchLoader.prepareMatchesForSession(latestHistory.matches);
             for (Match m : latestHistory.matches) {
                 if (MatchFixtureHelper.isScheduledFixture(m)) {
                     currentMatches.add(m);
                 }
             }
+            Collections.sort(currentMatches, SessionMatchLoader.BY_SCHEDULE_THEN_TEAM);
             if (updated) {
                 dataManager.updateClub(club);
             }
@@ -172,6 +183,42 @@ public class FixturesFragment extends Fragment {
         AutoCompleteTextView spinnerSport = dialogView.findViewById(R.id.spinnerSport);
         AutoCompleteTextView spinnerTeam1 = dialogView.findViewById(R.id.spinnerTeam1);
         AutoCompleteTextView spinnerTeam2 = dialogView.findViewById(R.id.spinnerTeam2);
+        TextInputEditText editVenue = dialogView.findViewById(R.id.editVenue);
+        TextInputEditText editSchedule = dialogView.findViewById(R.id.editScheduleStart);
+        final long[] scheduleMs = {0L};
+
+        editSchedule.setOnClickListener(v -> {
+            Calendar c = Calendar.getInstance();
+            if (scheduleMs[0] > 0) {
+                c.setTimeInMillis(scheduleMs[0]);
+            }
+            new DatePickerDialog(
+                    requireContext(),
+                    (view, year, month, dayOfMonth) -> {
+                        Calendar dayCal = Calendar.getInstance();
+                        dayCal.set(year, month, dayOfMonth);
+                        new TimePickerDialog(
+                                requireContext(),
+                                (tv, hour, minute) -> {
+                                    dayCal.set(Calendar.HOUR_OF_DAY, hour);
+                                    dayCal.set(Calendar.MINUTE, minute);
+                                    dayCal.set(Calendar.SECOND, 0);
+                                    dayCal.set(Calendar.MILLISECOND, 0);
+                                    scheduleMs[0] = dayCal.getTimeInMillis();
+                                    editSchedule.setText(DateFormat.getDateTimeInstance(
+                                            DateFormat.MEDIUM, DateFormat.SHORT, Locale.getDefault())
+                                            .format(dayCal.getTime()));
+                                },
+                                c.get(Calendar.HOUR_OF_DAY),
+                                c.get(Calendar.MINUTE),
+                                false
+                        ).show();
+                    },
+                    c.get(Calendar.YEAR),
+                    c.get(Calendar.MONTH),
+                    c.get(Calendar.DAY_OF_MONTH)
+            ).show();
+        });
 
         String[] sports = {"Cricket", "Football", "Basketball", "Other"};
         spinnerSport.setAdapter(new ArrayAdapter<>(requireContext(), R.layout.dropdown_item, sports));
@@ -181,7 +228,7 @@ public class FixturesFragment extends Fragment {
         spinnerTeam2.setAdapter(adapter);
 
         new AlertDialog.Builder(requireContext())
-                .setTitle("Add New Match")
+                .setTitle("Add fixture")
                 .setView(dialogView)
                 .setPositiveButton("Add", (dialog, which) -> {
                     String sport = spinnerSport.getText().toString();
@@ -194,7 +241,11 @@ public class FixturesFragment extends Fragment {
                     }
 
                     Match newMatch = new Match(t1, t2, sport);
-                    
+                    if (editVenue != null) {
+                        newMatch.venue = editVenue.getText().toString().trim();
+                    }
+                    newMatch.scheduledStartMillis = scheduleMs[0];
+
                     Team team1Obj = latestHistory.teams.stream().filter(t -> t.name.equals(t1)).findFirst().orElse(null);
                     Team team2Obj = latestHistory.teams.stream().filter(t -> t.name.equals(t2)).findFirst().orElse(null);
                     if (team1Obj != null) {
@@ -206,7 +257,7 @@ public class FixturesFragment extends Fragment {
 
                     if (latestHistory.matches == null) latestHistory.matches = new ArrayList<>();
                     latestHistory.matches.add(newMatch);
-                    
+
                     dataManager.updateClub(currentClub);
                     loadFixtures(currentClub);
                 })

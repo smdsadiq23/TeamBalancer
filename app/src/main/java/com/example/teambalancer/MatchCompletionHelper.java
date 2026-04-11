@@ -1,6 +1,9 @@
 package com.example.teambalancer;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Centralizes chase / innings-end rules so completion state stays consistent
@@ -8,11 +11,33 @@ import java.util.List;
  */
 public final class MatchCompletionHelper {
 
+    private static final String PREFS = "match_completion_backup";
+    private static final String KEY_PREFIX = "done_";
+
+    private static Context appContext;
+
     private MatchCompletionHelper() {}
 
-    /** True if the match is finished (flag and/or durable completion timestamp). */
+    /** Call from {@link MainActivity} so completion can be backed up by match id. */
+    public static void init(Context context) {
+        appContext = context.getApplicationContext();
+    }
+
+    /** Gson may omit {@link Match#id} on old rows; required for completion backup. */
+    public static boolean ensureMatchId(Match match) {
+        if (match == null || (match.id != null && !match.id.isEmpty())) {
+            return false;
+        }
+        match.id = UUID.randomUUID().toString();
+        return true;
+    }
+
+    /** True if the match is finished (flag, timestamp, and/or prefs backup by id). */
     public static boolean isEffectivelyCompleted(Match match) {
-        return match != null && (match.isCompleted || match.matchCompletedAt > 0L);
+        return match != null
+                && (match.isCompleted
+                        || match.matchCompletedAt > 0L
+                        || isRememberedCompleted(match));
     }
 
     /** Mark finished and stamp time once (for persistence). */
@@ -24,6 +49,52 @@ public final class MatchCompletionHelper {
         if (match.matchCompletedAt <= 0L) {
             match.matchCompletedAt = System.currentTimeMillis();
         }
+        rememberCompleted(match);
+    }
+
+    /** Call when a match row is removed so we do not treat a future reuse of the same id as finished. */
+    public static void forgetMatchCompletion(Match match) {
+        if (appContext == null || match == null || match.id == null) {
+            return;
+        }
+        prefs().edit().remove(KEY_PREFIX + match.id).apply();
+    }
+
+    private static SharedPreferences prefs() {
+        return appContext.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+    }
+
+    private static void rememberCompleted(Match match) {
+        if (appContext == null || match == null || match.id == null) {
+            return;
+        }
+        prefs().edit().putBoolean(KEY_PREFIX + match.id, true).apply();
+    }
+
+    private static boolean isRememberedCompleted(Match match) {
+        if (appContext == null || match == null || match.id == null) {
+            return false;
+        }
+        return prefs().getBoolean(KEY_PREFIX + match.id, false);
+    }
+
+    /**
+     * After load: if prefs say this match was finished, restore flags so Gson/Room JSON stays aligned.
+     */
+    public static boolean syncCompletionFromRemembered(Match match) {
+        if (match == null || !isRememberedCompleted(match)) {
+            return false;
+        }
+        boolean changed = false;
+        if (!match.isCompleted) {
+            match.isCompleted = true;
+            changed = true;
+        }
+        if (match.matchCompletedAt <= 0L) {
+            match.matchCompletedAt = System.currentTimeMillis();
+            changed = true;
+        }
+        return changed;
     }
 
     /** After Gson load: if timestamp survived but flag did not, restore the flag. */
@@ -88,8 +159,8 @@ public final class MatchCompletionHelper {
         }
         boolean changed = false;
         for (Match match : matches) {
-            boolean shouldBeStarted = match.isCompleted
-                    || match.matchCompletedAt > 0L
+            boolean hasBalls = match.ballHistory != null && !match.ballHistory.isEmpty();
+            boolean shouldBeStarted = isEffectivelyCompleted(match)
                     || match.score1 > 0
                     || match.score2 > 0
                     || match.wickets1 > 0
@@ -100,7 +171,7 @@ public final class MatchCompletionHelper {
                     || match.tossDecision != null
                     || match.battingTeam != null
                     || match.bowlingTeam != null
-                    || !match.ballHistory.isEmpty();
+                    || hasBalls;
             if (match.hasStarted != shouldBeStarted) {
                 match.hasStarted = shouldBeStarted;
                 changed = true;

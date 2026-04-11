@@ -43,6 +43,15 @@
                 app:tint="@color/on_surface_variant" />
         </RelativeLayout>
 
+        <TextView
+            android:id="@+id/txtFixtureMeta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:textAppearance="@style/TextAppearance.TeamBalancer.BodySmall"
+            android:textColor="@color/on_surface_variant"
+            android:visibility="gone" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
