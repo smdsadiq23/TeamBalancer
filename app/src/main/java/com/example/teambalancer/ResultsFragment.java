@@ -88,7 +88,7 @@ public class ResultsFragment extends Fragment {
         binding.btnRegenerate.setOnClickListener(v -> regenerateTeams());
         
         binding.btnSaveChanges.setOnClickListener(v -> {
-            saveChangesToHistory(false);
+            saveChangesToHistory();
             binding.btnSaveChanges.setVisibility(View.GONE);
             binding.btnRegenerate.setVisibility(View.GONE);
             Toast.makeText(requireContext(), "Changes Saved!", Toast.LENGTH_SHORT).show();
@@ -176,11 +176,15 @@ public class ResultsFragment extends Fragment {
         binding.btnSaveChanges.setVisibility(View.VISIBLE);
         binding.btnRegenerate.setVisibility(View.VISIBLE);
         
-        saveChangesToHistory(true);
+        saveChangesToHistory();
         Toast.makeText(requireContext(), "Teams Regenerated!", Toast.LENGTH_SHORT).show();
     }
 
-    private void saveChangesToHistory(boolean forceRegenerateMatches) {
+    /**
+     * Persists balanced teams and refreshes squads on existing matches. Never replaces
+     * {@link Club.TeamHistory#matches} with a new list — that would wipe cricket {@link Match#ballHistory}.
+     */
+    private void saveChangesToHistory() {
         if (currentClub != null && !currentClub.history.isEmpty()) {
             int idx = historyIndex;
             if (idx < 0 || idx >= currentClub.history.size()) {
@@ -193,18 +197,14 @@ public class ResultsFragment extends Fragment {
             if (session.matches == null) {
                 session.matches = new ArrayList<>();
             }
-            if (forceRegenerateMatches) {
-                session.matches = new ArrayList<>();
-            } else {
-                for (Match m : session.matches) {
-                    Team t1 = teams.stream().filter(t -> t.name.equals(m.team1)).findFirst().orElse(null);
-                    Team t2 = teams.stream().filter(t -> t.name.equals(m.team2)).findFirst().orElse(null);
-                    if (t1 != null) {
-                        m.squad1 = t1.players.stream().map(p -> p.name).collect(Collectors.toList());
-                    }
-                    if (t2 != null) {
-                        m.squad2 = t2.players.stream().map(p -> p.name).collect(Collectors.toList());
-                    }
+            for (Match m : session.matches) {
+                Team t1 = teams.stream().filter(t -> t.name.equals(m.team1)).findFirst().orElse(null);
+                Team t2 = teams.stream().filter(t -> t.name.equals(m.team2)).findFirst().orElse(null);
+                if (t1 != null) {
+                    m.squad1 = t1.players.stream().map(p -> p.name).collect(Collectors.toList());
+                }
+                if (t2 != null) {
+                    m.squad2 = t2.players.stream().map(p -> p.name).collect(Collectors.toList());
                 }
             }
 

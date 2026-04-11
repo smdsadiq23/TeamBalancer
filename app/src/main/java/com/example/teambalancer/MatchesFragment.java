@@ -732,7 +732,9 @@ public class MatchesFragment extends Fragment {
     }
 
     private void processBall(Match match, BallEvent event) {
-        if (MatchCompletionHelper.isEffectivelyCompleted(match)) return;
+        if (MatchCompletionHelper.isEffectivelyCompleted(match) || match.battingTeam == null) {
+            return;
+        }
 
         if (match.ballHistory == null) {
             match.ballHistory = new ArrayList<>();
