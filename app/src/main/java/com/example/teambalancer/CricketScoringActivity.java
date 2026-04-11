@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.OnBackPressedCallback;
@@ -12,6 +13,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.tabs.TabLayout;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -54,6 +56,32 @@ public class CricketScoringActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_cricket_scoring);
 
+        TabLayout tabScoring = findViewById(R.id.tabScoring);
+        ScrollView scrollPageScore = findViewById(R.id.scrollPageScore);
+        ScrollView scrollPageScoreboard = findViewById(R.id.scrollPageScoreboard);
+        tabScoring.addTab(tabScoring.newTab().setText(R.string.scoring_tab_live));
+        tabScoring.addTab(tabScoring.newTab().setText(R.string.scoring_tab_scoreboard));
+        tabScoring.addOnTabSelectedListener(
+                new TabLayout.OnTabSelectedListener() {
+                    @Override
+                    public void onTabSelected(TabLayout.Tab tab) {
+                        boolean live = tab.getPosition() == 0;
+                        scrollPageScore.setVisibility(live ? View.VISIBLE : View.GONE);
+                        scrollPageScoreboard.setVisibility(live ? View.GONE : View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onTabUnselected(TabLayout.Tab tab) {}
+
+                    @Override
+                    public void onTabReselected(TabLayout.Tab tab) {}
+                });
+
+        TextView txtFullBatting = findViewById(R.id.txtFullScoreboardBatting);
+        TextView txtFullBowling = findViewById(R.id.txtFullScoreboardBowling);
+        TextView txtFullExtras = findViewById(R.id.txtFullScoreboardExtras);
+        TextView txtFullTimeline = findViewById(R.id.txtFullScoreboardTimeline);
+
         MaterialToolbar toolbar = findViewById(R.id.toolbarScoring);
         toolbar.setNavigationOnClickListener(v -> finishWithOk());
 
@@ -67,7 +95,6 @@ public class CricketScoringActivity extends AppCompatActivity {
                             }
                         });
 
-        View view = findViewById(android.R.id.content).getRootView();
         TextView txtMatchInfo = findViewById(R.id.txtMatchInfo);
         TextView txtLiveScore = findViewById(R.id.txtLiveScore);
         TextView txtLiveOvers = findViewById(R.id.txtLiveOvers);
@@ -160,6 +187,19 @@ public class CricketScoringActivity extends AppCompatActivity {
                             txtNonStrikerStats,
                             txtBowler,
                             txtBowlerStats);
+
+                    if (txtFullBatting != null) {
+                        txtFullBatting.setText(CricketFullScoreboardHelper.formatBatting(match));
+                    }
+                    if (txtFullBowling != null) {
+                        txtFullBowling.setText(CricketFullScoreboardHelper.formatBowling(match));
+                    }
+                    if (txtFullExtras != null) {
+                        txtFullExtras.setText(CricketFullScoreboardHelper.formatExtras(match));
+                    }
+                    if (txtFullTimeline != null) {
+                        txtFullTimeline.setText(CricketFullScoreboardHelper.formatTimeline(match));
+                    }
                 };
 
         if (!MatchCompletionHelper.isEffectivelyCompleted(match)) {

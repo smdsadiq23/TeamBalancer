@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="16dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="24dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/scorecard_batting"
+        android:textAppearance="@style/TextAppearance.TeamBalancer.TitleSmall"
+        android:textColor="@color/accent_cyan" />
+
+    <TextView
+        android:id="@+id/txtFullScoreboardBatting"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:fontFamily="sans-serif"
+        android:lineSpacingMultiplier="1.2"
+        android:text="—"
+        android:textColor="@color/on_surface"
+        android:textSize="13sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/scorecard_bowling"
+        android:textAppearance="@style/TextAppearance.TeamBalancer.TitleSmall"
+        android:textColor="@color/accent_pink" />
+
+    <TextView
+        android:id="@+id/txtFullScoreboardBowling"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:lineSpacingMultiplier="1.2"
+        android:text="—"
+        android:textColor="@color/on_surface"
+        android:textSize="13sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/scorecard_extras"
+        android:textAppearance="@style/TextAppearance.TeamBalancer.TitleSmall"
+        android:textColor="@color/warning" />
+
+    <TextView
+        android:id="@+id/txtFullScoreboardExtras"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="Wd:0 Nb:0 B:0 Lb:0"
+        android:textColor="@color/on_surface_secondary"
+        android:textSize="13sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/scorecard_timeline"
+        android:textAppearance="@style/TextAppearance.TeamBalancer.TitleSmall"
+        android:textColor="@color/on_surface" />
+
+    <TextView
+        android:id="@+id/txtFullScoreboardTimeline"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:lineSpacingMultiplier="1.15"
+        android:text="—"
+        android:textColor="@color/on_surface_variant"
+        android:textSize="12sp"
+        android:typeface="monospace" />
+</LinearLayout>

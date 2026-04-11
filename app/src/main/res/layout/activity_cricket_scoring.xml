@@ -13,12 +13,38 @@
         app:navigationIcon="@drawable/ic_back"
         app:title="@string/cricket_scoring_title" />
 
-    <ScrollView
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabScoring"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primary_dark"
+        app:tabIndicatorColor="@color/accent_cyan"
+        app:tabSelectedTextColor="@color/accent_cyan"
+        app:tabTextColor="@color/on_surface_variant" />
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:fillViewport="true">
+        android:layout_weight="1">
 
-        <include layout="@layout/dialog_cricket_scoring" />
-    </ScrollView>
+        <ScrollView
+            android:id="@+id/scrollPageScore"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
+
+            <include layout="@layout/dialog_cricket_scoring" />
+        </ScrollView>
+
+        <ScrollView
+            android:id="@+id/scrollPageScoreboard"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/primary_dark"
+            android:fillViewport="true"
+            android:visibility="gone">
+
+            <include layout="@layout/layout_cricket_full_scoreboard" />
+        </ScrollView>
+    </FrameLayout>
 </LinearLayout>

@@ -18,4 +18,6 @@
     <string name="col_econ">Econ</string>
     <string name="scorecard_in_progress">Match in progress</string>
     <string name="cricket_scoring_title">Scoring</string>
+    <string name="scoring_tab_live">Live</string>
+    <string name="scoring_tab_scoreboard">Full scoreboard</string>
 </resources>
