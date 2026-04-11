@@ -49,6 +49,21 @@ public class Match implements Serializable {
     public String battingTeam; // Name of the team currently batting
     public String bowlingTeam; // Name of the team currently bowling
     public List<BallEvent> ballHistory = new ArrayList<>();
+    /** Mirrors {@link #ballHistory} as JSON — survives Gson/Room issues with nested lists. */
+    public String ballHistoryJson = "";
+    /** Mirrors {@link #scoreboardSnapshot} as JSON. */
+    public String scoreboardSnapshotJson = "";
+    /**
+     * Immutable copy of totals and ball-by-ball history at match completion so list/UI survive partial JSON loss.
+     */
+    public boolean hasFinalScoreSnapshot = false;
+    public int finalRuns1 = 0;
+    public int finalRuns2 = 0;
+    public int finalWickets1 = 0;
+    public int finalWickets2 = 0;
+    public double finalOvers1 = 0.0;
+    public double finalOvers2 = 0.0;
+    public List<BallEvent> scoreboardSnapshot = new ArrayList<>();
     public String striker;
     public String nonStriker;
     public String currentBowler;

@@ -8,7 +8,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
-import java.util.Locale;
 
 public class FixtureAdapter extends RecyclerView.Adapter<FixtureAdapter.MatchViewHolder> {
 
@@ -61,11 +60,11 @@ public class FixtureAdapter extends RecyclerView.Adapter<FixtureAdapter.MatchVie
             holder.txtResult.setText(getWinnerString(match));
 
             if ("Cricket".equalsIgnoreCase(match.sport)) {
-                holder.txtScore1.setText(match.score1 + "/" + match.wickets1);
-                holder.txtScore2.setText(match.score2 + "/" + match.wickets2);
+                holder.txtScore1.setText(MatchScoreDisplay.cricketScoreWithOvers(match, true));
+                holder.txtScore2.setText(MatchScoreDisplay.cricketScoreWithOvers(match, false));
             } else {
-                holder.txtScore1.setText(String.valueOf(match.score1));
-                holder.txtScore2.setText(String.valueOf(match.score2));
+                holder.txtScore1.setText(String.valueOf(MatchScoreDisplay.runs1(match)));
+                holder.txtScore2.setText(String.valueOf(MatchScoreDisplay.runs2(match)));
             }
             
             holder.btnDeleteMatch.setVisibility(View.VISIBLE);
@@ -79,11 +78,11 @@ public class FixtureAdapter extends RecyclerView.Adapter<FixtureAdapter.MatchVie
             holder.txtResult.setVisibility(View.GONE);
 
             if ("Cricket".equalsIgnoreCase(match.sport)) {
-                holder.txtScore1.setText(match.score1 + "/" + match.wickets1);
-                holder.txtScore2.setText(match.score2 + "/" + match.wickets2);
+                holder.txtScore1.setText(MatchScoreDisplay.cricketScoreWithOvers(match, true));
+                holder.txtScore2.setText(MatchScoreDisplay.cricketScoreWithOvers(match, false));
             } else {
-                holder.txtScore1.setText(String.valueOf(match.score1));
-                holder.txtScore2.setText(String.valueOf(match.score2));
+                holder.txtScore1.setText(String.valueOf(MatchScoreDisplay.runs1(match)));
+                holder.txtScore2.setText(String.valueOf(MatchScoreDisplay.runs2(match)));
             }
             
             holder.btnDeleteMatch.setVisibility(View.VISIBLE);
@@ -97,11 +96,11 @@ public class FixtureAdapter extends RecyclerView.Adapter<FixtureAdapter.MatchVie
             holder.txtResult.setVisibility(View.GONE);
 
             if ("Cricket".equalsIgnoreCase(match.sport)) {
-                holder.txtScore1.setText(match.score1 + "/" + match.wickets1);
-                holder.txtScore2.setText(match.score2 + "/" + match.wickets2);
+                holder.txtScore1.setText(MatchScoreDisplay.cricketScoreWithOvers(match, true));
+                holder.txtScore2.setText(MatchScoreDisplay.cricketScoreWithOvers(match, false));
             } else {
-                holder.txtScore1.setText(String.valueOf(match.score1));
-                holder.txtScore2.setText(String.valueOf(match.score2));
+                holder.txtScore1.setText(String.valueOf(MatchScoreDisplay.runs1(match)));
+                holder.txtScore2.setText(String.valueOf(MatchScoreDisplay.runs2(match)));
             }
 
             holder.btnDeleteMatch.setVisibility(View.VISIBLE);
@@ -115,11 +114,11 @@ public class FixtureAdapter extends RecyclerView.Adapter<FixtureAdapter.MatchVie
             holder.txtResult.setVisibility(View.GONE);
 
             if ("Cricket".equalsIgnoreCase(match.sport)) {
-                holder.txtScore1.setText(match.score1 + "/" + match.wickets1);
-                holder.txtScore2.setText(match.score2 + "/" + match.wickets2);
+                holder.txtScore1.setText(MatchScoreDisplay.cricketScoreWithOvers(match, true));
+                holder.txtScore2.setText(MatchScoreDisplay.cricketScoreWithOvers(match, false));
             } else {
-                holder.txtScore1.setText(String.valueOf(match.score1));
-                holder.txtScore2.setText(String.valueOf(match.score2));
+                holder.txtScore1.setText(String.valueOf(MatchScoreDisplay.runs1(match)));
+                holder.txtScore2.setText(String.valueOf(MatchScoreDisplay.runs2(match)));
             }
 
             holder.btnDeleteMatch.setVisibility(View.VISIBLE);
@@ -141,12 +140,14 @@ public class FixtureAdapter extends RecyclerView.Adapter<FixtureAdapter.MatchVie
     }
 
     private String getWinnerString(Match match) {
-        if (MatchCompletionHelper.isEffectivelyCompleted(match) && match.score1 == 0 && match.score2 == 0) {
+        int s1 = MatchScoreDisplay.runs1(match);
+        int s2 = MatchScoreDisplay.runs2(match);
+        if (MatchCompletionHelper.isEffectivelyCompleted(match) && s1 == 0 && s2 == 0 && !match.hasFinalScoreSnapshot) {
             return "Completed";
         }
-        if (match.score1 == match.score2) return "Match Tied";
+        if (s1 == s2) return "Match Tied";
         
-        if (match.score1 > match.score2) {
+        if (s1 > s2) {
             return match.team1 + " won";
         } else {
             return match.team2 + " won";

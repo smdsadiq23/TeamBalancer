@@ -2,6 +2,7 @@ package com.example.teambalancer;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -45,11 +46,103 @@ public final class MatchCompletionHelper {
         if (match == null) {
             return;
         }
+        snapshotFinalScoreboard(match);
         match.isCompleted = true;
         if (match.matchCompletedAt <= 0L) {
             match.matchCompletedAt = System.currentTimeMillis();
         }
         rememberCompleted(match);
+    }
+
+    /**
+     * Captures runs/wickets/overs and a copy of {@link Match#ballHistory} once, so completed cards and scoreboard
+     * still show real numbers after Gson/Room drops live fields.
+     */
+    private static void snapshotFinalScoreboard(Match match) {
+        if (match.hasFinalScoreSnapshot) {
+            return;
+        }
+        match.hasFinalScoreSnapshot = true;
+        match.finalRuns1 = match.score1;
+        match.finalRuns2 = match.score2;
+        match.finalWickets1 = match.wickets1;
+        match.finalWickets2 = match.wickets2;
+        match.finalOvers1 = match.overs1;
+        match.finalOvers2 = match.overs2;
+        match.scoreboardSnapshot = new ArrayList<>();
+        if (match.ballHistory != null) {
+            for (BallEvent e : match.ballHistory) {
+                match.scoreboardSnapshot.add(BallEvent.copyOf(e));
+            }
+        }
+        MatchPersistenceHelper.syncJsonFromLists(match);
+    }
+
+    /**
+     * For matches marked completed before snapshots existed: if live data exists, freeze it once.
+     *
+     * @return true if snapshot was written.
+     */
+    public static boolean ensureSnapshotForCompletedMatch(Match match) {
+        if (match == null || !isEffectivelyCompleted(match) || match.hasFinalScoreSnapshot) {
+            return false;
+        }
+        boolean hasData = hasRecordedPlay(match)
+                || match.score1 != 0
+                || match.score2 != 0
+                || match.wickets1 != 0
+                || match.wickets2 != 0
+                || match.overs1 > 0
+                || match.overs2 > 0;
+        if (!hasData) {
+            return false;
+        }
+        snapshotFinalScoreboard(match);
+        return true;
+    }
+
+    /**
+     * Restores live {@link Match} score fields and {@link Match#ballHistory} from the completion snapshot when
+     * persistence zeroed them out.
+     *
+     * @return true if anything was changed (club should be saved).
+     */
+    public static boolean restoreDisplayStateFromSnapshot(Match match) {
+        if (match == null || !isEffectivelyCompleted(match) || !match.hasFinalScoreSnapshot) {
+            return false;
+        }
+        boolean changed = false;
+        if (match.score1 != match.finalRuns1
+                || match.score2 != match.finalRuns2
+                || match.wickets1 != match.finalWickets1
+                || match.wickets2 != match.finalWickets2
+                || Double.compare(match.overs1, match.finalOvers1) != 0
+                || Double.compare(match.overs2, match.finalOvers2) != 0) {
+            match.score1 = match.finalRuns1;
+            match.score2 = match.finalRuns2;
+            match.wickets1 = match.finalWickets1;
+            match.wickets2 = match.finalWickets2;
+            match.overs1 = match.finalOvers1;
+            match.overs2 = match.finalOvers2;
+            changed = true;
+        }
+        if ((match.ballHistory == null || match.ballHistory.isEmpty())
+                && match.scoreboardSnapshot != null
+                && !match.scoreboardSnapshot.isEmpty()) {
+            if (match.ballHistory == null) {
+                match.ballHistory = new ArrayList<>();
+            } else {
+                match.ballHistory.clear();
+            }
+            for (BallEvent ev : match.scoreboardSnapshot) {
+                match.ballHistory.add(BallEvent.copyOf(ev));
+            }
+            changed = true;
+        }
+        if (changed) {
+            MatchPersistenceHelper.syncJsonFromLists(match);
+        }
+        return changed;
     }
 
     /** Call when a match row is removed so we do not treat a future reuse of the same id as finished. */

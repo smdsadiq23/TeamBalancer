@@ -95,7 +95,11 @@ public class MatchesFragment extends Fragment {
             @Override
             public void onViewMatch(Match match, int position) {
                 if ("Cricket".equalsIgnoreCase(match.sport)) {
-                    showCricketScoringDialog(match);
+                    if (MatchCompletionHelper.isEffectivelyCompleted(match)) {
+                        CompletedMatchScoreboardDialog.show(MatchesFragment.this, match);
+                    } else {
+                        showCricketScoringDialog(match);
+                    }
                 } else {
                     showSimpleEditScoreDialog(match);
                 }
@@ -265,20 +269,34 @@ public class MatchesFragment extends Fragment {
         TextView txtBowlerStats = view.findViewById(R.id.txtBowlerStats);
 
         Runnable updateUI = () -> {
-            int runs = (match.battingTeam.equals(match.team1)) ? match.score1 : match.score2;
-            int wkts = (match.battingTeam.equals(match.team1)) ? match.wickets1 : match.wickets2;
-            double overs = (match.battingTeam.equals(match.team1)) ? match.overs1 : match.overs2;
+            if (match.battingTeam == null) {
+                return;
+            }
+            int runs = (match.battingTeam.equals(match.team1)) ? MatchScoreDisplay.runs1(match) : MatchScoreDisplay.runs2(match);
+            int wkts = (match.battingTeam.equals(match.team1)) ? MatchScoreDisplay.wickets1(match) : MatchScoreDisplay.wickets2(match);
+            double overs = (match.battingTeam.equals(match.team1)) ? MatchScoreDisplay.overs1(match) : MatchScoreDisplay.overs2(match);
             
-            txtLiveScore.setText(runs + "/" + wkts);
-            txtLiveOvers.setText(String.format(Locale.getDefault(), "(%.1f / %d)", overs, match.maxOvers));
+            if (MatchCompletionHelper.isEffectivelyCompleted(match)) {
+                int s1 = MatchScoreDisplay.runs1(match);
+                int s2 = MatchScoreDisplay.runs2(match);
+                int w1 = MatchScoreDisplay.wickets1(match);
+                int w2 = MatchScoreDisplay.wickets2(match);
+                double o1 = MatchScoreDisplay.overs1(match);
+                double o2 = MatchScoreDisplay.overs2(match);
+                txtLiveScore.setText(s1 + "/" + w1 + "  vs  " + s2 + "/" + w2);
+                txtLiveOvers.setText(String.format(Locale.getDefault(), "(%.1f ov · %.1f ov · %d max)", o1, o2, match.maxOvers));
+            } else {
+                txtLiveScore.setText(runs + "/" + wkts);
+                txtLiveOvers.setText(String.format(Locale.getDefault(), "(%.1f / %d)", overs, match.maxOvers));
+            }
             
-            if (match.isCompleted) {
+            if (MatchCompletionHelper.isEffectivelyCompleted(match)) {
                 btnFinish.setText("CLOSE SCORECARD");
                 if (layoutControls != null) layoutControls.setVisibility(View.GONE);
                 if (btnUndo != null) btnUndo.setVisibility(View.GONE);
                 txtMatchInfo.setText(getWinnerString(match));
             } else {
-                txtMatchInfo.setText(match.battingTeam + " innings" + (match.currentInnings == 2 ? " (Target: " + ((match.battingTeam.equals(match.team1) ? match.score2 : match.score1) + 1) + ")" : ""));
+                txtMatchInfo.setText(match.battingTeam + " innings" + (match.currentInnings == 2 ? " (Target: " + ((match.battingTeam.equals(match.team1) ? MatchScoreDisplay.runs2(match) : MatchScoreDisplay.runs1(match)) + 1) + ")" : ""));
                 
                 addRRRDisplay(match, txtMatchInfo);
 
@@ -292,7 +310,7 @@ public class MatchesFragment extends Fragment {
             updatePlayerSection(match, txtStriker, txtStrikerStats, txtNonStriker, txtNonStrikerStats, txtBowler, txtBowlerStats);
         };
 
-        if (!match.isCompleted) {
+        if (!MatchCompletionHelper.isEffectivelyCompleted(match)) {
             txtStriker.setOnClickListener(v -> promptPlayerSelection(match, "Select Striker", true, name -> {
                 match.striker = name;
                 updateUI.run();
@@ -317,7 +335,7 @@ public class MatchesFragment extends Fragment {
                 .create();
 
         View.OnClickListener scoringListener = v -> {
-            if (match.isCompleted) return;
+            if (MatchCompletionHelper.isEffectivelyCompleted(match)) return;
             
             if (match.striker == null || match.nonStriker == null || match.currentBowler == null) {
                 checkAndPromptInitialPlayers(match, updateUI);
@@ -405,7 +423,7 @@ public class MatchesFragment extends Fragment {
             dataManager.updateClub(currentClub);
             matchAdapter.notifyDataSetChanged();
 
-            if (!match.isCompleted) {
+            if (!MatchCompletionHelper.isEffectivelyCompleted(match)) {
                 checkInningsOverAndBowlerChange(match, updateUI);
             }
         };
@@ -418,10 +436,11 @@ public class MatchesFragment extends Fragment {
 
         if (btnUndo != null) {
             btnUndo.setOnClickListener(v -> {
-                if (match.isCompleted) return;
-                if (!match.ballHistory.isEmpty()) {
+                if (MatchCompletionHelper.isEffectivelyCompleted(match)) return;
+                if (match.ballHistory != null && !match.ballHistory.isEmpty()) {
                     BallEvent last = match.ballHistory.remove(match.ballHistory.size() - 1);
                     undoBall(match, last);
+                    MatchPersistenceHelper.syncJsonFromLists(match);
                     updateUI.run();
                     dataManager.updateClub(currentClub);
                     matchAdapter.notifyDataSetChanged();
@@ -436,6 +455,12 @@ public class MatchesFragment extends Fragment {
             }
             
             if (match.currentInnings == 1 && !"Test".equals(match.matchType)) {
+                if (match.ballHistory == null || match.ballHistory.isEmpty()) {
+                    Toast.makeText(requireContext(),
+                            "Record at least one ball before ending the first innings.",
+                            Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 match.inningsTwoFirstBallIndex = match.ballHistory.size();
                 match.currentInnings = 2;
                 String temp = match.battingTeam;
@@ -446,10 +471,12 @@ public class MatchesFragment extends Fragment {
                 match.currentBowler = null;
                 checkAndPromptInitialPlayers(match, updateUI);
                 updateUI.run();
+                MatchPersistenceHelper.syncJsonFromLists(match);
                 dataManager.updateClub(currentClub);
             } else {
                 match.hasStarted = true;
                 MatchCompletionHelper.markMatchCompleted(match);
+                MatchPersistenceHelper.syncJsonFromLists(match);
                 dataManager.updateClub(currentClub);
                 matchAdapter.notifyDataSetChanged();
                 updateUI.run();
@@ -469,33 +496,38 @@ public class MatchesFragment extends Fragment {
     }
 
     private String getWinnerString(Match match) {
-        if (match.score1 == match.score2) return "Match Tied";
+        int s1 = MatchScoreDisplay.runs1(match);
+        int s2 = MatchScoreDisplay.runs2(match);
+        int w1 = MatchScoreDisplay.wickets1(match);
+        int w2 = MatchScoreDisplay.wickets2(match);
+        if (s1 == s2) return "Match Tied";
 
-        boolean team1Chasing = match.currentInnings == 2 && match.battingTeam.equals(match.team1);
+        boolean team1Chasing = match.currentInnings == 2 && match.battingTeam != null && match.battingTeam.equals(match.team1);
 
-        if (match.score1 > match.score2) {
+        if (s1 > s2) {
             if (team1Chasing) {
-                int wkts = MatchCompletionHelper.getMaxWickets(match) - match.wickets1;
+                int wkts = MatchCompletionHelper.getMaxWickets(match) - w1;
                 return match.team1 + " won by " + wkts + " wickets";
             } else {
-                return match.team1 + " won by " + (match.score1 - match.score2) + " runs";
+                return match.team1 + " won by " + (s1 - s2) + " runs";
             }
         } else {
             if (!team1Chasing) {
-                int wkts = MatchCompletionHelper.getMaxWickets(match) - match.wickets2;
+                int wkts = MatchCompletionHelper.getMaxWickets(match) - w2;
                 return match.team2 + " won by " + wkts + " wickets";
             } else {
-                return match.team2 + " won by " + (match.score2 - match.score1) + " runs";
+                return match.team2 + " won by " + (s2 - s1) + " runs";
             }
         }
     }
 
     private void updatePlayerSection(Match match, TextView txtStr, TextView txtStrStats, TextView txtNonStr, TextView txtNonStrStats, TextView txtBowler, TextView txtBowlerStats) {
+        boolean done = MatchCompletionHelper.isEffectivelyCompleted(match);
         if (match.striker != null) {
-            txtStr.setText(match.striker + (match.isCompleted ? "" : " ⭐"));
+            txtStr.setText(match.striker + (done ? "" : " ⭐"));
             txtStrStats.setText(getPlayerBattingStats(match, match.striker));
         } else {
-            txtStr.setText(match.isCompleted ? "" : "Select Striker");
+            txtStr.setText(done ? "" : "Select Striker");
             txtStrStats.setText("-");
         }
 
@@ -503,7 +535,7 @@ public class MatchesFragment extends Fragment {
             txtNonStr.setText(match.nonStriker);
             txtNonStrStats.setText(getPlayerBattingStats(match, match.nonStriker));
         } else {
-            txtNonStr.setText(match.isCompleted ? "" : "Select Non-Striker");
+            txtNonStr.setText(done ? "" : "Select Non-Striker");
             txtNonStrStats.setText("-");
         }
 
@@ -511,7 +543,7 @@ public class MatchesFragment extends Fragment {
             txtBowler.setText(match.currentBowler);
             txtBowlerStats.setText(getPlayerBowlingStats(match, match.currentBowler));
         } else {
-            txtBowler.setText(match.isCompleted ? "" : "Select Bowler");
+            txtBowler.setText(done ? "" : "Select Bowler");
             txtBowlerStats.setText("-");
         }
     }
@@ -519,7 +551,7 @@ public class MatchesFragment extends Fragment {
     private String getPlayerBattingStats(Match match, String playerName) {
         int runs = 0;
         int balls = 0;
-        for (BallEvent event : match.ballHistory) {
+        for (BallEvent event : MatchBallEvents.forStats(match)) {
             if (playerName.equals(event.striker)) {
                 if (event.extraType != BallEvent.ExtraType.WIDE) {
                     balls++;
@@ -536,7 +568,7 @@ public class MatchesFragment extends Fragment {
         int runsConceded = 0;
         int wickets = 0;
         int balls = 0;
-        for (BallEvent event : match.ballHistory) {
+        for (BallEvent event : MatchBallEvents.forStats(match)) {
             if (playerName.equals(event.bowler)) {
                 if (event.isLegalBall) balls++;
                 if (event.extraType == BallEvent.ExtraType.WIDE || event.extraType == BallEvent.ExtraType.NO_BALL) {
@@ -602,7 +634,7 @@ public class MatchesFragment extends Fragment {
             if (match.striker != null) available.remove(match.striker);
             if (match.nonStriker != null) available.remove(match.nonStriker);
             List<String> outPlayers = new ArrayList<>();
-            for (BallEvent event : match.ballHistory) {
+            for (BallEvent event : MatchBallEvents.forStats(match)) {
                 if (event.wicketType != BallEvent.WicketType.NONE) {
                     outPlayers.add(event.striker); 
                 }
@@ -632,7 +664,7 @@ public class MatchesFragment extends Fragment {
     }
 
     private void processBallAndUpdateRotation(Match match, BallEvent event) {
-        if (match.isCompleted) return;
+        if (MatchCompletionHelper.isEffectivelyCompleted(match)) return;
 
         processBall(match, event);
 
@@ -700,7 +732,7 @@ public class MatchesFragment extends Fragment {
                     checkMatchStatus(match);
                     
                     int currentWickets = (match.battingTeam.equals(match.team1)) ? match.wickets1 : match.wickets2;
-                    if (!match.isCompleted && currentWickets <= MatchCompletionHelper.getMaxWickets(match)) {
+                    if (!MatchCompletionHelper.isEffectivelyCompleted(match) && currentWickets <= MatchCompletionHelper.getMaxWickets(match)) {
                         match.striker = null; 
                         checkAndPromptInitialPlayers(match, updateUI);
                     }
@@ -709,7 +741,7 @@ public class MatchesFragment extends Fragment {
                     dataManager.updateClub(currentClub);
                     matchAdapter.notifyDataSetChanged();
                     
-                    if (!match.isCompleted) {
+                    if (!MatchCompletionHelper.isEffectivelyCompleted(match)) {
                         checkInningsOverAndBowlerChange(match, updateUI);
                     }
                 })
@@ -717,8 +749,11 @@ public class MatchesFragment extends Fragment {
     }
 
     private void processBall(Match match, BallEvent event) {
-        if (match.isCompleted) return;
+        if (MatchCompletionHelper.isEffectivelyCompleted(match)) return;
 
+        if (match.ballHistory == null) {
+            match.ballHistory = new ArrayList<>();
+        }
         match.ballHistory.add(event);
         boolean isTeam1 = match.battingTeam.equals(match.team1);
 
@@ -741,6 +776,7 @@ public class MatchesFragment extends Fragment {
         if (match.isFreeHit && event.extraType != BallEvent.ExtraType.NO_BALL) {
             match.isFreeHit = false;
         }
+        MatchPersistenceHelper.syncJsonFromLists(match);
     }
 
     private void undoBall(Match match, BallEvent event) {
@@ -811,6 +847,7 @@ public class MatchesFragment extends Fragment {
                         match.score2 = Integer.parseInt(editScore2.getText().toString());
                         match.hasStarted = true;
                         MatchCompletionHelper.markMatchCompleted(match);
+                        MatchPersistenceHelper.syncJsonFromLists(match);
                         dataManager.updateClub(currentClub);
                         matchAdapter.notifyDataSetChanged();
                     } catch (NumberFormatException e) {
@@ -822,13 +859,13 @@ public class MatchesFragment extends Fragment {
     }
 
     private void addRRRDisplay(Match match, TextView txtMatchInfo) {
-        if (!match.isCompleted && match.currentInnings == 2) {
-            int battingScore = (match.battingTeam.equals(match.team1)) ? match.score1 : match.score2;
-            int bowlingScore = (match.battingTeam.equals(match.team1)) ? match.score2 : match.score1;
+        if (!MatchCompletionHelper.isEffectivelyCompleted(match) && match.currentInnings == 2) {
+            int battingScore = (match.battingTeam.equals(match.team1)) ? MatchScoreDisplay.runs1(match) : MatchScoreDisplay.runs2(match);
+            int bowlingScore = (match.battingTeam.equals(match.team1)) ? MatchScoreDisplay.runs2(match) : MatchScoreDisplay.runs1(match);
 
             int target = bowlingScore + 1;
 
-            double overs = (match.battingTeam.equals(match.team1)) ? match.overs1 : match.overs2;
+            double overs = (match.battingTeam.equals(match.team1)) ? MatchScoreDisplay.overs1(match) : MatchScoreDisplay.overs2(match);
             int ballsBowled = ((int)overs * 6) + (int)Math.round((overs - (int)overs) * 10);
 
             int totalBalls = match.maxOvers * 6;

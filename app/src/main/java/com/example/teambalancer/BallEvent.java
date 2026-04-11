@@ -20,4 +20,23 @@ public class BallEvent implements Serializable {
     public BallEvent() {
         this.timestamp = System.currentTimeMillis();
     }
+
+    /** Deep copy for completed-match scoreboard snapshots. */
+    public static BallEvent copyOf(BallEvent src) {
+        if (src == null) {
+            return null;
+        }
+        BallEvent e = new BallEvent();
+        e.runs = src.runs;
+        e.extraType = src.extraType;
+        e.wicketType = src.wicketType;
+        e.striker = src.striker;
+        e.nonStriker = src.nonStriker;
+        e.bowler = src.bowler;
+        e.isLegalBall = src.isLegalBall;
+        e.overNumber = src.overNumber;
+        e.ballNumber = src.ballNumber;
+        e.timestamp = src.timestamp;
+        return e;
+    }
 }

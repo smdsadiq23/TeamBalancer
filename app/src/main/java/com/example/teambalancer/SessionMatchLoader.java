@@ -20,6 +20,10 @@ public final class SessionMatchLoader {
         }
         boolean updated = false;
         for (Match m : matches) {
+            MatchPersistenceHelper.ensureListsNotNull(m);
+            if (MatchPersistenceHelper.restoreListsFromJson(m)) {
+                updated = true;
+            }
             if (MatchCompletionHelper.ensureMatchId(m)) {
                 updated = true;
             }
@@ -33,6 +37,16 @@ public final class SessionMatchLoader {
         updated |= MatchCompletionHelper.normalizeStartedFlags(matches);
         for (Match m : matches) {
             if (MatchCompletionHelper.applyInningsCompletionRules(m)) {
+                updated = true;
+            }
+        }
+        for (Match m : matches) {
+            if (MatchCompletionHelper.ensureSnapshotForCompletedMatch(m)) {
+                updated = true;
+            }
+        }
+        for (Match m : matches) {
+            if (MatchCompletionHelper.restoreDisplayStateFromSnapshot(m)) {
                 updated = true;
             }
         }
