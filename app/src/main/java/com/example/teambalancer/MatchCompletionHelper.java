@@ -10,6 +10,34 @@ public final class MatchCompletionHelper {
 
     private MatchCompletionHelper() {}
 
+    /** True if the match is finished (flag and/or durable completion timestamp). */
+    public static boolean isEffectivelyCompleted(Match match) {
+        return match != null && (match.isCompleted || match.matchCompletedAt > 0L);
+    }
+
+    /** Mark finished and stamp time once (for persistence). */
+    public static void markMatchCompleted(Match match) {
+        if (match == null) {
+            return;
+        }
+        match.isCompleted = true;
+        if (match.matchCompletedAt <= 0L) {
+            match.matchCompletedAt = System.currentTimeMillis();
+        }
+    }
+
+    /** After Gson load: if timestamp survived but flag did not, restore the flag. */
+    public static boolean syncCompletionFromTimestamp(Match match) {
+        if (match == null) {
+            return false;
+        }
+        if (match.matchCompletedAt > 0L && !match.isCompleted) {
+            match.isCompleted = true;
+            return true;
+        }
+        return false;
+    }
+
     /** True once any ball, run, wicket, or over has been recorded (not just toss/setup). */
     public static boolean hasRecordedPlay(Match match) {
         if (match == null) {
@@ -30,7 +58,7 @@ public final class MatchCompletionHelper {
      * Toss or lineup is set but no delivery yet — avoid showing "LIVE" for 0/0 scorecards.
      */
     public static boolean isPreBallSetup(Match match) {
-        if (match == null || match.isCompleted) {
+        if (match == null || isEffectivelyCompleted(match)) {
             return false;
         }
         if (hasRecordedPlay(match)) {
@@ -61,6 +89,7 @@ public final class MatchCompletionHelper {
         boolean changed = false;
         for (Match match : matches) {
             boolean shouldBeStarted = match.isCompleted
+                    || match.matchCompletedAt > 0L
                     || match.score1 > 0
                     || match.score2 > 0
                     || match.wickets1 > 0
@@ -87,7 +116,7 @@ public final class MatchCompletionHelper {
      * @return true if {@link Match#isCompleted} was set to true by this call
      */
     public static boolean applyInningsCompletionRules(Match match) {
-        if (match.isCompleted) {
+        if (isEffectivelyCompleted(match)) {
             return false;
         }
         if (match.currentInnings != 2) {
@@ -115,7 +144,7 @@ public final class MatchCompletionHelper {
 
         if (battingScore >= target || wkts >= getMaxWickets(match) || overs >= match.maxOvers) {
             match.hasStarted = true;
-            match.isCompleted = true;
+            markMatchCompleted(match);
             return true;
         }
         return recoveredTeams;

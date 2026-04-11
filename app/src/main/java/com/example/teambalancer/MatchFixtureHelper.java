@@ -16,7 +16,7 @@ public final class MatchFixtureHelper {
         if (m == null) {
             return;
         }
-        if (m.isCompleted) {
+        if (m.isCompleted || m.matchCompletedAt > 0L) {
             m.isFixtureSchedule = false;
             return;
         }
@@ -40,7 +40,7 @@ public final class MatchFixtureHelper {
     }
 
     private static boolean hasMatchProgress(Match m) {
-        if (m.isCompleted) {
+        if (m.isCompleted || m.matchCompletedAt > 0L) {
             return true;
         }
         if (m.tossWinner != null) {

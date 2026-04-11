@@ -35,6 +35,10 @@ public class Match implements Serializable {
     public boolean isFixtureSchedule = true;
     public boolean hasStarted = false;
     public boolean isCompleted = false;
+    /**
+     * Set when the match is finished; survives better than scores if JSON/persistence is partial.
+     */
+    public long matchCompletedAt = 0L;
     public String tossWinner;
     public String tossDecision; // Batting, Bowling
     public int currentInnings = 1; // 1 to 4

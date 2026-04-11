@@ -126,6 +126,11 @@ public class FixturesFragment extends Fragment {
                 latestHistory.matches = new ArrayList<>();
                 updated = true;
             }
+            for (Match m : latestHistory.matches) {
+                if (MatchCompletionHelper.syncCompletionFromTimestamp(m)) {
+                    updated = true;
+                }
+            }
             updated |= MatchCompletionHelper.normalizeStartedFlags(latestHistory.matches);
             for (Match m : latestHistory.matches) {
                 if (MatchCompletionHelper.applyInningsCompletionRules(m)) {
@@ -210,7 +215,7 @@ public class FixturesFragment extends Fragment {
     }
 
     private void showCricketSetupDialog(Match match) {
-        if (match.isCompleted) {
+        if (MatchCompletionHelper.isEffectivelyCompleted(match)) {
             showCricketScoringDialog(match);
             return;
         }
@@ -474,7 +479,7 @@ public class FixturesFragment extends Fragment {
         }
 
         btnFinish.setOnClickListener(v -> {
-            if (match.isCompleted) {
+            if (MatchCompletionHelper.isEffectivelyCompleted(match)) {
                 dialog.dismiss();
                 return;
             }
@@ -493,7 +498,7 @@ public class FixturesFragment extends Fragment {
                 dataManager.updateClub(currentClub);
             } else {
                 match.hasStarted = true;
-                match.isCompleted = true;
+                MatchCompletionHelper.markMatchCompleted(match);
                 dataManager.updateClub(currentClub);
                 fixtureAdapter.notifyDataSetChanged();
                 updateUI.run();
@@ -503,7 +508,7 @@ public class FixturesFragment extends Fragment {
 
         dialog.show();
         
-        if (!match.isCompleted) {
+        if (!MatchCompletionHelper.isEffectivelyCompleted(match)) {
             checkAndPromptInitialPlayers(match, updateUI);
         }
     }
@@ -842,7 +847,7 @@ public class FixturesFragment extends Fragment {
     }
 
     private void showSimpleEditScoreDialog(Match match) {
-        if (match.isCompleted) {
+        if (MatchCompletionHelper.isEffectivelyCompleted(match)) {
             new AlertDialog.Builder(requireContext())
                     .setTitle("Match Summary")
                     .setMessage(match.team1 + ": " + match.score1 + "\n" + match.team2 + ": " + match.score2 + "\n\nMatch Completed.")
@@ -866,7 +871,7 @@ public class FixturesFragment extends Fragment {
                         match.score1 = Integer.parseInt(editScore1.getText().toString());
                         match.score2 = Integer.parseInt(editScore2.getText().toString());
                         match.hasStarted = true;
-                        match.isCompleted = true;
+                        MatchCompletionHelper.markMatchCompleted(match);
                         dataManager.updateClub(currentClub);
                         fixtureAdapter.notifyDataSetChanged();
                     } catch (NumberFormatException e) {

@@ -48,7 +48,7 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
         holder.txtTeam1.setText(match.team1);
         holder.txtTeam2.setText(match.team2);
 
-        if (match.isCompleted) {
+        if (MatchCompletionHelper.isEffectivelyCompleted(match)) {
             holder.txtStatus.setVisibility(View.VISIBLE);
             holder.txtStatus.setText("COMPLETED");
             holder.txtStatus.setBackgroundResource(R.drawable.bg_stat_pill);
@@ -126,7 +126,7 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
 
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
-                if (match.isCompleted) {
+                if (MatchCompletionHelper.isEffectivelyCompleted(match)) {
                     listener.onViewMatch(match, position);
                 } else {
                     listener.onEditMatch(match, position);
@@ -140,6 +140,9 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
     }
 
     private String getWinnerString(Match match) {
+        if (MatchCompletionHelper.isEffectivelyCompleted(match) && match.score1 == 0 && match.score2 == 0) {
+            return "Completed";
+        }
         if (match.score1 == match.score2) return "Match Tied";
         
         boolean team1Won = match.score1 > match.score2;
