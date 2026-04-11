@@ -20,6 +20,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ScorecardActivity"
+            android:exported="false"
+            android:theme="@style/Theme.TeamBalancer" />
     </application>
 
 </manifest>

@@ -1,13 +1,9 @@
 package com.example.teambalancer;
 
-import android.widget.ScrollView;
-import android.widget.TextView;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 /**
- * Scrollable full scoreboard for completed cricket matches.
+ * Opens the main read-only {@link ScorecardActivity} for a cricket match.
  */
 public final class CompletedMatchScoreboardDialog {
 
@@ -17,24 +13,6 @@ public final class CompletedMatchScoreboardDialog {
         if (fragment.getContext() == null || match == null) {
             return;
         }
-        ScrollView scroll = new ScrollView(fragment.requireContext());
-        int pad = (int) (16 * fragment.getResources().getDisplayMetrics().density);
-        scroll.setPadding(pad, pad, pad, pad);
-        TextView tv = new TextView(fragment.requireContext());
-        tv.setTextSize(14f);
-        tv.setTextColor(ContextCompat.getColor(fragment.requireContext(), R.color.on_surface));
-        tv.setTextIsSelectable(true);
-        tv.setText(CricketScoreboardFormatter.formatFull(match));
-        scroll.addView(tv);
-
-        String title = (match.team1 != null ? match.team1 : "") + " vs " + (match.team2 != null ? match.team2 : "");
-        if (MatchCompletionHelper.isEffectivelyCompleted(match)) {
-            title = CricketMatchResultFormatter.formatResult(match);
-        }
-        new AlertDialog.Builder(fragment.requireContext())
-                .setTitle(title)
-                .setView(scroll)
-                .setPositiveButton(android.R.string.ok, null)
-                .show();
+        ScorecardActivity.start(fragment.requireContext(), match);
     }
 }

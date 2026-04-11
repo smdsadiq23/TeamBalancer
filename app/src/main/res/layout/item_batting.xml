@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_glass_card"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingHorizontal="12dp"
+    android:paddingVertical="10dp">
+
+    <TextView
+        android:id="@+id/txtPlayer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2.2"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/on_surface"
+        android:textSize="13sp"
+        tools:text="Player Name" />
+
+    <TextView
+        android:id="@+id/txtRuns"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.6"
+        android:gravity="end"
+        android:textColor="@color/on_surface"
+        android:textSize="13sp"
+        tools:text="48" />
+
+    <TextView
+        android:id="@+id/txtBalls"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.6"
+        android:gravity="end"
+        android:textColor="@color/on_surface_variant"
+        android:textSize="13sp"
+        tools:text="32" />
+
+    <TextView
+        android:id="@+id/txtFours"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.55"
+        android:gravity="end"
+        android:textColor="@color/on_surface_variant"
+        android:textSize="13sp"
+        tools:text="6" />
+
+    <TextView
+        android:id="@+id/txtSixes"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.55"
+        android:gravity="end"
+        android:textColor="@color/on_surface_variant"
+        android:textSize="13sp"
+        tools:text="2" />
+
+    <TextView
+        android:id="@+id/txtSr"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.75"
+        android:gravity="end"
+        android:textColor="@color/neon_blue"
+        android:textSize="13sp"
+        tools:text="150.0" />
+</LinearLayout>

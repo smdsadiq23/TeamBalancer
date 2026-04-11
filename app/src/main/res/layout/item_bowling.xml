@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_glass_card"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingHorizontal="12dp"
+    android:paddingVertical="10dp">
+
+    <TextView
+        android:id="@+id/txtBowler"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/on_surface"
+        android:textSize="13sp"
+        tools:text="Bowler" />
+
+    <TextView
+        android:id="@+id/txtOvers"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.7"
+        android:gravity="end"
+        android:textColor="@color/on_surface"
+        android:textSize="13sp"
+        tools:text="3.2" />
+
+    <TextView
+        android:id="@+id/txtRuns"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.65"
+        android:gravity="end"
+        android:textColor="@color/on_surface_variant"
+        android:textSize="13sp"
+        tools:text="24" />
+
+    <TextView
+        android:id="@+id/txtWkts"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.55"
+        android:gravity="end"
+        android:textColor="@color/on_surface_variant"
+        android:textSize="13sp"
+        tools:text="2" />
+
+    <TextView
+        android:id="@+id/txtEcon"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.75"
+        android:gravity="end"
+        android:textColor="@color/secondary"
+        android:textSize="13sp"
+        tools:text="6.50" />
+</LinearLayout>

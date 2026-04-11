@@ -1,4 +1,20 @@
 <resources>
     <string name="app_name">GamXen</string>
     <string name="saved_teams_label">SAVED TEAMS</string>
+    <string name="scorecard_title">Scorecard</string>
+    <string name="scorecard_batting">Batting</string>
+    <string name="scorecard_bowling">Bowling</string>
+    <string name="scorecard_extras">Extras</string>
+    <string name="scorecard_timeline">Ball-by-ball</string>
+    <string name="col_player">Player</string>
+    <string name="col_bowler">Bowler</string>
+    <string name="col_r">R</string>
+    <string name="col_b">B</string>
+    <string name="col_4s">4s</string>
+    <string name="col_6s">6s</string>
+    <string name="col_sr">SR</string>
+    <string name="col_o">O</string>
+    <string name="col_w">W</string>
+    <string name="col_econ">Econ</string>
+    <string name="scorecard_in_progress">Match in progress</string>
 </resources>
