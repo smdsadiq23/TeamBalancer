@@ -22,20 +22,5 @@
         android:layout_marginBottom="12dp"
         android:background="#33FFFFFF" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/scorecard_squads"
-        android:textAppearance="@style/TextAppearance.TeamBalancer.TitleSmall"
-        android:textColor="@color/accent_purple" />
-
-    <TextView
-        android:id="@+id/txtFullScoreboardSquads"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:lineSpacingMultiplier="1.25"
-        android:text="—"
-        android:textColor="@color/on_surface_secondary"
-        android:textSize="13sp" />
+    <include layout="@layout/layout_squad_playing_xi" />
 </LinearLayout>

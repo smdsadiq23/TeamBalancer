@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -82,7 +83,9 @@ public class CricketScoringActivity extends AppCompatActivity {
                 });
 
         WebView webFullScorecard = findViewById(R.id.webFullScorecard);
-        TextView txtFullSquads = findViewById(R.id.txtFullScoreboardSquads);
+        LinearLayout layoutPlayingXiRows = findViewById(R.id.layoutPlayingXiRows);
+        TextView txtPlayingXiTeam1 = findViewById(R.id.txtPlayingXiTeam1);
+        TextView txtPlayingXiTeam2 = findViewById(R.id.txtPlayingXiTeam2);
 
         MaterialToolbar toolbar = findViewById(R.id.toolbarScoring);
         toolbar.setNavigationOnClickListener(v -> finishWithOk());
@@ -193,9 +196,12 @@ public class CricketScoringActivity extends AppCompatActivity {
                     if (webFullScorecard != null) {
                         loadProfessionalScorecard(webFullScorecard, match);
                     }
-                    if (txtFullSquads != null) {
-                        txtFullSquads.setText(CricketFullScoreboardHelper.formatSquads(match));
-                    }
+                    SquadPlayingXiBinder.bind(
+                            layoutPlayingXiRows,
+                            txtPlayingXiTeam1,
+                            txtPlayingXiTeam2,
+                            match,
+                            getLayoutInflater());
                 };
 
         if (!MatchCompletionHelper.isEffectivelyCompleted(match)) {
