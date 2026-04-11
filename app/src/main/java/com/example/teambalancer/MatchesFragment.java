@@ -67,6 +67,22 @@ public class MatchesFragment extends Fragment {
         observeCurrentClub();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (dataManager == null) {
+            return;
+        }
+        dataManager.loadClubFromDatabaseAsync(fresh -> {
+            if (!isAdded() || fresh == null || binding == null) {
+                return;
+            }
+            currentClub = fresh;
+            binding.txtClubName.setText(fresh.name);
+            loadMatches(fresh);
+        });
+    }
+
     private void setupRecyclerView() {
         matchAdapter = new MatchAdapter(currentMatches);
         matchAdapter.setOnMatchActionListener(new MatchAdapter.OnMatchActionListener() {
@@ -159,7 +175,7 @@ public class MatchesFragment extends Fragment {
             }
             Collections.sort(currentMatches, SessionMatchLoader.BY_SCHEDULE_THEN_TEAM);
             if (updated) {
-                dataManager.updateClub(currentClub);
+                dataManager.updateClub(club);
             }
         }
 

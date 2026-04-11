@@ -2,8 +2,12 @@ package com.example.teambalancer;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Handler;
+import android.os.Looper;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class DataManager {
     private static final String PREFS_NAME = "TeamBalancerPrefs";
@@ -55,6 +59,11 @@ public class DataManager {
         prefs.edit().putString(KEY_LAST_CLUB, name).apply();
     }
 
+    /** Active club name (for reloading from DB after navigation). */
+    public String getCurrentClubName() {
+        return lastClubName;
+    }
+
     public void setLoggedInUser(String username) {
         prefs.edit().putString(KEY_LOGGED_IN_USER, username).apply();
     }
@@ -81,6 +90,35 @@ public class DataManager {
 
     public void updateClub(Club club) {
         AppDatabase.databaseWriteExecutor.execute(() -> db.clubDao().update(club));
+    }
+
+    /**
+     * Reads the current club from SQLite (after any pending writes), runs {@link SessionMatchLoader}
+     * normalization, persists if needed, then delivers the result on the main thread. Use from
+     * {@code onResume} so the UI matches DB after {@link ScorecardActivity} or async saves.
+     */
+    public void loadClubFromDatabaseAsync(@Nullable Consumer<Club> onMainThread) {
+        final String name = lastClubName;
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            Club c = db.clubDao().getClubByNameSync(name);
+            boolean needWrite = false;
+            if (c != null && c.history != null && !c.history.isEmpty()) {
+                Club.TeamHistory th = c.history.get(c.history.size() - 1);
+                if (th.matches != null) {
+                    needWrite = SessionMatchLoader.prepareMatchesForSession(th.matches);
+                }
+            }
+            if (needWrite && c != null) {
+                db.clubDao().update(c);
+                c = db.clubDao().getClubByNameSync(name);
+            }
+            final Club out = c;
+            new Handler(Looper.getMainLooper()).post(() -> {
+                if (onMainThread != null) {
+                    onMainThread.accept(out);
+                }
+            });
+        });
     }
 
     public void deleteClub(Club club) {

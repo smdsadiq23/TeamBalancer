@@ -73,6 +73,22 @@ public class FixturesFragment extends Fragment {
         binding.btnAddFixture.setOnClickListener(v -> showAddMatchDialog());
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (dataManager == null) {
+            return;
+        }
+        dataManager.loadClubFromDatabaseAsync(fresh -> {
+            if (!isAdded() || fresh == null || binding == null) {
+                return;
+            }
+            currentClub = fresh;
+            binding.txtClubName.setText(fresh.name);
+            loadFixtures(fresh);
+        });
+    }
+
     private void setupRecyclerView() {
         fixtureAdapter = new FixtureAdapter(currentMatches);
         fixtureAdapter.setOnMatchActionListener(new FixtureAdapter.OnMatchActionListener() {
