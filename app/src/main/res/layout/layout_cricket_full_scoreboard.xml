@@ -8,7 +8,6 @@
     android:paddingTop="8dp"
     android:paddingBottom="24dp">
 
-    <!-- Sub-tabs: scorecard stats vs extras/timeline (tablet-friendly split) -->
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabFullScoreboardSub"
         android:layout_width="match_parent"
@@ -22,7 +21,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="100dp">
+        android:minHeight="120dp">
 
         <LinearLayout
             android:id="@+id/layoutFullScoreboardScorecard"
@@ -31,40 +30,13 @@
             android:orientation="vertical"
             android:visibility="visible">
 
-            <TextView
+            <android.webkit.WebView
+                android:id="@+id/webFullScorecard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/scorecard_batting"
-                android:textAppearance="@style/TextAppearance.TeamBalancer.TitleSmall"
-                android:textColor="@color/accent_cyan" />
-
-            <TextView
-                android:id="@+id/txtFullScoreboardBatting"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:lineSpacingMultiplier="1.2"
-                android:text="—"
-                android:textColor="@color/on_surface"
-                android:textSize="13sp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="@string/scorecard_bowling"
-                android:textAppearance="@style/TextAppearance.TeamBalancer.TitleSmall"
-                android:textColor="@color/accent_pink" />
-
-            <TextView
-                android:id="@+id/txtFullScoreboardBowling"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:lineSpacingMultiplier="1.2"
-                android:text="—"
-                android:textColor="@color/on_surface"
-                android:textSize="13sp" />
+                android:background="@android:color/transparent"
+                android:minHeight="320dp"
+                android:overScrollMode="never" />
         </LinearLayout>
 
         <LinearLayout

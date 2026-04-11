@@ -4,6 +4,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -77,8 +81,7 @@ public class CricketScoringActivity extends AppCompatActivity {
                     public void onTabReselected(TabLayout.Tab tab) {}
                 });
 
-        TextView txtFullBatting = findViewById(R.id.txtFullScoreboardBatting);
-        TextView txtFullBowling = findViewById(R.id.txtFullScoreboardBowling);
+        WebView webFullScorecard = findViewById(R.id.webFullScorecard);
         TextView txtFullExtras = findViewById(R.id.txtFullScoreboardExtras);
         TextView txtFullTimeline = findViewById(R.id.txtFullScoreboardTimeline);
         TextView txtFullSquads = findViewById(R.id.txtFullScoreboardSquads);
@@ -218,11 +221,8 @@ public class CricketScoringActivity extends AppCompatActivity {
                             txtBowler,
                             txtBowlerStats);
 
-                    if (txtFullBatting != null) {
-                        txtFullBatting.setText(CricketFullScoreboardHelper.formatBatting(match));
-                    }
-                    if (txtFullBowling != null) {
-                        txtFullBowling.setText(CricketFullScoreboardHelper.formatBowling(match));
+                    if (webFullScorecard != null) {
+                        loadProfessionalScorecard(webFullScorecard, match);
                     }
                     if (txtFullExtras != null) {
                         txtFullExtras.setText(CricketFullScoreboardHelper.formatExtras(match));
@@ -472,6 +472,40 @@ public class CricketScoringActivity extends AppCompatActivity {
         if (!MatchCompletionHelper.isEffectivelyCompleted(match)) {
             checkAndPromptInitialPlayers(match, updateUI);
         }
+    }
+
+    private void loadProfessionalScorecard(WebView webView, Match match) {
+        WebSettings settings = webView.getSettings();
+        settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+        String html = CricketProfessionalScorecardHtml.build(match);
+        webView.setWebViewClient(
+                new WebViewClient() {
+                    @Override
+                    public void onPageFinished(WebView view, String url) {
+                        view.post(
+                                () ->
+                                        view.evaluateJavascript(
+                                                "(function(){return document.body.scrollHeight;})();",
+                                                value -> {
+                                                    try {
+                                                        float h =
+                                                                Float.parseFloat(
+                                                                        value != null
+                                                                                ? value.replace(
+                                                                                        "\"", "")
+                                                                                : "0");
+                                                        if (h > 0) {
+                                                            ViewGroup.LayoutParams lp =
+                                                                    view.getLayoutParams();
+                                                            lp.height = (int) h;
+                                                            view.setLayoutParams(lp);
+                                                        }
+                                                    } catch (NumberFormatException ignored) {
+                                                    }
+                                                }));
+                    }
+                });
+        webView.loadDataWithBaseURL(null, html, "text/html", "UTF-8", null);
     }
 
     private void persist() {
