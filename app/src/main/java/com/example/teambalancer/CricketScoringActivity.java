@@ -14,12 +14,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.tabs.TabLayout;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -601,12 +601,11 @@ public class CricketScoringActivity extends AppCompatActivity {
             return;
         }
 
-        String[] options = available.toArray(new String[0]);
-        new AlertDialog.Builder(this)
-                .setTitle(title)
-                .setCancelable(true)
-                .setItems(options, (dialog, which) -> listener.onSelected(options[which]))
-                .show();
+        String subtitle =
+                isBattingTeam
+                        ? getString(R.string.player_pick_subtitle_batting)
+                        : getString(R.string.player_pick_subtitle_bowling);
+        CricketListPickerDialog.show(this, title, subtitle, available, listener::onSelected);
     }
 
     interface OnPlayerSelectedListener {
@@ -637,49 +636,54 @@ public class CricketScoringActivity extends AppCompatActivity {
 
     private void showWicketTypeDialog(Match m, Runnable updateUI) {
         String[] types = {"Bowled", "Caught", "LBW", "Run Out", "Stumped", "Hit Wicket"};
-        new AlertDialog.Builder(this)
-                .setTitle("Select Wicket Type")
-                .setItems(
-                        types,
-                        (dialog, which) -> {
-                            if (m.maxOversPerBowler > 0
-                                    && m.currentBowler != null
-                                    && BowlingQuotaHelper.wouldExceedQuotaAfterLegalBall(
-                                            m, m.currentBowler)) {
-                                Toast.makeText(
-                                                this,
-                                                "This delivery would exceed the bowler's over limit for this innings.",
-                                                Toast.LENGTH_SHORT)
-                                        .show();
-                                return;
-                            }
-                            BallEvent event = new BallEvent();
-                            event.striker = m.striker;
-                            event.nonStriker = m.nonStriker;
-                            event.bowler = m.currentBowler;
-                            event.wicketType =
-                                    BallEvent.WicketType.valueOf(
-                                            types[which].toUpperCase().replace(" ", "_"));
+        List<String> typeList = Arrays.asList(types);
+        CricketListPickerDialog.show(
+                this,
+                getString(R.string.wicket_type_title),
+                getString(R.string.wicket_type_subtitle),
+                typeList,
+                picked -> {
+                    int which = typeList.indexOf(picked);
+                    if (which < 0) {
+                        return;
+                    }
+                    if (m.maxOversPerBowler > 0
+                            && m.currentBowler != null
+                            && BowlingQuotaHelper.wouldExceedQuotaAfterLegalBall(
+                                    m, m.currentBowler)) {
+                        Toast.makeText(
+                                        this,
+                                        "This delivery would exceed the bowler's over limit for this innings.",
+                                        Toast.LENGTH_SHORT)
+                                .show();
+                        return;
+                    }
+                    BallEvent event = new BallEvent();
+                    event.striker = m.striker;
+                    event.nonStriker = m.nonStriker;
+                    event.bowler = m.currentBowler;
+                    event.wicketType =
+                            BallEvent.WicketType.valueOf(
+                                    types[which].toUpperCase().replace(" ", "_"));
 
-                            CricketScoringHelper.processBallAndUpdateRotation(m, event);
-                            CricketScoringHelper.checkMatchStatus(m);
+                    CricketScoringHelper.processBallAndUpdateRotation(m, event);
+                    CricketScoringHelper.checkMatchStatus(m);
 
-                            int currentWickets =
-                                    (m.battingTeam.equals(m.team1)) ? m.wickets1 : m.wickets2;
-                            if (!MatchCompletionHelper.isEffectivelyCompleted(m)
-                                    && currentWickets <= MatchCompletionHelper.getMaxWickets(m)) {
-                                m.striker = null;
-                                checkAndPromptInitialPlayers(m, updateUI);
-                            }
+                    int currentWickets =
+                            (m.battingTeam.equals(m.team1)) ? m.wickets1 : m.wickets2;
+                    if (!MatchCompletionHelper.isEffectivelyCompleted(m)
+                            && currentWickets <= MatchCompletionHelper.getMaxWickets(m)) {
+                        m.striker = null;
+                        checkAndPromptInitialPlayers(m, updateUI);
+                    }
 
-                            updateUI.run();
-                            persist();
+                    updateUI.run();
+                    persist();
 
-                            if (!MatchCompletionHelper.isEffectivelyCompleted(m)) {
-                                checkInningsOverAndBowlerChange(m, updateUI);
-                            }
-                        })
-                .show();
+                    if (!MatchCompletionHelper.isEffectivelyCompleted(m)) {
+                        checkInningsOverAndBowlerChange(m, updateUI);
+                    }
+                });
     }
 
     private void addRRRDisplay(Match m, TextView txtMatchInfo) {

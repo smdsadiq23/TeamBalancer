@@ -31,4 +31,8 @@
     <string name="scoring_bye">BYE</string>
     <string name="scoring_lb">LB</string>
     <string name="scoring_undo">Undo</string>
+    <string name="player_pick_subtitle_batting">Batting squad — tap a player</string>
+    <string name="player_pick_subtitle_bowling">Bowling squad — tap a player</string>
+    <string name="wicket_type_title">Dismissal type</string>
+    <string name="wicket_type_subtitle">How was the wicket?</string>
 </resources>
