@@ -1,0 +1,14 @@
+# Copy to "local.properties" in THIS folder (next to settings.gradle). That file is gitignored.
+#
+# Android Emulator → special loopback (default in Gradle if you omit api.base.url):
+#   api.base.url=http://10.0.2.2:3010
+#
+# Tablet / phone on same Wi‑Fi as laptop → laptop's LAN IPv4:
+#   api.base.url=http://192.168.1.23:3010
+#
+# (Find IP: macOS/Linux "ipconfig getifaddr en0" / "hostname -I", Windows "ipconfig".)
+#
+# Uncomment ONE line:
+
+# api.base.url=http://10.0.2.2:3010
+# api.base.url=http://REPLACE_WITH_YOUR_LAPTOP_LAN_IP:3010

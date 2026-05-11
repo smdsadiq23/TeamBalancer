@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -18,7 +17,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import com.example.teambalancer.databinding.FragmentFixturesBinding;
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,7 +39,6 @@ public class MatchesFragment extends Fragment {
     private MatchAdapter matchAdapter;
     private final List<Match> currentMatches = new ArrayList<>();
     private Club currentClub;
-    private Club.TeamHistory latestHistory;
 
     private ActivityResultLauncher<Intent> cricketScoringLauncher;
 
@@ -155,7 +152,7 @@ public class MatchesFragment extends Fragment {
                 .setTitle("Delete Match")
                 .setMessage("Are you sure you want to delete this match?")
                 .setPositiveButton("Delete", (dialog, which) -> {
-                    if (currentClub != null && !currentClub.history.isEmpty()) {
+                    if (currentClub != null && currentClub.history != null && !currentClub.history.isEmpty()) {
                         Club.TeamHistory latestHistory = currentClub.history.get(currentClub.history.size() - 1);
                         if (latestHistory.matches != null) {
                             MatchCompletionHelper.forgetMatchCompletion(match);
@@ -182,25 +179,14 @@ public class MatchesFragment extends Fragment {
     private void loadMatches(Club club) {
         currentMatches.clear();
         if (club.history != null && !club.history.isEmpty()) {
-            latestHistory = club.history.get(club.history.size() - 1);
-            boolean updated = false;
-            if (latestHistory.matches == null) {
-                latestHistory.matches = new ArrayList<>();
-                updated = true;
-            }
-
+            Club.TeamHistory latestHistory = club.history.get(club.history.size() - 1);
             if (latestHistory.matches != null) {
-                updated |= SessionMatchLoader.prepareMatchesForSession(latestHistory.matches);
-            }
-
-            for (Match m : latestHistory.matches) {
-                if (!MatchFixtureHelper.isScheduledFixture(m)) {
-                    currentMatches.add(m);
+                for (Match m : latestHistory.matches) {
+                    if (m != null && !MatchFixtureHelper.isScheduledFixture(m)) {
+                        currentMatches.add(m);
+                    }
                 }
-            }
-            Collections.sort(currentMatches, SessionMatchLoader.BY_SCHEDULE_THEN_TEAM);
-            if (updated) {
-                dataManager.updateClub(club);
+                Collections.sort(currentMatches, SessionMatchLoader.BY_SCHEDULE_THEN_TEAM);
             }
         }
 
@@ -236,10 +222,12 @@ public class MatchesFragment extends Fragment {
                     match.hasStarted = true;
                     match.matchType = spinnerMatchType.getText().toString();
                     try {
-                        match.maxOvers = Integer.parseInt(editMaxOvers.getText().toString());
+                        String oversStr = editMaxOvers.getText() != null ? editMaxOvers.getText().toString() : "20";
+                        match.maxOvers = Integer.parseInt(oversStr);
                     } catch (Exception e) { match.maxOvers = 20; }
                     try {
-                        match.maxOversPerBowler = Integer.parseInt(editMaxOversPerBowler.getText().toString().trim());
+                        String perBowlerStr = editMaxOversPerBowler.getText() != null ? editMaxOversPerBowler.getText().toString().trim() : "0";
+                        match.maxOversPerBowler = Integer.parseInt(perBowlerStr);
                     } catch (Exception e) { match.maxOversPerBowler = 0; }
                     if (match.maxOversPerBowler < 0) {
                         match.maxOversPerBowler = 0;
@@ -327,8 +315,10 @@ public class MatchesFragment extends Fragment {
                 .setPositiveButton("Save & Finish", (dialog, which) -> {
                     try {
                         MatchFixtureHelper.promoteToMatch(match);
-                        match.score1 = Integer.parseInt(editScore1.getText().toString());
-                        match.score2 = Integer.parseInt(editScore2.getText().toString());
+                        String s1 = editScore1.getText() != null ? editScore1.getText().toString() : "0";
+                        String s2 = editScore2.getText() != null ? editScore2.getText().toString() : "0";
+                        match.score1 = Integer.parseInt(s1);
+                        match.score2 = Integer.parseInt(s2);
                         match.hasStarted = true;
                         MatchCompletionHelper.markMatchCompleted(match);
                         MatchPersistenceHelper.syncJsonFromLists(match);

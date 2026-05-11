@@ -43,9 +43,10 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
     @Override
     public void onBindViewHolder(@NonNull MatchViewHolder holder, int position) {
         Match match = matches.get(position);
+        if (match == null) return;
 
-        holder.txtTeam1.setText(match.team1);
-        holder.txtTeam2.setText(match.team2);
+        holder.txtTeam1.setText(match.team1 != null ? match.team1 : "");
+        holder.txtTeam2.setText(match.team2 != null ? match.team2 : "");
         MatchDisplayHelper.bindFixtureMetaLine(holder.txtFixtureMeta, match);
 
         if (MatchCompletionHelper.isEffectivelyCompleted(match)) {
@@ -66,8 +67,6 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
                 holder.txtScore1.setText(String.valueOf(MatchScoreDisplay.runs1(match)));
                 holder.txtScore2.setText(String.valueOf(MatchScoreDisplay.runs2(match)));
             }
-            
-            holder.btnDeleteMatch.setVisibility(View.VISIBLE);
         } else if (MatchCompletionHelper.hasRecordedPlay(match)) {
             holder.txtStatus.setVisibility(View.VISIBLE);
             holder.txtStatus.setText("LIVE");
@@ -84,29 +83,10 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
                 holder.txtScore1.setText(String.valueOf(MatchScoreDisplay.runs1(match)));
                 holder.txtScore2.setText(String.valueOf(MatchScoreDisplay.runs2(match)));
             }
-            
-            holder.btnDeleteMatch.setVisibility(View.VISIBLE);
-        } else if (MatchCompletionHelper.isPreBallSetup(match)) {
-            holder.txtStatus.setVisibility(View.VISIBLE);
-            holder.txtStatus.setText("READY");
-            holder.txtStatus.setBackgroundResource(R.drawable.bg_stat_pill);
-
-            holder.layoutScores.setVisibility(View.VISIBLE);
-            holder.txtVs.setVisibility(View.GONE);
-            holder.txtResult.setVisibility(View.GONE);
-
-            if ("Cricket".equalsIgnoreCase(match.sport)) {
-                holder.txtScore1.setText(MatchScoreDisplay.cricketScoreWithOvers(match, true));
-                holder.txtScore2.setText(MatchScoreDisplay.cricketScoreWithOvers(match, false));
-            } else {
-                holder.txtScore1.setText(String.valueOf(MatchScoreDisplay.runs1(match)));
-                holder.txtScore2.setText(String.valueOf(MatchScoreDisplay.runs2(match)));
-            }
-
-            holder.btnDeleteMatch.setVisibility(View.VISIBLE);
         } else {
+            String status = MatchCompletionHelper.isPreBallSetup(match) ? "READY" : "SCHEDULED";
             holder.txtStatus.setVisibility(View.VISIBLE);
-            holder.txtStatus.setText("SCHEDULED");
+            holder.txtStatus.setText(status);
             holder.txtStatus.setBackgroundResource(R.drawable.bg_stat_pill);
 
             holder.layoutScores.setVisibility(View.VISIBLE);
@@ -120,22 +100,25 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
                 holder.txtScore1.setText(String.valueOf(MatchScoreDisplay.runs1(match)));
                 holder.txtScore2.setText(String.valueOf(MatchScoreDisplay.runs2(match)));
             }
-
-            holder.btnDeleteMatch.setVisibility(View.VISIBLE);
         }
 
         holder.itemView.setOnClickListener(v -> {
-            if (listener != null) {
-                if (MatchCompletionHelper.isEffectivelyCompleted(match)) {
-                    listener.onViewMatch(match, position);
+            int pos = holder.getBindingAdapterPosition();
+            if (pos != RecyclerView.NO_POSITION && listener != null) {
+                Match m = matches.get(pos);
+                if (MatchCompletionHelper.isEffectivelyCompleted(m)) {
+                    listener.onViewMatch(m, pos);
                 } else {
-                    listener.onEditMatch(match, position);
+                    listener.onEditMatch(m, pos);
                 }
             }
         });
 
         holder.btnDeleteMatch.setOnClickListener(v -> {
-            if (listener != null) listener.onDeleteMatch(match, position);
+            int pos = holder.getBindingAdapterPosition();
+            if (pos != RecyclerView.NO_POSITION && listener != null) {
+                listener.onDeleteMatch(matches.get(pos), pos);
+            }
         });
     }
 
@@ -148,7 +131,8 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
         if (s1 == s2) {
             return "Match tied";
         }
-        return (s1 > s2 ? match.team1 : match.team2) + " won";
+        String winner = s1 > s2 ? (match.team1 != null ? match.team1 : "Team 1") : (match.team2 != null ? match.team2 : "Team 2");
+        return winner + " won";
     }
 
     @Override

@@ -102,12 +102,6 @@ public final class MatchCompletionHelper {
     }
 
     /**
-     * Restores live {@link Match} score fields and {@link Match#ballHistory} from the completion snapshot when
-     * persistence zeroed them out.
-     *
-     * @return true if anything was changed (club should be saved).
-     */
-    /**
      * After totals are repaired from ball history, keep {@link Match#hasFinalScoreSnapshot} fields aligned
      * for {@link MatchScoreDisplay} and JSON mirrors.
      */
@@ -115,22 +109,32 @@ public final class MatchCompletionHelper {
         if (match == null || !match.hasFinalScoreSnapshot || !isEffectivelyCompleted(match)) {
             return false;
         }
-        match.finalRuns1 = match.score1;
-        match.finalRuns2 = match.score2;
-        match.finalWickets1 = match.wickets1;
-        match.finalWickets2 = match.wickets2;
-        match.finalOvers1 = match.overs1;
-        match.finalOvers2 = match.overs2;
-        match.scoreboardSnapshot = new ArrayList<>();
-        List<BallEvent> src =
-                match.ballHistory != null && !match.ballHistory.isEmpty()
-                        ? match.ballHistory
-                        : MatchBallEvents.forStats(match);
-        for (BallEvent e : src) {
-            match.scoreboardSnapshot.add(BallEvent.copyOf(e));
+        boolean changed = false;
+        if (match.finalRuns1 != match.score1) { match.finalRuns1 = match.score1; changed = true; }
+        if (match.finalRuns2 != match.score2) { match.finalRuns2 = match.score2; changed = true; }
+        if (match.finalWickets1 != match.wickets1) { match.finalWickets1 = match.wickets1; changed = true; }
+        if (match.finalWickets2 != match.wickets2) { match.finalWickets2 = match.wickets2; changed = true; }
+        if (Double.compare(match.finalOvers1, match.overs1) != 0) { match.finalOvers1 = match.overs1; changed = true; }
+        if (Double.compare(match.finalOvers2, match.overs2) != 0) { match.finalOvers2 = match.overs2; changed = true; }
+
+        List<BallEvent> src = match.ballHistory != null && !match.ballHistory.isEmpty()
+                ? match.ballHistory
+                : match.scoreboardSnapshot;
+
+        if (match.scoreboardSnapshot == null || src == null || match.scoreboardSnapshot.size() != src.size()) {
+            match.scoreboardSnapshot = new ArrayList<>();
+            if (src != null) {
+                for (BallEvent e : src) {
+                    match.scoreboardSnapshot.add(BallEvent.copyOf(e));
+                }
+            }
+            changed = true;
         }
-        MatchPersistenceHelper.syncJsonFromLists(match);
-        return true;
+
+        if (changed) {
+            MatchPersistenceHelper.syncJsonFromLists(match);
+        }
+        return changed;
     }
 
     public static boolean restoreDisplayStateFromSnapshot(Match match) {

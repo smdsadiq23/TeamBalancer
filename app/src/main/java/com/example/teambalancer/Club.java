@@ -10,6 +10,9 @@ import java.util.List;
 public class Club implements Serializable {
     @PrimaryKey(autoGenerate = true)
     public int id;
+
+    /** Stable id on PostgreSQL (null until first successful sync). */
+    public Integer remoteId;
     public String name;
     
     public List<String> teamNames;

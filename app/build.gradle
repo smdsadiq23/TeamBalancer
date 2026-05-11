@@ -2,6 +2,16 @@ plugins {
     alias(libs.plugins.android.application)
 }
 
+def localProps = new Properties()
+def lf = rootProject.file("local.properties")
+if (lf.exists()) {
+    lf.withInputStream { localProps.load(it) }
+}
+String apiBaseUrl = localProps.getProperty("api.base.url", "http://10.0.2.2:3010")
+if (!apiBaseUrl.endsWith("/")) {
+    apiBaseUrl += "/"
+}
+
 android {
     namespace 'com.example.teambalancer'
     compileSdk 34
@@ -14,7 +24,9 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        
+
+        buildConfigField "String", "API_BASE_URL", "\"${apiBaseUrl}\""
+
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
@@ -24,6 +36,7 @@ android {
 
     buildFeatures {
         viewBinding true
+        buildConfig true
     }
 
     buildTypes {
@@ -32,9 +45,17 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    // This forces Gradle to use a full JDK (required for jlink)
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
     }
 }
 
@@ -47,9 +68,13 @@ dependencies {
     implementation libs.gridlayout
     implementation libs.recyclerview
     implementation libs.viewpager2
+    implementation libs.retrofit
+    implementation libs.retrofit.gson
+    implementation libs.okhttp
+    implementation libs.okhttp.logging
+    implementation libs.security.crypto
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
-    
-    // Room
+
     implementation "androidx.room:room-runtime:2.6.1"
     annotationProcessor "androidx.room:room-compiler:2.6.1"
 

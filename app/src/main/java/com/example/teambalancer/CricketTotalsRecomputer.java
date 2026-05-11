@@ -1,6 +1,7 @@
 package com.example.teambalancer;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Replays {@link BallEvent} history into score/wicket/over fields. Used after Gson/Room load when
@@ -11,7 +12,7 @@ public final class CricketTotalsRecomputer {
     private CricketTotalsRecomputer() {}
 
     /**
-     * @return true if match totals were recalculated (caller may persist).
+     * @return true if match totals were recalculated and actually changed (caller may persist).
      */
     public static boolean recomputeFromStoredEvents(Match match) {
         if (match == null || !"Cricket".equalsIgnoreCase(match.sport)) {
@@ -27,12 +28,12 @@ public final class CricketTotalsRecomputer {
             split = events.size();
         }
 
-        match.score1 = 0;
-        match.score2 = 0;
-        match.wickets1 = 0;
-        match.wickets2 = 0;
-        match.overs1 = 0.0;
-        match.overs2 = 0.0;
+        int newScore1 = 0;
+        int newScore2 = 0;
+        int newWickets1 = 0;
+        int newWickets2 = 0;
+        double newOvers1 = 0.0;
+        double newOvers2 = 0.0;
 
         String batting = battingTeamForFirstBall(match, events.get(0));
         if (batting == null) {
@@ -55,22 +56,22 @@ public final class CricketTotalsRecomputer {
                 e.wicketType = BallEvent.WicketType.NONE;
             }
 
-            boolean isTeam1 = batting.equals(match.team1);
+            boolean isTeam1 = batting != null && batting.equals(match.team1);
             if (isTeam1) {
-                match.score1 += e.runs;
+                newScore1 += e.runs;
                 if (e.wicketType != BallEvent.WicketType.NONE) {
-                    match.wickets1++;
+                    newWickets1++;
                 }
                 if (e.isLegalBall) {
-                    match.overs1 = addBall(match.overs1);
+                    newOvers1 = addBall(newOvers1);
                 }
             } else {
-                match.score2 += e.runs;
+                newScore2 += e.runs;
                 if (e.wicketType != BallEvent.WicketType.NONE) {
-                    match.wickets2++;
+                    newWickets2++;
                 }
                 if (e.isLegalBall) {
-                    match.overs2 = addBall(match.overs2);
+                    newOvers2 = addBall(newOvers2);
                 }
             }
 
@@ -79,8 +80,16 @@ public final class CricketTotalsRecomputer {
             }
         }
 
-        match.battingTeam = batting;
-        return true;
+        boolean changed = false;
+        if (match.score1 != newScore1) { match.score1 = newScore1; changed = true; }
+        if (match.score2 != newScore2) { match.score2 = newScore2; changed = true; }
+        if (match.wickets1 != newWickets1) { match.wickets1 = newWickets1; changed = true; }
+        if (match.wickets2 != newWickets2) { match.wickets2 = newWickets2; changed = true; }
+        if (Double.compare(match.overs1, newOvers1) != 0) { match.overs1 = newOvers1; changed = true; }
+        if (Double.compare(match.overs2, newOvers2) != 0) { match.overs2 = newOvers2; changed = true; }
+        if (!Objects.equals(match.battingTeam, batting)) { match.battingTeam = batting; changed = true; }
+
+        return changed;
     }
 
     private static String battingTeamForFirstBall(Match m, BallEvent first) {

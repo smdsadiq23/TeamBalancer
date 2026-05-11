@@ -36,7 +36,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
     @Override
     public void onBindViewHolder(@NonNull HistoryViewHolder holder, int position) {
         Club.TeamHistory history = historyList.get(position);
-        holder.txtDate.setText(history.date);
+        holder.txtDate.setText(history.date != null ? history.date : "");
 
         LayoutInflater inflater = holder.inflater;
         LinearLayout layoutTeams = holder.layoutTeams;
@@ -47,7 +47,10 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
         int totalPlayers = 0;
         for (int i = 0; i < teamCount; i++) {
             Team team = teams.get(i);
-            totalPlayers += team.players.size();
+            if (team == null) continue;
+            
+            int pCount = team.players != null ? team.players.size() : 0;
+            totalPlayers += pCount;
 
             View teamView;
             if (i < existing) {
@@ -62,18 +65,24 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
             TextView txtTeamStrength = teamView.findViewById(R.id.txtTeamStrength);
             TextView txtTeamPlayers = teamView.findViewById(R.id.txtTeamPlayers);
 
-            txtTeamName.setText(team.name);
+            txtTeamName.setText(team.name != null ? team.name : "Team " + (i + 1));
             txtTeamStrength.setText("Str: " + team.totalStrength);
 
-            StringBuilder playersList = new StringBuilder(team.players.size() * 16);
-            for (int j = 0; j < team.players.size(); j++) {
-                Player p = team.players.get(j);
-                playersList.append(p.isCaptain ? "★ " : "• ").append(p.name);
-                if (j < team.players.size() - 1) {
-                    playersList.append('\n');
+            if (team.players != null) {
+                StringBuilder playersList = new StringBuilder(team.players.size() * 16);
+                for (int j = 0; j < team.players.size(); j++) {
+                    Player p = team.players.get(j);
+                    if (p != null) {
+                        playersList.append(p.isCaptain ? "★ " : "• ").append(p.name != null ? p.name : "Unknown");
+                        if (j < team.players.size() - 1) {
+                            playersList.append('\n');
+                        }
+                    }
                 }
+                txtTeamPlayers.setText(playersList.toString());
+            } else {
+                txtTeamPlayers.setText("");
             }
-            txtTeamPlayers.setText(playersList.toString());
         }
 
         for (int i = teamCount; i < existing; i++) {
@@ -83,10 +92,12 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
         String summary = teamCount + " Teams, " + totalPlayers + " Players total";
         holder.txtSummary.setText(summary);
 
-        holder.btnView.setOnClickListener(v -> listener.onHistoryClick(history));
+        holder.btnView.setOnClickListener(v -> {
+            if (listener != null) listener.onHistoryClick(history);
+        });
         holder.btnDelete.setOnClickListener(v -> {
-            int pos = holder.getAdapterPosition();
-            if (pos != RecyclerView.NO_POSITION) {
+            int pos = holder.getBindingAdapterPosition();
+            if (pos != RecyclerView.NO_POSITION && listener != null) {
                 listener.onHistoryDelete(pos);
             }
         });
@@ -94,7 +105,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
 
     @Override
     public int getItemCount() {
-        return historyList.size();
+        return historyList == null ? 0 : historyList.size();
     }
 
     static class HistoryViewHolder extends RecyclerView.ViewHolder {

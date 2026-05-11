@@ -24,6 +24,9 @@ public interface ClubDao {
     @Query("SELECT * FROM clubs WHERE name = :name LIMIT 1")
     Club getClubByNameSync(String name);
 
+    @Query("SELECT * FROM clubs WHERE id = :id LIMIT 1")
+    Club getClubByIdSync(int id);
+
     @Query("SELECT * FROM clubs WHERE id = :id")
     LiveData<Club> getClubById(int id);
 

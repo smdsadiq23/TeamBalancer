@@ -16,6 +16,9 @@ import java.io.Serializable;
 public class Player implements Serializable {
     @PrimaryKey(autoGenerate = true)
     public int id;
+
+    /** Stable id on PostgreSQL (null until synced). */
+    public Integer remoteId;
     public int clubId;
     public String name;
     public Style style;

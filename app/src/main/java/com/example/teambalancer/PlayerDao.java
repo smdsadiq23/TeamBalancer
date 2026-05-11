@@ -16,8 +16,14 @@ public interface PlayerDao {
     @Query("SELECT * FROM players WHERE clubId = :clubId")
     List<Player> getPlayersForClubSync(int clubId);
 
+    @Query("SELECT * FROM players WHERE id = :id LIMIT 1")
+    Player getPlayerByIdSync(int id);
+
+    @Query("DELETE FROM players WHERE clubId = :clubId")
+    void deletePlayersForClub(int clubId);
+
     @Insert
-    void insert(Player player);
+    long insert(Player player);
 
     @Update
     void update(Player player);

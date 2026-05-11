@@ -10,26 +10,37 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class DataManager {
-    private static final String PREFS_NAME = "TeamBalancerPrefs";
+    static final String PREFS_NAME = "TeamBalancerPrefs";
     private static final String KEY_LAST_CLUB = "last_club_name";
     private static final String KEY_LOGGED_IN_USER = "logged_in_user";
 
+    private final Context appContext;
     private final SharedPreferences prefs;
     private final AppDatabase db;
     private String lastClubName;
 
     public DataManager(Context context) {
-        prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        db = AppDatabase.getInstance(context);
+        appContext = context.getApplicationContext();
+        prefs = appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        db = AppDatabase.getInstance(appContext);
         lastClubName = prefs.getString(KEY_LAST_CLUB, "Default Club");
         ensureDefaultClub();
+    }
+
+    /** Active club label from prefs (does not touch Room). Sync uses this path. */
+    public static String peekCurrentClubName(Context ctx) {
+        return ctx.getApplicationContext()
+                .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                .getString(KEY_LAST_CLUB, "Default Club");
     }
 
     private void ensureDefaultClub() {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             if (db.clubDao().getAllClubsSync().isEmpty()) {
                 Club defaultClub = new Club("Default Club");
-                db.clubDao().insert(defaultClub);
+                long rowId = db.clubDao().insert(defaultClub);
+                defaultClub.id = (int) rowId;
+                EndToEndSync.onClubInserted(appContext, defaultClub);
             }
         });
     }
@@ -45,7 +56,7 @@ public class DataManager {
     public LiveData<Club> getCurrentClub() {
         return db.clubDao().getClubByName(lastClubName);
     }
-    
+
     public LiveData<Club> getClubById(int id) {
         return db.clubDao().getClubById(id);
     }
@@ -57,6 +68,7 @@ public class DataManager {
     public void setCurrentClub(String name) {
         this.lastClubName = name;
         prefs.edit().putString(KEY_LAST_CLUB, name).apply();
+        EndToEndSync.schedulePull(appContext);
     }
 
     /** Active club name (for reloading from DB after navigation). */
@@ -73,23 +85,46 @@ public class DataManager {
     }
 
     public void addPlayer(Player player) {
-        AppDatabase.databaseWriteExecutor.execute(() -> db.playerDao().insert(player));
+        AppDatabase.databaseWriteExecutor.execute(
+                () -> {
+                    long id = db.playerDao().insert(player);
+                    player.id = (int) id;
+                    EndToEndSync.onPlayerInserted(appContext, player);
+                });
     }
 
     public void updatePlayer(Player player) {
-        AppDatabase.databaseWriteExecutor.execute(() -> db.playerDao().update(player));
+        AppDatabase.databaseWriteExecutor.execute(
+                () -> {
+                    db.playerDao().update(player);
+                    EndToEndSync.onPlayerUpdated(appContext, player);
+                });
     }
 
     public void deletePlayer(Player player) {
-        AppDatabase.databaseWriteExecutor.execute(() -> db.playerDao().delete(player));
+        AppDatabase.databaseWriteExecutor.execute(
+                () -> {
+                    Integer remote = player.remoteId;
+                    db.playerDao().delete(player);
+                    EndToEndSync.onPlayerDeleted(appContext, remote);
+                });
     }
 
     public void addClub(Club club) {
-        AppDatabase.databaseWriteExecutor.execute(() -> db.clubDao().insert(club));
+        AppDatabase.databaseWriteExecutor.execute(
+                () -> {
+                    long row = db.clubDao().insert(club);
+                    club.id = (int) row;
+                    EndToEndSync.onClubInserted(appContext, club);
+                });
     }
 
     public void updateClub(Club club) {
-        AppDatabase.databaseWriteExecutor.execute(() -> db.clubDao().update(club));
+        AppDatabase.databaseWriteExecutor.execute(
+                () -> {
+                    db.clubDao().update(club);
+                    EndToEndSync.debouncePushClub(appContext);
+                });
     }
 
     /**
@@ -101,13 +136,15 @@ public class DataManager {
             return;
         }
         MatchPersistenceHelper.syncJsonFromLists(updated);
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            Club c = db.clubDao().getClubByNameSync(clubName);
-            if (c == null || !replaceMatchInClub(c, updated)) {
-                return;
-            }
-            db.clubDao().update(c);
-        });
+        AppDatabase.databaseWriteExecutor.execute(
+                () -> {
+                    Club c = db.clubDao().getClubByNameSync(clubName);
+                    if (c == null || !replaceMatchInClub(c, updated)) {
+                        return;
+                    }
+                    db.clubDao().update(c);
+                    EndToEndSync.debouncePushClub(appContext);
+                });
     }
 
     private static boolean replaceMatchInClub(Club c, Match updated) {
@@ -131,34 +168,41 @@ public class DataManager {
 
     /**
      * Reads the current club from SQLite (after any pending writes), runs {@link SessionMatchLoader}
-     * normalization, persists if needed, then delivers the result on the main thread. Use from
-     * {@code onResume} so the UI matches DB after {@link ScorecardActivity} or async saves.
+     * normalization, persists if needed, then delivers the result on the main thread.
      */
     public void loadClubFromDatabaseAsync(@Nullable Consumer<Club> onMainThread) {
         final String name = lastClubName;
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            Club c = db.clubDao().getClubByNameSync(name);
-            boolean needWrite = false;
-            if (c != null && c.history != null && !c.history.isEmpty()) {
-                Club.TeamHistory th = c.history.get(c.history.size() - 1);
-                if (th.matches != null) {
-                    needWrite = SessionMatchLoader.prepareMatchesForSession(th.matches);
-                }
-            }
-            if (needWrite && c != null) {
-                db.clubDao().update(c);
-                c = db.clubDao().getClubByNameSync(name);
-            }
-            final Club out = c;
-            new Handler(Looper.getMainLooper()).post(() -> {
-                if (onMainThread != null) {
-                    onMainThread.accept(out);
-                }
-            });
-        });
+        AppDatabase.databaseWriteExecutor.execute(
+                () -> {
+                    Club c = db.clubDao().getClubByNameSync(name);
+                    boolean needWrite = false;
+                    if (c != null && c.history != null && !c.history.isEmpty()) {
+                        Club.TeamHistory th = c.history.get(c.history.size() - 1);
+                        if (th.matches != null) {
+                            needWrite = SessionMatchLoader.prepareMatchesForSession(th.matches);
+                        }
+                    }
+                    if (needWrite && c != null) {
+                        db.clubDao().update(c);
+                        c = db.clubDao().getClubByNameSync(name);
+                    }
+                    final Club out = c;
+                    new Handler(Looper.getMainLooper())
+                            .post(
+                                    () -> {
+                                        if (onMainThread != null) {
+                                            onMainThread.accept(out);
+                                        }
+                                    });
+                });
     }
 
     public void deleteClub(Club club) {
-        AppDatabase.databaseWriteExecutor.execute(() -> db.clubDao().delete(club));
+        AppDatabase.databaseWriteExecutor.execute(
+                () -> {
+                    Integer remote = club.remoteId;
+                    EndToEndSync.notifyClubDeleted(appContext, remote);
+                    db.clubDao().delete(club);
+                });
     }
 }

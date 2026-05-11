@@ -1,0 +1,48 @@
+// Server-side mirror of TeamBalancer Android Room model: User, Club (JSON history), Player.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique
+  passwordHash String
+  clubs        Club[]
+  createdAt    DateTime @default(now())
+}
+
+model Club {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  teamNames Json     @default("[]")
+  history   Json     @default("[]")
+  players   Player[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model Player {
+  id             Int     @id @default(autoincrement())
+  clubId         Int
+  club           Club    @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  name           String
+  style          String // BATSMAN | BOWLER | ALL_ROUNDER (matches Android enums)
+  category       String // REGULAR | PROMISING_TALENT | VETERAN
+  battingRating  Int     @default(1)
+  bowlingRating  Int     @default(1)
+  fieldingRating Int     @default(1)
+  isCaptain      Boolean @default(false)
+  isAvailable    Boolean @default(true)
+
+  @@index([clubId])
+}

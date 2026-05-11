@@ -1,5 +1,6 @@
 package com.example.teambalancer;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,9 @@ import com.example.teambalancer.databinding.FragmentHomeBinding;
 
 public class HomeFragment extends Fragment {
 
+    private static final java.util.concurrent.ExecutorService IO =
+            java.util.concurrent.Executors.newSingleThreadExecutor();
+
     private FragmentHomeBinding binding;
     private DataManager dataManager;
 
@@ -21,6 +25,12 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         return binding.getRoot();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        EndToEndSync.schedulePull(requireContext());
     }
 
     @Override
@@ -63,10 +73,22 @@ public class HomeFragment extends Fragment {
     }
 
     private void logout() {
+        final Context appCtx = requireContext().getApplicationContext();
+
+        Runnable serverLogout =
+                () -> {
+                    try {
+                        ApiModule.api().logout().execute();
+                    } catch (Exception ignored) {
+                        // Offline or logout not needed for stateless JWT
+                    } finally {
+                        SecureSessionStore.clear(appCtx);
+                    }
+                };
+        IO.execute(serverLogout);
+
         dataManager.setLoggedInUser("Guest");
-        getParentFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, new LoginFragment())
-                .commit();
+        getParentFragmentManager().beginTransaction().replace(R.id.fragment_container, new LoginFragment()).commit();
     }
 
     private void observeCurrentClub() {

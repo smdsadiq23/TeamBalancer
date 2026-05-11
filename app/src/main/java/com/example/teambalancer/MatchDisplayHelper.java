@@ -1,5 +1,6 @@
 package com.example.teambalancer;
 
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 import java.text.DateFormat;
@@ -13,7 +14,17 @@ import java.util.Locale;
  */
 public final class MatchDisplayHelper {
 
+    private static DateFormat cachedDateTimeFormat;
+
     private MatchDisplayHelper() {}
+
+    private static DateFormat getFormat() {
+        if (cachedDateTimeFormat == null) {
+            cachedDateTimeFormat = DateFormat.getDateTimeInstance(
+                    DateFormat.MEDIUM, DateFormat.SHORT, Locale.getDefault());
+        }
+        return cachedDateTimeFormat;
+    }
 
     public static void bindFixtureMetaLine(TextView textView, Match match) {
         if (textView == null) {
@@ -37,10 +48,8 @@ public final class MatchDisplayHelper {
             parts.add(match.venue.trim());
         }
         if (match.scheduledStartMillis > 0L) {
-            DateFormat df = DateFormat.getDateTimeInstance(
-                    DateFormat.MEDIUM, DateFormat.SHORT, Locale.getDefault());
-            parts.add(df.format(new Date(match.scheduledStartMillis)));
+            parts.add(getFormat().format(new Date(match.scheduledStartMillis)));
         }
-        return String.join(" · ", parts);
+        return TextUtils.join(" · ", parts);
     }
 }

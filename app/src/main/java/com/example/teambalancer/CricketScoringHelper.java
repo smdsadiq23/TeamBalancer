@@ -15,7 +15,7 @@ public final class CricketScoringHelper {
     }
 
     public static void processBallAndUpdateRotation(Match match, BallEvent event) {
-        if (MatchCompletionHelper.isEffectivelyCompleted(match)) {
+        if (match == null || MatchCompletionHelper.isEffectivelyCompleted(match) || match.battingTeam == null) {
             return;
         }
 
@@ -46,7 +46,7 @@ public final class CricketScoringHelper {
     }
 
     public static void processBall(Match match, BallEvent event) {
-        if (MatchCompletionHelper.isEffectivelyCompleted(match) || match.battingTeam == null) {
+        if (match == null || MatchCompletionHelper.isEffectivelyCompleted(match) || match.battingTeam == null) {
             return;
         }
 
@@ -89,6 +89,9 @@ public final class CricketScoringHelper {
     }
 
     public static void undoBall(Match match, BallEvent event) {
+        if (match == null || match.battingTeam == null) {
+            return;
+        }
         boolean isTeam1 = match.battingTeam.equals(match.team1);
         if (isTeam1) {
             match.score1 -= event.runs;
@@ -107,7 +110,7 @@ public final class CricketScoringHelper {
                 match.overs2 = removeBall(match.overs2);
             }
         }
-        if (!match.ballHistory.isEmpty()) {
+        if (match.ballHistory != null && !match.ballHistory.isEmpty()) {
             BallEvent last = match.ballHistory.get(match.ballHistory.size() - 1);
             match.striker = last.striker;
             match.nonStriker = last.nonStriker;

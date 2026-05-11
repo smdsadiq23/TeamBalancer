@@ -61,10 +61,19 @@ public class ResultsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         dataManager = new DataManager(requireContext());
 
+        if (getArguments() == null) {
+            getParentFragmentManager().popBackStack();
+            return;
+        }
+
         clubId = getArguments().getInt(ARG_CLUB_ID);
-        String clubName = getArguments().getString(ARG_CLUB_NAME);
+        String clubName = getArguments().getString(ARG_CLUB_NAME, "");
         teams = (ArrayList<Team>) getArguments().getSerializable(ARG_TEAMS);
         historyIndex = getArguments().getInt(ARG_HISTORY_INDEX, -1);
+
+        if (teams == null) {
+            teams = new ArrayList<>();
+        }
 
         binding.txtResultClubName.setText(clubName.isEmpty() ? "BALANCED TEAMS" : clubName.toUpperCase());
         
@@ -185,7 +194,7 @@ public class ResultsFragment extends Fragment {
      * {@link Club.TeamHistory#matches} with a new list — that would wipe cricket {@link Match#ballHistory}.
      */
     private void saveChangesToHistory() {
-        if (currentClub != null && !currentClub.history.isEmpty()) {
+        if (currentClub != null && currentClub.history != null && !currentClub.history.isEmpty()) {
             int idx = historyIndex;
             if (idx < 0 || idx >= currentClub.history.size()) {
                 idx = currentClub.history.size() - 1;

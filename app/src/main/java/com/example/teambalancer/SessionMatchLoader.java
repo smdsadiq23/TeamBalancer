@@ -12,62 +12,54 @@ public final class SessionMatchLoader {
     private SessionMatchLoader() {}
 
     /**
-     * @return true if any match was modified and should be written back with {@link DataManager#updateClub(Club)}.
+     * Optimally prepares matches for the session in a single pass to avoid ANRs.
+     * @return true if any match was modified and should be written back.
      */
     public static boolean prepareMatchesForSession(List<Match> matches) {
-        if (matches == null) {
+        if (matches == null || matches.isEmpty()) {
             return false;
         }
-        boolean updated = false;
+        boolean anyUpdated = false;
+        
+        // 1. Normalize started flags (requires full list context)
+        anyUpdated |= MatchCompletionHelper.normalizeStartedFlags(matches);
+
+        // 2. Perform all other per-match normalizations in one pass
         for (Match m : matches) {
+            if (m == null) continue;
+            
+            boolean mUpdated = false;
+            
+            // Core restoration
             MatchPersistenceHelper.ensureListsNotNull(m);
-            if (MatchPersistenceHelper.restoreListsFromJson(m)) {
-                updated = true;
-            }
-            if (MatchCompletionHelper.ensureMatchId(m)) {
-                updated = true;
-            }
-            if (MatchCompletionHelper.syncCompletionFromTimestamp(m)) {
-                updated = true;
-            }
-            if (MatchCompletionHelper.syncCompletionFromRemembered(m)) {
-                updated = true;
-            }
-        }
-        updated |= MatchCompletionHelper.normalizeStartedFlags(matches);
-        for (Match m : matches) {
-            if (MatchCompletionHelper.applyInningsCompletionRules(m)) {
-                updated = true;
-            }
-        }
-        for (Match m : matches) {
-            if (MatchCompletionHelper.restoreDisplayStateFromSnapshot(m)) {
-                updated = true;
-            }
-        }
-        for (Match m : matches) {
-            if (CricketTotalsRecomputer.recomputeFromStoredEvents(m)) {
-                updated = true;
-            }
-        }
-        for (Match m : matches) {
-            if (MatchCompletionHelper.ensureSnapshotForCompletedMatch(m)) {
-                updated = true;
-            }
-        }
-        for (Match m : matches) {
-            if (MatchCompletionHelper.refreshFinalSnapshotFromLive(m)) {
-                updated = true;
-            }
-        }
-        for (Match m : matches) {
+            mUpdated |= MatchPersistenceHelper.restoreListsFromJson(m);
+            mUpdated |= MatchCompletionHelper.ensureMatchId(m);
+            mUpdated |= MatchCompletionHelper.syncCompletionFromTimestamp(m);
+            mUpdated |= MatchCompletionHelper.syncCompletionFromRemembered(m);
+            
+            // Logical consistency
+            mUpdated |= MatchCompletionHelper.applyInningsCompletionRules(m);
+            mUpdated |= MatchCompletionHelper.restoreDisplayStateFromSnapshot(m);
+            mUpdated |= CricketTotalsRecomputer.recomputeFromStoredEvents(m);
+            mUpdated |= MatchCompletionHelper.ensureSnapshotForCompletedMatch(m);
+            mUpdated |= MatchCompletionHelper.refreshFinalSnapshotFromLive(m);
+            
+            // UI State
             MatchFixtureHelper.normalizeFixtureScheduleOnLoad(m);
+            
+            if (mUpdated) {
+                anyUpdated = true;
+            }
         }
-        return updated;
+        return anyUpdated;
     }
 
     /** Scheduled time first; matches without a time sort last; then team name. */
     public static final Comparator<Match> BY_SCHEDULE_THEN_TEAM = (a, b) -> {
+        if (a == null && b == null) return 0;
+        if (a == null) return 1;
+        if (b == null) return -1;
+
         long ka = a.scheduledStartMillis <= 0 ? Long.MAX_VALUE : a.scheduledStartMillis;
         long kb = b.scheduledStartMillis <= 0 ? Long.MAX_VALUE : b.scheduledStartMillis;
         if (ka != kb) {

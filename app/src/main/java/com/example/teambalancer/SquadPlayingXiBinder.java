@@ -37,9 +37,6 @@ public final class SquadPlayingXiBinder {
         String roleDefault = inflater.getContext().getString(R.string.squad_player_role_default);
 
         if (max == 0) {
-            View row = inflater.inflate(R.layout.item_squad_playing_xi_row, rowsContainer, false);
-            bindOneRow(row, "—", "—", roleDefault, roleDefault, 0);
-            rowsContainer.addView(row);
             return;
         }
 
@@ -47,45 +44,40 @@ public final class SquadPlayingXiBinder {
             View row = inflater.inflate(R.layout.item_squad_playing_xi_row, rowsContainer, false);
             String left = i < s1.size() ? s1.get(i) : "";
             String right = i < s2.size() ? s2.get(i) : "";
-            bindOneRow(row, left, right, roleDefault, roleDefault, i);
+            
+            TextView tl = row.findViewById(R.id.txtSquadLeftName);
+            TextView tr = row.findViewById(R.id.txtSquadRightName);
+            TextView rl = row.findViewById(R.id.txtSquadLeftRole);
+            TextView rr = row.findViewById(R.id.txtSquadRightRole);
+
+            if (tl == null || tr == null || rl == null || rr == null) {
+                continue;
+            }
+
+            if (left.isEmpty()) {
+                tl.setText("");
+                rl.setVisibility(View.GONE);
+            } else {
+                tl.setText(left);
+                rl.setText(roleDefault);
+                rl.setVisibility(View.VISIBLE);
+            }
+
+            if (right.isEmpty()) {
+                tr.setText("");
+                rr.setVisibility(View.GONE);
+            } else {
+                tr.setText(right);
+                rr.setText(roleDefault);
+                rr.setVisibility(View.VISIBLE);
+            }
+
+            if (i % 2 == 1) {
+                row.setBackgroundResource(R.drawable.bg_playing_xi_row_alt);
+            } else {
+                row.setBackground(null);
+            }
             rowsContainer.addView(row);
-        }
-    }
-
-    private static void bindOneRow(
-            View row,
-            String leftName,
-            String rightName,
-            String leftRole,
-            String rightRole,
-            int index) {
-        TextView tl = row.findViewById(R.id.txtSquadLeftName);
-        TextView tr = row.findViewById(R.id.txtSquadRightName);
-        TextView rl = row.findViewById(R.id.txtSquadLeftRole);
-        TextView rr = row.findViewById(R.id.txtSquadRightRole);
-
-        if (leftName == null || leftName.isEmpty()) {
-            tl.setText("");
-            rl.setVisibility(View.GONE);
-        } else {
-            tl.setText(leftName);
-            rl.setText(leftRole);
-            rl.setVisibility(View.VISIBLE);
-        }
-
-        if (rightName == null || rightName.isEmpty()) {
-            tr.setText("");
-            rr.setVisibility(View.GONE);
-        } else {
-            tr.setText(rightName);
-            rr.setText(rightRole);
-            rr.setVisibility(View.VISIBLE);
-        }
-
-        if (index % 2 == 1) {
-            row.setBackgroundResource(R.drawable.bg_playing_xi_row_alt);
-        } else {
-            row.setBackground(null);
         }
     }
 }
